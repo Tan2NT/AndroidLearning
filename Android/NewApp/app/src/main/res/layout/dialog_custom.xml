@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#00BCD4"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txtLable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login system"
+        android:padding="5dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        />
+
+    <EditText
+        android:id="@+id/txtUserName"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="username"
+        android:textSize="10sp"
+        android:inputType="textPassword"
+        android:padding="5dp"
+        android:gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/txtPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="password"
+        android:textSize="10sp"
+        android:inputType="textPassword"
+        android:padding="5dp"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingTop="30dp"
+        android:layout_weight="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_weight="6"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

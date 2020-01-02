@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> arrSubjects;
     ArrayAdapter adapterSubject;
 
+    private Button btnSwitchLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         //handleContextMenu();
 
         handleDialog();
+
+        handleLoginDialog();
     }
 
     @Override
@@ -125,6 +131,40 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+
+    private void handleLoginDialog(){
+        btnSwitchLogin = findViewById(R.id.btnSwitchlogin);
+        btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogLogin();
+            }
+        });
+    }
+
+    private void showDialogLogin(){
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_custom);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle("Login");
+
+        // Matching
+        EditText edtUsename = dialog.findViewById(R.id.txtUserName);
+        EditText edtPassword = dialog.findViewById(R.id.txtPass);
+        Button btnLogin = dialog.findViewById(R.id.btnLogin);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+
+        //handle action when click here
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
      private void handleDialog(){
         lvSubject = findViewById(R.id.lvSubject);
 
