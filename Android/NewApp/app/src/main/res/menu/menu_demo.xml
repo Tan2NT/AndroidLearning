@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Settings"
+        android:icon="@drawable/settings"
+        app:showAsAction="always"
+        android:id="@+id/menuSettings"/>
+
+    <item android:title="Share"
+        android:icon="@drawable/share"
+        android:orderInCategory="2"
+        android:id="@+id/menuShare"/>
+
+    <item android:title="Search"
+        android:orderInCategory="1"
+        android:icon="@drawable/search"
+        android:id="@+id/menuSearch"/>
+
+    <item android:title="Exit"
+        android:orderInCategory="3"
+        android:id="@+id/menuExit"
+        />
+
+    <item android:title="Contact"
+        android:id="@+id/menuContact"
+        android:orderInCategory="4"
+        >
+        <menu>
+            <item android:title="Name"
+                android:id="menuContactName"/>
+            <item android:title="Email"
+                android:id="@+id/menuContactEmail"/>
+            <item android:title="Address"
+                android:id="@+id/menuContactAddress"/>
+        </menu>
+
+    </item>
+
+</menu>
