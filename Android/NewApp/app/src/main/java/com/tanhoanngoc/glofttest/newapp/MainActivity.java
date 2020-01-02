@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,10 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private GridView gvImage;
     private ArrayList arrPics;
 
+    // menu
+    private Button btnCreatePopupMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.b_52_drawable_shape_button);
+        setContentView(R.layout.menu_test_layout);
         Log.i(TAG, "---------- onCreate -------");
 
 //        btn_Login = findViewById(R.id.btn_switchLogin);
@@ -55,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         //handleGridViewSimple();
 
         //handleGridPictures();
+
+        handlePopupMenu();
     }
 
     @Override
@@ -81,6 +87,43 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handlePopupMenu(){
+        btnCreatePopupMenu = findViewById(R.id.btnPopupMenu);
+
+        btnCreatePopupMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu();
+            }
+        });
+    }
+
+    private void showPopupMenu(){
+        PopupMenu popupMenu = new PopupMenu(this, btnCreatePopupMenu);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menuInsert:
+                        btnCreatePopupMenu.setText("Insert");
+                        break;
+                    case R.id.menuDelete:
+                        btnCreatePopupMenu.setText("Delete");
+                        break;
+                    case R.id.menuEdit:
+                        btnCreatePopupMenu.setText("Edit");
+                        break;
+
+                }
+
+                return false;
+            }
+        });
+        popupMenu.show();
     }
 
     private void handleGridPictures(){

@@ -28,7 +28,7 @@
         >
         <menu>
             <item android:title="Name"
-                android:id="menuContactName"/>
+                android:id="@+id/menuContactName"/>
             <item android:title="Email"
                 android:id="@+id/menuContactEmail"/>
             <item android:title="Address"
