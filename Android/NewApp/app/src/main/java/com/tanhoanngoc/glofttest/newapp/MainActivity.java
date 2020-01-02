@@ -2,10 +2,13 @@ package com.tanhoanngoc.glofttest.newapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     // menu
     private Button btnCreatePopupMenu;
+    private Button btnContextMenu;
+    private ConstraintLayout layoutMonitor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         //handleGridPictures();
 
         handlePopupMenu();
+
+        handleContextMenu();
     }
 
     @Override
@@ -83,10 +90,39 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menuExit:
                 break;
-
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getMenuInflater().inflate(R.menu.menu_context, menu);
+        menu.setHeaderTitle("Select color");
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menuYellow:
+                layoutMonitor.setBackgroundColor(Color.YELLOW);
+                break;
+            case R.id.menuRed:
+                layoutMonitor.setBackgroundColor(Color.RED);
+                break;
+            case R.id.menuGreen:
+                layoutMonitor.setBackgroundColor(Color.GREEN);
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void handleContextMenu(){
+        btnContextMenu = findViewById(R.id.btnContextMenu);
+        layoutMonitor = findViewById(R.id.layoutMonitor);
+
+        //register view to content_menu
+        registerForContextMenu(btnContextMenu);
     }
 
     private void handlePopupMenu(){
