@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.grid_view_custom_layout);
+        setContentView(R.layout.b_52_drawable_shape_button);
         Log.i(TAG, "---------- onCreate -------");
 
 //        btn_Login = findViewById(R.id.btn_switchLogin);
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         //handleGridViewSimple();
 
-        handleGridPictures();
+        //handleGridPictures();
     }
 
     private void handleGridPictures(){
