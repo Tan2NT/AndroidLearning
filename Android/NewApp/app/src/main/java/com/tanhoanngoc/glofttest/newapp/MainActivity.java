@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,10 +26,17 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btn_Login;
 
+    // Gridview
+    private GridView gvName;
+    private String[] arrayName = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T" };
+
+    private GridView gvImage;
+    private ArrayList arrPics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fruit_listview_layout);
+        setContentView(R.layout.grid_view_custom_layout);
         Log.i(TAG, "---------- onCreate -------");
 
 //        btn_Login = findViewById(R.id.btn_switchLogin);
@@ -37,7 +48,49 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        handleFruitLayout();
+        //handleFruitLayout();
+
+        //handleGridViewSimple();
+
+        handleGridPictures();
+    }
+
+    private void handleGridPictures(){
+        gvImage = findViewById(R.id.gv_Image);
+        arrPics = new ArrayList<Picturel>();
+        arrPics.add(new Picturel("girl 1", R.drawable.girl_1));
+        arrPics.add(new Picturel("girl 2", R.drawable.girl_2));
+        arrPics.add(new Picturel("girl 3", R.drawable.girl_3));
+        arrPics.add(new Picturel("girl 4", R.drawable.girl_4));
+        arrPics.add(new Picturel("girl 5", R.drawable.girl_5));
+        arrPics.add(new Picturel("girl 6", R.drawable.girl_6));
+        arrPics.add(new Picturel("girl 7", R.drawable.girl_7));
+        arrPics.add(new Picturel("girl 8", R.drawable.girl_8));
+        arrPics.add(new Picturel("girl 9", R.drawable.girl_9));
+        arrPics.add(new Picturel("girl 1", R.drawable.girl_1));
+
+        PictureAdapter picAdapter = new PictureAdapter(MainActivity.this, arrPics, R.layout.grid_view_image_item);
+
+        gvImage.setAdapter(picAdapter);
+    }
+
+    private void handleGridViewSimple(){
+        // anh xa
+        gvName = findViewById(R.id.gv_Ten);
+
+        // Create an adapter
+        ArrayAdapter adaper = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, arrayName);
+
+        // Fill data
+        gvName.setAdapter(adaper);
+
+        gvName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "Selected character is " + arrayName[position].toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void handleFruitLayout(){
