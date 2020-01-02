@@ -1,9 +1,11 @@
 package com.tanhoanngoc.glofttest.newapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -44,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
     private Button btnContextMenu;
     private ConstraintLayout layoutMonitor;
 
+    // dialog
+    ListView lvSubject;
+    ArrayList<String> arrSubjects;
+    ArrayAdapter adapterSubject;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
         //handleGridPictures();
 
-        handlePopupMenu();
+        //handlePopupMenu();
 
-        handleContextMenu();
+        //handleContextMenu();
+
+        handleDialog();
     }
 
     @Override
@@ -116,6 +125,49 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+     private void handleDialog(){
+        lvSubject = findViewById(R.id.lvSubject);
+
+        arrSubjects = new ArrayList<String>();
+        arrSubjects.add("Php");
+        arrSubjects.add(".Net");
+        arrSubjects.add("Java");
+        arrSubjects.add("Android");
+
+         adapterSubject = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1 , arrSubjects);
+        lvSubject.setAdapter(adapterSubject);
+
+        lvSubject.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ShowDialog(position);
+                return false;
+            }
+        });
+     }
+
+     private void ShowDialog(int pos){
+        final int index = pos;
+         AlertDialog.Builder alerBuilder = new AlertDialog.Builder(MainActivity.this);
+         alerBuilder.setTitle("Confirmation Message");
+         alerBuilder.setMessage("Are you sure you want to delete " + arrSubjects.get(pos).toString() + "?");
+         alerBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                arrSubjects.remove(index);
+                adapterSubject.notifyDataSetChanged();
+             }
+         });
+
+         alerBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+
+             }
+         });
+
+         alerBuilder.show();
+     }
 
     private void handleContextMenu(){
         btnContextMenu = findViewById(R.id.btnContextMenu);

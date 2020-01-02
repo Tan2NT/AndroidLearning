@@ -8,25 +8,40 @@
     android:layout_height="match_parent">
 
     <Button
-        android:background="@drawable/custom_button"
         android:id="@+id/btnPopupMenu"
         android:layout_width="128dp"
         android:layout_height="59dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/custom_button"
         android:text="Create Popup Menu"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:background="@drawable/custom_button_simple"
         android:id="@+id/btnContextMenu"
         android:layout_width="110dp"
         android:layout_height="43dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/custom_button_simple"
         android:text="Select color"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.467"
+        app:layout_constraintStart_toEndOf="@+id/btnPopupMenu"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/lvSubject"
+        android:layout_width="369dp"
+        android:layout_height="391dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="112dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPopupMenu" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
