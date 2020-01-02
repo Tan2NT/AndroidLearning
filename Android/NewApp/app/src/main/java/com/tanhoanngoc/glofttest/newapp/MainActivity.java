@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -60,6 +61,26 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_demo, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.menuSettings:
+                break;
+            case R.id.menuShare:
+                break;
+            case R.id.menuSearch:
+                break;
+            case R.id.menuContact:
+                break;
+            case R.id.menuExit:
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void handleGridPictures(){
