@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -54,12 +55,38 @@ class MainActivity : AppCompatActivity() {
         //handleCustomGridview();
 
         handlePopupMenu()
+
+        handleForContextMenu()
+    }
+
+    private fun handleForContextMenu(){
+        registerForContextMenu(btnContextMenu)
     }
 
     private fun handlePopupMenu(){
         btnPopupMenu.setOnClickListener(View.OnClickListener {
             showPopupMenu()
         })
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        menuInflater.inflate(R.menu.context_menu, menu)
+        menu?.setHeaderTitle("Chose color")
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menuYellow -> mainLayout.setBackgroundColor(Color.YELLOW)
+            R.id.menuRed -> mainLayout.setBackgroundColor(Color.RED)
+            R.id.menuGreen -> mainLayout.setBackgroundColor(Color.GREEN)
+        }
+
+        return super.onContextItemSelected(item)
     }
 
     private fun showPopupMenu(){
