@@ -12,6 +12,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fruit_listview_layout.*
+import kotlinx.android.synthetic.main.grid_view_basic.*
 
 import kotlinx.android.synthetic.main.list_view_simple.*
 
@@ -22,9 +23,12 @@ class MainActivity : AppCompatActivity() {
 
     private var subjectData : ArrayList<String> = ArrayList()
 
+    //Gridview
+    private var friendList : List<String> = listOf ("Tri", "Thai", "Trinh", "Thanh", "Thang", "Mui")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.grid_view_basic)
 
         //b5_When_Statement()
 
@@ -40,7 +44,20 @@ class MainActivity : AppCompatActivity() {
 
         //listViewCustome()
 
-        handleComnonButton()
+       // handleComnonButton()
+
+        handleGridviewBasic()
+    }
+
+    private fun  handleGridviewBasic(){
+        // Fill data
+        gvHotGirls.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, friendList)
+        gvHotGirls.numColumns = 3
+
+        // handle click action
+        gvHotGirls.setOnItemClickListener { parent, view, position, id ->
+            Toast.makeText(this, "Selected friend is ${friendList.get(position)}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun handleComnonButton(){
