@@ -11,6 +11,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fruit_listview_layout.*
 import kotlinx.android.synthetic.main.grid_view_basic.*
+import kotlinx.android.synthetic.main.grid_view_custom_hotgirl.*
 
 import kotlinx.android.synthetic.main.list_view_simple.*
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.grid_view_basic)
+        setContentView(R.layout.grid_view_custom_hotgirl)
 
         //b5_When_Statement()
 
@@ -44,7 +45,25 @@ class MainActivity : AppCompatActivity() {
 
        // handleComnonButton()
 
-        handleGridviewBasic()
+        //handleGridviewBasic()
+
+        handleCustomGridview();
+    }
+
+    private fun  handleCustomGridview(){
+        var hotGirlData : ArrayList<HotGirl> = ArrayList()
+        hotGirlData.add(HotGirl("girl_1", R.drawable.girl_1))
+        hotGirlData.add(HotGirl("girl_2", R.drawable.girl_2))
+        hotGirlData.add(HotGirl("girl_3", R.drawable.girl_3))
+        hotGirlData.add(HotGirl("girl_4", R.drawable.girl_4))
+        hotGirlData.add(HotGirl("girl_5", R.drawable.girl_5))
+        hotGirlData.add(HotGirl("girl_6", R.drawable.girl_6))
+        hotGirlData.add(HotGirl("girl_7", R.drawable.girl_7))
+        hotGirlData.add(HotGirl("girl_8", R.drawable.girl_8))
+        hotGirlData.add(HotGirl("girl_9", R.drawable.girl_9))
+
+        gvHotGirls.numColumns = 3;
+        gvHotGirls.adapter = HotGirlAdapter(this, R.layout.grid_view_item_hot_girl_detail, hotGirlData)
     }
 
     private fun  handleGridviewBasic(){
