@@ -5,10 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fruit_listview_layout.*
@@ -51,11 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun  handleGridviewBasic(){
         // Fill data
-        gvHotGirls.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, friendList)
-        gvHotGirls.numColumns = 3
+        gvFriends.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, friendList)
+        gvFriends.numColumns = 3
 
         // handle click action
-        gvHotGirls.setOnItemClickListener { parent, view, position, id ->
+        gvFriends.setOnItemClickListener { parent, view, position, id ->
             Toast.makeText(this, "Selected friend is ${friendList.get(position)}", Toast.LENGTH_SHORT).show()
         }
     }
