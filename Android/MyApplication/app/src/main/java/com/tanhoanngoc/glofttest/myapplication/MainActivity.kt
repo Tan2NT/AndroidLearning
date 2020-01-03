@@ -3,8 +3,10 @@ package com.tanhoanngoc.glofttest.myapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fruit_listview_layout.*
 
 import kotlinx.android.synthetic.main.list_view_simple.*
 
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.list_view_simple)
+        setContentView(R.layout.fruit_listview_layout)
 
         //b5_When_Statement()
 
@@ -29,7 +31,28 @@ class MainActivity : AppCompatActivity() {
 
         //TestOOP()
 
-        listViewSimple()
+        //listViewSimple()
+
+        listViewCustome()
+    }
+
+    private fun listViewCustome(){
+        var fruitData : ArrayList<Fruit> = ArrayList()
+        fruitData.add(Fruit("Banana", "banana is a ..... special for a girl ...", R.drawable.banana))
+        fruitData.add(Fruit("Cherries", "cherries is a ..... special for a girl lip ...", R.drawable.cherries));
+        fruitData.add(Fruit("Coconutmeat", "coconutmeat is a ..... special in the South of Vietnam ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        var  fruitAdapter : FruitAdapter = FruitAdapter(this, fruitData, R.layout.fruit_listview_item);
+        lv_fruits.adapter = fruitAdapter
+
+        lv_fruits.setOnItemClickListener { parent, view, position, id ->
+            Toast.makeText(this, "You clicked in ${fruitData.get(position).getName()}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun listViewSimple(){
