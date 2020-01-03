@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.PopupMenu
 import android.widget.SeekBar
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.grid_view_custom_hotgirl)
+        setContentView(R.layout.activity_main)
 
         //b5_When_Statement()
 
@@ -48,12 +51,48 @@ class MainActivity : AppCompatActivity() {
 
         //handleGridviewBasic()
 
-        handleCustomGridview();
+        //handleCustomGridview();
+
+        handlePopupMenu()
+    }
+
+    private fun handlePopupMenu(){
+        btnPopupMenu.setOnClickListener(View.OnClickListener {
+            showPopupMenu()
+        })
+    }
+
+    private fun showPopupMenu(){
+        var popup : PopupMenu = PopupMenu(this, btnPopupMenu)
+        popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            when(item.itemId){
+                R.id.menuEdit -> Toast.makeText(this, "You chose Edit", Toast.LENGTH_SHORT).show()
+                R.id.menuDelete -> Toast.makeText(this, "You chose Delete", Toast.LENGTH_SHORT).show()
+                R.id.menuInsert -> Toast.makeText(this, "You chose Insert", Toast.LENGTH_SHORT).show()
+            }
+
+            true
+        }
+
+        popup.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.optionSettings -> {
+                Toast.makeText(this, "You chose Settigns", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun  handleCustomGridview(){
