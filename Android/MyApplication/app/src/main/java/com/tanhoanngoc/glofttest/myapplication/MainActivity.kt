@@ -20,7 +20,18 @@ class MainActivity : AppCompatActivity() {
 
         //b7_For_Statement()
 
-        b8_Array()
+        //b8_Array()
+
+        TestOOP()
+    }
+
+    private fun TestOOP(){
+        var st: Student = Student("Tan", "Hue", 1991);
+        st.ShowInfo()
+
+        // DAta
+        var vl : Vehicle = Vehicle("Motorbike", "Black", 2);
+        Log.i(TAG, "This is a " + vl.name + " with " + vl.color + " has  ${vl.numOfSpin.toString()}  spin")
     }
 
     private fun b5_When_Statement(){
