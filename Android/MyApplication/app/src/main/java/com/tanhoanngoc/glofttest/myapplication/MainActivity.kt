@@ -1,11 +1,16 @@
 package com.tanhoanngoc.glofttest.myapplication
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fruit_listview_layout.*
 
 import kotlinx.android.synthetic.main.list_view_simple.*
@@ -19,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fruit_listview_layout)
+        setContentView(R.layout.activity_main)
 
         //b5_When_Statement()
 
@@ -33,7 +38,61 @@ class MainActivity : AppCompatActivity() {
 
         //listViewSimple()
 
-        listViewCustome()
+        //listViewCustome()
+
+        handleComnonButton()
+    }
+
+    private fun handleComnonButton(){
+        cbRobot.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                Toast.makeText(this, "You are not a Robot, congratulation !", Toast.LENGTH_SHORT).show()
+            else
+                Toast.makeText(this, "You are a Robot so you are not allowed to login !", Toast.LENGTH_SHORT).show()
+        }
+
+        radioGroupGender.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId){
+                R.id.radioFemale -> radioFemale.setBackgroundColor(Color.RED)
+                R.id.radioMale -> radioMale.setBackgroundColor(Color.GREEN)
+            }
+        }
+
+        // handle seek bar & progress bar
+        seekBar.setOnSeekBarChangeListener(
+            object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    var seekBarMax : Int = seekBar?.max ?: 0;
+                    progressBar.setProgress(progress * progressBar.max/seekBarMax )
+                    return
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    return
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    return
+                }
+
+            }
+        )
+
+        var cdt = object : CountDownTimer(10000, 1000){
+            override fun onFinish() {
+                Toast.makeText(applicationContext, "Download succeed !", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                seekBar.setProgress(seekBar.progress + 1)
+            }
+
+        }.start()
     }
 
     private fun listViewCustome(){
@@ -54,6 +113,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "You clicked in ${fruitData.get(position).getName()}", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun listViewSimple(){
         subjectData.add("PHP")
