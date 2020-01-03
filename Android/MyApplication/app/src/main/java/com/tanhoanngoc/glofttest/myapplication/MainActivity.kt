@@ -3,16 +3,21 @@ package com.tanhoanngoc.glofttest.myapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import kotlin.concurrent.thread
+
+import kotlinx.android.synthetic.main.list_view_simple.*
+
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG : String = "TDebug";
 
+    private var subjectData : ArrayList<String> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.list_view_simple)
 
         //b5_When_Statement()
 
@@ -22,7 +27,18 @@ class MainActivity : AppCompatActivity() {
 
         //b8_Array()
 
-        TestOOP()
+        //TestOOP()
+
+        listViewSimple()
+    }
+
+    private fun listViewSimple(){
+        subjectData.add("PHP")
+        subjectData.add(".Net")
+        subjectData.add("Android")
+        subjectData.add("Java")
+
+        lvSubject.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, subjectData);
     }
 
     private fun TestOOP(){
