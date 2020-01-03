@@ -1,5 +1,6 @@
 package com.tanhoanngoc.glofttest.myapplication
 
+import android.app.Dialog
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,11 +10,9 @@ import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.PopupMenu
-import android.widget.SeekBar
-import android.widget.Toast
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_custom.*
 import kotlinx.android.synthetic.main.fruit_listview_layout.*
 import kotlinx.android.synthetic.main.grid_view_basic.*
 import kotlinx.android.synthetic.main.grid_view_custom_hotgirl.*
@@ -57,6 +56,24 @@ class MainActivity : AppCompatActivity() {
         handlePopupMenu()
 
         handleForContextMenu()
+
+        handleLoginDialog()
+    }
+
+    private fun handleLoginDialog(){
+        btnCustomDialog.setOnClickListener(View.OnClickListener {
+            showDialog()
+        })
+    }
+
+    private fun showDialog(){
+        var dialog : Dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setCanceledOnTouchOutside(false)
+
+        dialog.btnCancel.setOnClickListener(View.OnClickListener { dialog.dismiss() })
+
+        dialog.show()
     }
 
     private fun handleForContextMenu(){
