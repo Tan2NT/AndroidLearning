@@ -18,7 +18,9 @@ class SecondActivity : AppCompatActivity() {
         var name : String = intent?.getStringExtra("name").toString()
         var age : Int? = intent?.getIntExtra("age", 1234)
         var subjects : ArrayList<String> = intent.getStringArrayListExtra("subjects")
-        txt_hello_friend.setText("Hello ${name}, he's ${age} age")
+        var student : Student = intent.getSerializableExtra("student") as Student
+
+        txt_hello_friend.setText("Hello ${student.name}, he's ${student.name} age")
 
         var message : String = "your registed subjects are ";
 

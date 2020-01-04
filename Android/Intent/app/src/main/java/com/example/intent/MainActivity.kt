@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,10 +30,16 @@ class MainActivity : AppCompatActivity() {
 
             secondIntent.putExtra("name", edt_name.text.toString())
             secondIntent.putExtra("age", 28)
+
             var subjectList : ArrayList<String> = ArrayList()
             subjectList.add("PHP")
             subjectList.add("Android")
             secondIntent.putStringArrayListExtra("subjects", subjectList)
+
+            // send object
+            var student : Student = Student("Tan", 28)
+            secondIntent.putExtra("student", student as Serializable)
+
             startActivity(secondIntent)
 
         })
