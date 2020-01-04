@@ -21,10 +21,22 @@ class MainActivity : AppCompatActivity() {
 
         Log.i(TAG, "----- onCreate -----")
 
+        // ACTION_VIEW
         imgBrowser.setOnClickListener(View.OnClickListener {
             var browserIntent : Intent = Intent( Intent.ACTION_VIEW)
             browserIntent.setData(Uri.parse("https://www.facebook.com"))
             startActivity(browserIntent)
+        })
+
+        // ACTION_SENDTO
+        btnSendMessage.setOnClickListener(View.OnClickListener {
+            var messageIntent : Intent = Intent()
+            messageIntent.setAction(Intent.ACTION_SENDTO)
+            //messageIntent.putExtra("phone_number", edt_phoneNumber.text.toString())
+            messageIntent.setData(Uri.parse("sms:" + edt_phoneNumber.text.toString()))
+            messageIntent.putExtra("sms_body", edt_message.text.toString())
+
+            startActivity(messageIntent)
         })
     }
 
