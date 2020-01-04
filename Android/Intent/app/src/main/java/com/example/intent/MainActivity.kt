@@ -22,6 +22,13 @@ class MainActivity : AppCompatActivity() {
     private fun switchToMainActivity(){
         btnMainActivity.setOnClickListener(View.OnClickListener {
             var secondIntent : Intent = Intent(this, SecondActivity::class.java)
+
+//            var bundle : Bundle = Bundle()
+//            bundle.putString("name", edt_name.text.toString())
+//            secondIntent.putExtras(bundle)
+
+            secondIntent.putExtra("name", edt_name.text.toString())
+            secondIntent.putExtra("age", 28)
             startActivity(secondIntent)
 
         })

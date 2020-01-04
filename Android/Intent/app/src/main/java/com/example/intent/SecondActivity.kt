@@ -12,6 +12,11 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
+
+        var name : String = intent?.getStringExtra("name").toString()
+        var age : Int? = intent?.getIntExtra("age", 1234)
+
+        txt_hello_friend.setText("Hello ${name}, he's ${age} age")
         switchToMainActivity()
     }
 
