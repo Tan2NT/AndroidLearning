@@ -24,13 +24,10 @@ class MainActivity : AppCompatActivity() {
         btnMainActivity.setOnClickListener(View.OnClickListener {
             var secondIntent : Intent = Intent(this, SecondActivity::class.java)
 
-//            var bundle : Bundle = Bundle()
-//            bundle.putString("name", edt_name.text.toString())
-//            secondIntent.putExtras(bundle)
-
             secondIntent.putExtra("name", edt_name.text.toString())
             secondIntent.putExtra("age", 28)
 
+            // send an array
             var subjectList : ArrayList<String> = ArrayList()
             subjectList.add("PHP")
             subjectList.add("Android")
@@ -39,6 +36,13 @@ class MainActivity : AppCompatActivity() {
             // send object
             var student : Student = Student("Tan", 28)
             secondIntent.putExtra("student", student as Serializable)
+
+            // send bundle
+            var bundle : Bundle = Bundle()
+            bundle.putInt("id", 1234)
+            bundle.putStringArrayList("subjects", subjectList)
+            bundle.putSerializable("student", student)
+            secondIntent.putExtra("data", bundle)
 
             startActivity(secondIntent)
 
