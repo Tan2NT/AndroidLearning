@@ -2,14 +2,18 @@ package com.example.intent
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_second.*
 import java.util.ArrayList
 
 class SecondActivity : AppCompatActivity() {
+
+    final var TAKE_PICTURE_REQUEST_CODE : Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +41,20 @@ class SecondActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
-        switchToMainActivity()
+        //switchToMainActivity()
+
+        btnTakePhoto.setOnClickListener(View.OnClickListener {
+            var cameraIntent : Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(cameraIntent, TAKE_PICTURE_REQUEST_CODE)
+        })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == TAKE_PICTURE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null){
+            var bitmap : Bitmap = data.extras?.get("data") as Bitmap
+            imgCameraPhoto.setImageBitmap(bitmap)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun switchToMainActivity(){
