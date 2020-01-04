@@ -1,6 +1,7 @@
 package com.example.intent
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +18,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         switchToMainActivity()
+
         Log.i(TAG, "----- onCreate -----")
+
+        imgBrowser.setOnClickListener(View.OnClickListener {
+            var browserIntent : Intent = Intent( Intent.ACTION_VIEW)
+            browserIntent.setData(Uri.parse("https://www.facebook.com"))
+            startActivity(browserIntent)
+        })
     }
 
     private fun switchToMainActivity(){
