@@ -43,8 +43,9 @@
         app:srcCompat="@drawable/chrome_icon" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="294dp"
-        android:layout_height="185dp"
+        android:id="@+id/constraintLayout"
+        android:layout_width="283dp"
+        android:layout_height="116dp"
         android:layout_marginTop="28dp"
         android:background="#CDDC39"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,8 +57,8 @@
             android:id="@+id/edt_phoneNumber"
             android:layout_width="126dp"
             android:layout_height="21dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
             android:layout_marginTop="28dp"
             android:background="#2196F3"
             android:ems="10"
@@ -67,7 +68,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.105" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/edt_message"
@@ -80,22 +81,33 @@
             android:text="Name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintHorizontal_bias="0.172"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edt_phoneNumber"
-            app:layout_constraintVertical_bias="0.647" />
+            app:layout_constraintVertical_bias="0.223" />
 
         <Button
             android:id="@+id/btnSendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="16dp"
             android:text="SEND"
             app:layout_constraintStart_toEndOf="@+id/edt_phoneNumber"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnMakeCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="16dp"
+        android:text="Make a call"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

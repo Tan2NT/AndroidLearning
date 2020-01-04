@@ -1,17 +1,26 @@
 package com.example.intent
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.Serializable
+import java.lang.Exception
+import java.security.Permission
+import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
 
     final var TAG : String = "TDebug"
+    final var CALL_PHONE_PERMISSION_REQUEST_CODE = 111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +47,67 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(messageIntent)
         })
+
+        //ACTION_CALL
+        btnMakeCall.setOnClickListener(View.OnClickListener {
+            // Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                // Permission is not granted
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        android.Manifest.permission.CALL_PHONE)) {
+                    var builder : AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder.setMessage("permission call phone is required to making this action")
+                    builder.setTitle("Permission required")
+                    builder.setPositiveButton("OK") {
+                        dialog, which ->
+                        makeRequestPersmission(android.Manifest.permission.CALL_PHONE)
+                        val dialog = builder.create()
+                        dialog.show()
+                    }
+                } else {
+                    makeRequestPersmission(android.Manifest.permission.CALL_PHONE)
+                }
+            } else {
+                // Permission has already been granted
+                makeCall()
+            }
+        })
+    }
+
+    fun makeCall(){
+        try {
+            var callItent : Intent = Intent()
+            callItent.setAction(Intent.ACTION_CALL)
+            callItent.setData(Uri.parse("tel:0384992090"))
+            startActivity(callItent)
+        }catch (e : Exception){
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    fun makeRequestPersmission(permissionName : String){
+        ActivityCompat.requestPermissions(this, arrayOf(permissionName), CALL_PHONE_PERMISSION_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            CALL_PHONE_PERMISSION_REQUEST_CODE -> {
+                if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                    Log.w(TAG, "Permission ${permissions[0].toString()} is denied by user")
+                }else{
+                    Log.i(TAG, "permission ${permissions[0]} is granted")
+                    makeCall()
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun switchToMainActivity(){
