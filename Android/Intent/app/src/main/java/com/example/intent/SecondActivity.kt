@@ -2,18 +2,23 @@ package com.example.intent
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_second.*
 import java.util.ArrayList
 
 class SecondActivity : AppCompatActivity() {
 
     final var TAKE_PICTURE_REQUEST_CODE : Int = 100
+    final var REQUEST_CAMERA_PERMISSION : Int = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +49,50 @@ class SecondActivity : AppCompatActivity() {
         //switchToMainActivity()
 
         btnTakePhoto.setOnClickListener(View.OnClickListener {
-            var cameraIntent : Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(cameraIntent, TAKE_PICTURE_REQUEST_CODE)
+            if(checkPermission(android.Manifest.permission.CAMERA)){
+                takePhoto()
+            }else{
+                requestPermission(android.Manifest.permission.CAMERA, REQUEST_CAMERA_PERMISSION)
+            }
+
         })
+    }
+
+    fun checkPermission(pemissionName : String): Boolean{
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+            return true
+        }else
+        {
+            Log.i("TDebug", "permission ${pemissionName} is not granted")
+            return false
+        }
+    }
+
+    fun requestPermission(permisionName : String, requestCode: Int){
+        if(!checkPermission(permisionName))
+        {
+            ActivityCompat.requestPermissions(this, arrayOf(permisionName), requestCode)
+        }
+    }
+
+    fun takePhoto(){
+        var cameraIntent : Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, TAKE_PICTURE_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            REQUEST_CAMERA_PERMISSION -> {
+                if(!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    takePhoto()
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
