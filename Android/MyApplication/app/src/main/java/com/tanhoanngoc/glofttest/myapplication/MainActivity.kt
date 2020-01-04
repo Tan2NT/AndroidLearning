@@ -1,7 +1,10 @@
 package com.tanhoanngoc.glofttest.myapplication
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.graphics.Color
+import android.icu.util.Calendar
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -18,6 +21,7 @@ import kotlinx.android.synthetic.main.grid_view_basic.*
 import kotlinx.android.synthetic.main.grid_view_custom_hotgirl.*
 
 import kotlinx.android.synthetic.main.list_view_simple.*
+import java.text.SimpleDateFormat
 
 
 class MainActivity : AppCompatActivity() {
@@ -58,6 +62,33 @@ class MainActivity : AppCompatActivity() {
         handleForContextMenu()
 
         handleLoginDialog()
+
+        handleDatepicker()
+    }
+
+    private fun handleDatepicker(){
+        if(Build.VERSION.SDK_INT >= 24){
+            edtDatePicker.setOnClickListener(View.OnClickListener {
+                val c = Calendar.getInstance()
+                val year = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+
+                val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+
+                    // Display Selected date in textbox
+                    var cal : Calendar = Calendar.getInstance()
+                    cal.set(year, monthOfYear, dayOfMonth)
+                    var dateFormat : SimpleDateFormat = SimpleDateFormat("dd/mm/yyyy")
+                    edtDatePicker.setText(dateFormat.format(cal.time))
+                    Toast.makeText(this, "${dayOfMonth} / ${monthOfYear} / ${year}", Toast.LENGTH_SHORT).show()
+                }, year, month, day)
+
+                dpd.show()
+
+            })
+        }
+
     }
 
     private fun handleLoginDialog(){
