@@ -1,5 +1,6 @@
 package com.example.intent
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -41,8 +42,16 @@ class SecondActivity : AppCompatActivity() {
 
     private fun switchToMainActivity(){
         btnSecondActivity.setOnClickListener(View.OnClickListener {
-            var mainItent : Intent = Intent(this, MainActivity::class.java)
-            startActivity(mainItent)
+//            var mainItent : Intent = Intent(this, MainActivity::class.java)
+//            startActivity(mainItent)
+
+            // Activity result
+            var message = "The student info is displayed succeed !"
+            var resultIntent : Intent = Intent()
+            resultIntent.putExtra("message", message)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+
         })
     }
 }
