@@ -29,6 +29,10 @@ class MainActivity : AppCompatActivity() {
 
             secondIntent.putExtra("name", edt_name.text.toString())
             secondIntent.putExtra("age", 28)
+            var subjectList : ArrayList<String> = ArrayList()
+            subjectList.add("PHP")
+            subjectList.add("Android")
+            secondIntent.putStringArrayListExtra("subjects", subjectList)
             startActivity(secondIntent)
 
         })

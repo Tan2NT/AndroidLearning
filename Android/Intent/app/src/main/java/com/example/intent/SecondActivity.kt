@@ -4,7 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_second.*
+import java.util.ArrayList
 
 class SecondActivity : AppCompatActivity() {
 
@@ -15,8 +17,17 @@ class SecondActivity : AppCompatActivity() {
 
         var name : String = intent?.getStringExtra("name").toString()
         var age : Int? = intent?.getIntExtra("age", 1234)
-
+        var subjects : ArrayList<String> = intent.getStringArrayListExtra("subjects")
         txt_hello_friend.setText("Hello ${name}, he's ${age} age")
+
+        var message : String = "your registed subjects are ";
+
+        for(i in 0 .. subjects.size - 1){
+            message = message + subjects.get(i).toString() + " "
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
         switchToMainActivity()
     }
 
