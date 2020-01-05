@@ -1,11 +1,18 @@
 package com.example.json
 
+import android.app.DownloadManager
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -24,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //volleyStringRequest()
+
+        volleyJsonRequest()
+
         var json = ReadJson(this)
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo1.json")
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo2.json")
@@ -39,6 +50,38 @@ class MainActivity : AppCompatActivity() {
             displayInfo(enJson as JSONObject)
         })
 
+    }
+
+    fun volleyJsonRequest(){
+        var requestQueue = Volley.newRequestQueue(this)
+        var url = "https://khoapham.vn/KhoaPhamTraining/json/tien/demo1.json"
+
+        //val url = "http://my-json-feed"
+
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+            Response.Listener { response ->
+                processJsonObject(response.toString())
+                Toast.makeText(this, "Response: %s".format(response.toString()), Toast.LENGTH_LONG).show()
+            },
+            Response.ErrorListener { error ->
+                // TODO: Handle error
+                Toast.makeText(this, "Error: %s".format(error.toString()), Toast.LENGTH_LONG).show()
+            }
+        )
+
+        requestQueue.add(jsonObjectRequest)
+    }
+
+    fun volleyStringRequest(){
+        val requestQueue = Volley.newRequestQueue(this)
+        val url = "http://online.khoapham.vn/"
+        val stringRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                // Display the first 500 characters of the response string.
+                Toast.makeText(this, "Response is: ${response.substring(0, 500)}", Toast.LENGTH_LONG).show()
+            },
+            Response.ErrorListener { Toast.makeText(this, "That didn't work!", Toast.LENGTH_LONG).show()})
+        requestQueue.add(stringRequest)
     }
 
     public fun  processJsonObject(s : String){
