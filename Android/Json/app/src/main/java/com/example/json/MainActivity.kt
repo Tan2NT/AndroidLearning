@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -33,13 +34,15 @@ class MainActivity : AppCompatActivity() {
 
         //volleyStringRequest()
 
-        volleyJsonRequest()
+        //volleyJsonRequest()
 
-        var json = ReadJson(this)
+        volleyJsonArrayRequest()
+
+        //var json = ReadJson(this)
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo1.json")
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo2.json")
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo3.json")
-        json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo4.json")
+        //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo4.json")
 
 
         img_ViFlag.setOnClickListener(View.OnClickListener {
@@ -50,6 +53,24 @@ class MainActivity : AppCompatActivity() {
             displayInfo(enJson as JSONObject)
         })
 
+    }
+
+    fun volleyJsonArrayRequest(){
+        var reuestQueue = Volley.newRequestQueue(this)
+        var url = "https://khoapham.vn/KhoaPhamTraining/json/tien/demo4.json"
+
+        var jsonArrayRequest = JsonArrayRequest(url,
+            Response.Listener { response ->
+                processJsonArrayObject(response.toString())
+                Toast.makeText(this, "Response: %s".format(response.toString()), Toast.LENGTH_LONG).show()
+            },
+            Response.ErrorListener { error ->
+                // TODO: Handle error
+                Toast.makeText(this, "Error: %s".format(error.toString()), Toast.LENGTH_LONG).show()
+            }
+            )
+
+        reuestQueue.add(jsonArrayRequest)
     }
 
     fun volleyJsonRequest(){
