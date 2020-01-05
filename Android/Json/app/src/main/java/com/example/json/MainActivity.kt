@@ -27,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         var json = ReadJson(this)
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo1.json")
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo2.json")
-        json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo3.json")
+        //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo3.json")
+        json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo4.json")
 
 
         img_ViFlag.setOnClickListener(View.OnClickListener {
@@ -108,6 +109,21 @@ class MainActivity : AppCompatActivity() {
         txt_info.setText(info)
     }
 
+    public fun processJsonArrayObject(s : String){
+        try {
+            var jArray = JSONArray(s)
+            Log.i("TDebg", "array size is ${jArray.length()}")
+            for(i in 0..jArray.length()-1){
+                var jObj = jArray.getJSONObject(i)
+                var monhoc = jObj.get("khoahoc").toString()
+                var hocphi = jObj.get("hocphi").toString()
+                Log.i("TDebug", "${monhoc} - ${hocphi}")
+            }
+        }catch(e: Exception){
+            Log.i("TDebug", "processJsonArrayObject " + e.toString())
+        }
+    }
+
     private class ReadJson(var activity: MainActivity) : AsyncTask<String, Void, String>(){
         override fun doInBackground(vararg params: String?): String {
             var url = URL(params[0])
@@ -144,7 +160,10 @@ class MainActivity : AppCompatActivity() {
             //activity.processJsonArray(result as String)
 
             // process language Json
-            activity.processJsonLanguage(result as String)
+            //activity.processJsonLanguage(result as String)
+
+            //process Json Array Object
+            activity.processJsonArrayObject(result as String)
 
 
             super.onPostExecute(result)
