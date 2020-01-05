@@ -4,7 +4,9 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -15,13 +17,26 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    var viJson : JSONObject? = null
+    var enJson : JSONObject? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         var json = ReadJson(this)
         //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo1.json")
-        json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo2.json")
+        //json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo2.json")
+        json.execute("https://khoapham.vn/KhoaPhamTraining/json/tien/demo3.json")
+
+
+        img_ViFlag.setOnClickListener(View.OnClickListener {
+            displayInfo(viJson as JSONObject)
+        })
+
+        img_EnFlag.setOnClickListener(View.OnClickListener {
+            displayInfo(enJson as JSONObject)
+        })
 
     }
 
@@ -60,6 +75,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    public fun processJsonLanguage(s : String){
+        try{
+            var jLang = JSONObject(s).getJSONObject("language")
+            viJson = jLang.getJSONObject("vn")
+            enJson = jLang.getJSONObject("en")
+        }catch(e : Exception){
+            Log.i("TDebug", "processJsonLanguage " + e.toString())
+        }
+    }
+
+    fun displayInfo(jobj : JSONObject){
+
+        if(jobj == null)
+        {
+            txt_info.setText("")
+            return
+        }
+
+        var name : String = jobj.get("name").toString()
+        var address : String = jobj.get("address").toString()
+        var course1 : String = jobj.get("course1").toString()
+        var course2 : String = jobj.get("course2").toString()
+        var course3 : String = jobj.get("course3").toString()
+
+        var info = ""
+        info += name + "\n"
+        info += address + "\n"
+        info += course1 + "\n"
+        info += course2 + "\n"
+        info += course3 + "\n"
+        txt_info.setText(info)
+    }
+
     private class ReadJson(var activity: MainActivity) : AsyncTask<String, Void, String>(){
         override fun doInBackground(vararg params: String?): String {
             var url = URL(params[0])
@@ -74,7 +122,7 @@ class MainActivity : AppCompatActivity() {
                    var line = bfReader.readLine()
                    if(line == null)
                        break
-
+                   Log.i("Tdebug", line)
                    builder.append(line)
                }catch (e : Exception){
                 Log.i("Tdebug", "An Error has occurred" + e.toString())
@@ -92,7 +140,11 @@ class MainActivity : AppCompatActivity() {
             // process Json Object
             //activity.processJsonObject(result as String)
 
-            activity.processJsonArray(result as String)
+            // process Array Json
+            //activity.processJsonArray(result as String)
+
+            // process language Json
+            activity.processJsonLanguage(result as String)
 
 
             super.onPostExecute(result)

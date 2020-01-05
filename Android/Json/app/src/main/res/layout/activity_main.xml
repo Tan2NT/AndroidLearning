@@ -6,13 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <ImageView
+        android:id="@+id/img_ViFlag"
+        android:layout_width="174dp"
+        android:layout_height="149dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/vietnamese_flag"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <ImageView
+        android:id="@+id/img_EnFlag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/en_flag" />
 
+    <TextView
+        android:id="@+id/txt_info"
+        android:layout_width="246dp"
+        android:layout_height="185dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="57dp"
+        tools:layout_editor_absoluteY="204dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
