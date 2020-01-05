@@ -6,6 +6,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.ImageView
@@ -40,6 +42,9 @@ class FruitAdapter(var context: Context, var data : ArrayList<Fruit>, var layout
         holder.txtName.setText(fruit.getName())
         holder.txtDes.setText(fruit.getDescription())
         holder.image.setImageResource(fruit.getPictureId())
+
+        var scaleAnim : Animation = AnimationUtils.loadAnimation(context, R.anim.anim_scale)
+        view?.startAnimation(scaleAnim)
 
         return view as View;
     }

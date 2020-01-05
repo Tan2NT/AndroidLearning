@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.fruit_listview_layout)
 
         //b5_When_Statement()
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         //listViewSimple()
 
-        //listViewCustome()
+        listViewCustome()
 
        // handleComnonButton()
 
@@ -57,13 +57,13 @@ class MainActivity : AppCompatActivity() {
 
         //handleCustomGridview();
 
-        handlePopupMenu()
-
-        handleForContextMenu()
-
-        handleLoginDialog()
-
-        handleDatepicker()
+//        handlePopupMenu()
+//
+//        handleForContextMenu()
+//
+//        handleLoginDialog()
+//
+//        handleDatepicker()
     }
 
     private fun handleDatepicker(){
@@ -255,10 +255,17 @@ class MainActivity : AppCompatActivity() {
         fruitData.add(Fruit("Cherries", "cherries is a ..... special for a girl lip ...", R.drawable.cherries));
         fruitData.add(Fruit("Coconutmeat", "coconutmeat is a ..... special in the South of Vietnam ...", R.drawable.coconutmeat));
         fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Banana", "banana is a ..... special for a girl ...", R.drawable.banana))
+        fruitData.add(Fruit("Cherries", "cherries is a ..... special for a girl lip ...", R.drawable.cherries));
+        fruitData.add(Fruit("Coconutmeat", "coconutmeat is a ..... special in the South of Vietnam ...", R.drawable.coconutmeat));
         fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Banana", "banana is a ..... special for a girl ...", R.drawable.banana))
+        fruitData.add(Fruit("Cherries", "cherries is a ..... special for a girl lip ...", R.drawable.cherries));
+        fruitData.add(Fruit("Coconutmeat", "coconutmeat is a ..... special in the South of Vietnam ...", R.drawable.coconutmeat));
         fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
-        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
-        fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
+        fruitData.add(Fruit("Banana", "banana is a ..... special for a girl ...", R.drawable.banana))
+        fruitData.add(Fruit("Cherries", "cherries is a ..... special for a girl lip ...", R.drawable.cherries));
+        fruitData.add(Fruit("Coconutmeat", "coconutmeat is a ..... special in the South of Vietnam ...", R.drawable.coconutmeat));
         fruitData.add(Fruit("Grape", "Grape is a ..... i don't know anymore about it ...", R.drawable.coconutmeat));
         var  fruitAdapter : FruitAdapter = FruitAdapter(this, fruitData, R.layout.fruit_listview_item);
         lv_fruits.adapter = fruitAdapter
