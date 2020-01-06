@@ -1,6 +1,7 @@
 package com.tanhoanngoc.glofttest.sqlite
 
 import android.app.Dialog
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.image_store.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,8 +30,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.image_store)
 
+        btnAddItem.setOnClickListener(View.OnClickListener {
+            var itemIntent = Intent(this, AddItemActivity::class.java)
+            startActivity(itemIntent)
+        })
+
+    }
+
+    fun initStudentDatabaseAndList(){
         // create database
         database = Database(this, "student_database.sqlite", null, 1)
 
@@ -41,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
         // get data
         loadStudentFromDataBase(database!!)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
