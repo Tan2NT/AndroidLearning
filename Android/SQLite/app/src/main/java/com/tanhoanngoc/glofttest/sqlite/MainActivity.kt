@@ -1,5 +1,6 @@
 package com.tanhoanngoc.glofttest.sqlite
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.database.Cursor
@@ -19,13 +20,18 @@ import kotlinx.android.synthetic.main.image_store.*
 class MainActivity : AppCompatActivity() {
 
     val TAG : String = "TDebug"
+    var ADD_ITEM_REQUEST_CODE = 100
 
     companion object{
         var database : Database? = null
+        var itemDatabase : ItemDatabase? = null
     }
 
     var studentList : ArrayList<Student> = ArrayList()
     var studentAdapter : StudentAdapter? = null
+
+    var itemList : ArrayList<Item> = ArrayList()
+    var itemAdapter : ItemAdapter? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +40,42 @@ class MainActivity : AppCompatActivity() {
 
         btnAddItem.setOnClickListener(View.OnClickListener {
             var itemIntent = Intent(this, AddItemActivity::class.java)
-            startActivity(itemIntent)
+            startActivityForResult(itemIntent, ADD_ITEM_REQUEST_CODE)
         })
 
+        itemDatabase  = ItemDatabase(this, "ItemData.sqlite", 1, null)
+        itemDatabase?.queryData("CREATE TABLE IF NOT EXISTS Item(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(150), Detail VARCHAR(250), Image BLOB)")
+
+        loadItemFromDatabase(itemDatabase as ItemDatabase)
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            ADD_ITEM_REQUEST_CODE -> {
+                if(resultCode == Activity.RESULT_OK){
+                    if(data?.getBooleanExtra("isImageAdded", false)!!)
+                        loadItemFromDatabase(itemDatabase as ItemDatabase)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun loadItemFromDatabase(data: ItemDatabase){
+        var items : Cursor = data.getData("SELECT * FROM Item")
+        while (items.moveToNext()){
+            var id = items.getInt(0)
+            var name = items.getString(1)
+            var detail = items.getString(2)
+            var imageData = items.getBlob(3)
+
+            var item = Item(id, name, detail, imageData)
+            itemList.add(item)
+        }
+
+        lv_itemList.adapter = ItemAdapter(this, R.layout.item_detail, itemList)
     }
 
     fun initStudentDatabaseAndList(){

@@ -2,21 +2,19 @@ package com.tanhoanngoc.glofttest.sqlite
 
 import android.app.Dialog
 import android.content.Context
-import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.getSystemService
 
 class StudentAdapter (var context : Context, var layoutID : Int, var studentList: ArrayList<Student>) : BaseAdapter(){
 
     class ViewHolder(view : View){
         var txtName : TextView = view.findViewById(R.id.txt_name)
-        var txtId : TextView = view.findViewById(R.id.txt_id)
-        var txtAge : TextView = view.findViewById(R.id.txt_age)
-        var btnEdit : ImageButton = view.findViewById(R.id.btn_edit)
-        var btnDelete : ImageButton = view.findViewById(R.id.btnDelete)
+        var txtId : TextView = view.findViewById(R.id.txt_itemDetail_name)
+        var txtAge : TextView = view.findViewById(R.id.txt_itemDetail_Des)
+        var btnEdit : ImageButton = view.findViewById(R.id.btn_itemDetail_Edit)
+        var btnDelete : ImageButton = view.findViewById(R.id.btn_itemDetail_Delete)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
