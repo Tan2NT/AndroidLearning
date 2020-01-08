@@ -6,9 +6,16 @@
     android:layout_height="match_parent">
 
     <Button
+        android:id="@+id/btnButtonB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="FRAGMENT B"/>
+
+    <EditText
+        android:id="@+id/txtFragmentB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="text here"/>
 
 </LinearLayout>

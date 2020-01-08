@@ -8,6 +8,25 @@
     android:weightSum="5"
 
     tools:context=".MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/btnChangeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHANGE TEXT"/>
+        <TextView
+            android:id="@+id/txtSayHello"
+            android:textSize="20sp"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello Friend!"
+            />
+    </LinearLayout>
 
     <fragment
         android:id="@+id/fragmentA"
@@ -46,9 +65,7 @@
         android:id="@+id/frameLayout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-
-            />
+        android:layout_weight="1"/>
         />
 
 </LinearLayout>
