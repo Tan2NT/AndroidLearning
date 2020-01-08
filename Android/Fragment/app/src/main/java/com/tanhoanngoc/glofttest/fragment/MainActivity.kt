@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         var fragmentManager : FragmentManager = supportFragmentManager
         var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.frameLayout1, fragment, tag)
+        fragmentTransaction.addToBackStack(tag)
         fragmentTransaction.commit()
     }
 
@@ -52,7 +53,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun backStack(view : View){
+        supportFragmentManager.popBackStack()
+    }
 
+    fun popFragmentA(view: View){
+        supportFragmentManager.popBackStack("fragA", 0)
+    }
+
+    override fun onBackPressed() {
+        if(supportFragmentManager.backStackEntryCount > 0){
+            supportFragmentManager.popBackStack()
+        }else{
+            super.onBackPressed()
+        }
+
+    }
 
     fun initEvent(){
         btnChangeText.setOnClickListener(View.OnClickListener {
