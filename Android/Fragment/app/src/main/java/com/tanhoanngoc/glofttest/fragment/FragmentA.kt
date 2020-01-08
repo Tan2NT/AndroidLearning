@@ -24,8 +24,17 @@ public class FragmentA : Fragment(){
     ): View? {
 
         var view : View  = inflater.inflate(R.layout.fragment_a, container, false)
+
         btnHello = view.findViewById(R.id.btnFragASayHello)
         txtHello = view.findViewById(R.id.txtFragAName)
+
+        // receive argument
+        var bundle : Bundle = Bundle()
+        if(arguments != null)
+            bundle = arguments as Bundle
+        if(bundle != null){
+            txtHello.setText(bundle.getString("name"))
+        }
 
         btnHello.setOnClickListener(View.OnClickListener {
             activity?.txtSayHello?.setText(txtHello.text.toString())

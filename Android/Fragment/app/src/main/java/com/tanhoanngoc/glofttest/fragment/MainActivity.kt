@@ -14,6 +14,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initEvent()
+    }
+
+    fun initEvent(){
         btnChangeText.setOnClickListener(View.OnClickListener {
             var fragmentA : FragmentA = supportFragmentManager.findFragmentById(R.id.fragmentA) as FragmentA
             //fragmentA.txtHello.setText("Change by Main Activity")
@@ -25,6 +29,11 @@ class MainActivity : AppCompatActivity() {
             var fragmentManager : FragmentManager = supportFragmentManager
             var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
             var fragmentA : FragmentA = FragmentA()
+
+            var bundle : Bundle = Bundle()
+            bundle.putString("name", "Nguyen Van A")
+            fragmentA.arguments = bundle
+
             fragmentTransaction.add(R.id.frameLayout1, fragmentA)
             fragmentTransaction.commit()
         })
