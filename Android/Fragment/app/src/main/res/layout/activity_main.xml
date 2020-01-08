@@ -5,27 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="5"
 
+    android:weightSum="5"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
         <Button
             android:id="@+id/btnChangeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHANGE TEXT"/>
+            android:text="CHANGE TEXT" />
+
         <TextView
             android:id="@+id/txtSayHello"
-            android:textSize="20sp"
-            android:textColor="@color/colorRed"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello Friend!"
-            />
+            android:textColor="@color/colorRed"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <fragment
@@ -40,32 +42,116 @@
         android:name="com.tanhoanngoc.glofttest.fragment.FragmentB"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-    <LinearLayout
+        android:layout_weight="1" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/btnAddFragA"
+            android:onClick="onButtonClicked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Fragment A"
-            />
+            android:text="Add A" />
 
         <Button
             android:id="@+id/btnAddFragB"
+            android:onClick="onButtonClicked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Fragment B"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="90dp"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="0dp"
+            android:text="Add B" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnAddFragC"
+            android:onClick="onButtonClicked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="178dp"
+            android:layout_marginLeft="178dp"
+            android:layout_marginTop="-1dp"
+            android:text="Add C" />
+
+        <Button
+            android:id="@+id/btnRemoveFragA"
+            android:onClick="onButtonClicked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:text="Remove A" />
+
+        <Button
+            android:id="@+id/btnRemoveFragB"
+            android:onClick="onButtonClicked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="95dp"
+            android:layout_marginLeft="95dp"
+            android:layout_marginTop="56dp"
+            android:text="Remove B" />
+
+        <Button
+            android:id="@+id/btnRemoveFragC"
+            android:onClick="onButtonClicked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="191dp"
+            android:layout_marginLeft="191dp"
+            android:layout_marginBottom="2dp"
+            android:text="Remove C" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginRight="2dp"
+            android:text="BACK" />
+
+        <Button
+            android:id="@+id/btnPop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="41dp"
+            android:text="POP" />
+
+    </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/frameLayout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
-        />
+        android:layout_weight="1" />
+    />
 
 </LinearLayout>

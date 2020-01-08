@@ -9,6 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="enter your name here !"
+        android:text="Fragment A"
         android:textStyle="bold"
         android:textColor="#ffff"
         android:textSize="30sp">

@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
@@ -14,8 +16,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initEvent()
+        //initEvent()
     }
+
+    fun onButtonClicked(view: View){
+        var fragmentManager : FragmentManager = supportFragmentManager
+        var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+
+        when(view.id){
+            R.id.btnAddFragA -> { addFragment(FragmentA(), "fragA") }
+            R.id.btnAddFragB -> { addFragment(FragmentB(), "fragB") }
+            R.id.btnAddFragC -> { addFragment(FragmentC(), "fragC") }
+
+            R.id.btnRemoveFragA -> { removeFragment(supportFragmentManager.findFragmentByTag("fragA") as FragmentA) }
+            R.id.btnRemoveFragB -> { removeFragment(supportFragmentManager.findFragmentByTag("fragB") as FragmentB) }
+            R.id.btnRemoveFragC -> { removeFragment(supportFragmentManager.findFragmentByTag("fragC") as FragmentC) }
+        }
+    }
+
+    fun addFragment(fragment : Fragment, tag : String){
+        var fragmentManager : FragmentManager = supportFragmentManager
+        var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.frameLayout1, fragment, tag)
+        fragmentTransaction.commit()
+    }
+
+    fun removeFragment(fragment: Fragment){
+        var fragmentManager : FragmentManager = supportFragmentManager
+        var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+        if(fragment != null){
+            fragmentTransaction.remove(fragment)
+            fragmentTransaction.commit()
+        }else{
+            Toast.makeText(this, "this fragment doesn't exits!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
     fun initEvent(){
         btnChangeText.setOnClickListener(View.OnClickListener {
