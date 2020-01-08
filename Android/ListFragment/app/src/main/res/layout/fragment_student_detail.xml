@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:weightSum="3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txt_detailName"
+        android:background="#FFEB3B"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:gravity="center"
+        android:text="Student name"
+        android:layout_weight="1"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="#8BC34A"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:weightSum="2"
+        android:layout_weight="2">
+
+        <TextView
+            android:id="@+id/txt_detailAge"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="#ffff"
+            android:text="Age"
+            android:textSize="30sp"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/txt_detailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="#ffff"
+            android:text="Address"
+            android:textSize="30sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
+    tools:context=".StudentDetailActivity">
 
     <fragment
-        android:id="@+id/fragment3"
-        android:name="com.tanhoanngoc.glofttest.listfragment.FragmentListStudent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="192dp"
-        tools:layout_editor_absoluteY="315dp" />
+        android:id="@+id/fragment"
+        android:name="com.tanhoanngoc.glofttest.listfragment.FragmentStudentDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="190dp"
+        tools:layout_editor_absoluteY="223dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

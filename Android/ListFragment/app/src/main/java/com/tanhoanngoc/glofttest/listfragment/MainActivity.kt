@@ -11,9 +11,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnOpenDialog.setOnClickListener(View.OnClickListener {
-            var dialog : MyFragmentDialog = MyFragmentDialog()
-            dialog.show(supportFragmentManager, "dialog")
-        })
+//        btnOpenDialog.setOnClickListener(View.OnClickListener {
+//            var dialog : MyFragmentDialog = MyFragmentDialog()
+//            dialog.show(supportFragmentManager, "dialog")
+//        })
     }
 }

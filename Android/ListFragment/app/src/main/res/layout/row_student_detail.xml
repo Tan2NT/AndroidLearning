@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <ImageView
+        android:id="@+id/img_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/student_icon"/>
+
+   <TextView
+       android:id="@+id/txt_rowName"
+       android:gravity="center"
+       android:textStyle="bold"
+       android:textColor="#ffff"
+       android:textSize="30sp"
+       android:text="Student name"
+       android:layout_width="match_parent"
+       android:layout_height="50dp"/>
+
+
+</LinearLayout>
