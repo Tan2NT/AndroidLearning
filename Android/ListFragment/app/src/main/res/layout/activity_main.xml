@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.tanhoanngoc.glofttest.listfragment.FragmentListCity"
+    <Button
+        android:id="@+id/btnOpenDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="127dp"
-        tools:layout_editor_absoluteY="212dp" />
+        android:text="Open Dialog"
+        tools:layout_editor_absoluteX="66dp"
+        tools:layout_editor_absoluteY="52dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
