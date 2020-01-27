@@ -9,10 +9,13 @@ import android.view.ViewGroup
 
 import com.example.forecastmvvm.R
 import com.example.forecastmvvm.data.ApixuWeatherApiService
+import com.example.forecastmvvm.data.network.ConnectivityInterceptorImpl
+import com.example.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
 
@@ -37,11 +40,20 @@ class CurrentWeatherFragment : Fragment() {
         // TODO: Use the ViewModel
 
         // call the current Weather service
-        val apiService = ApixuWeatherApiService()
+        val apiService = ApixuWeatherApiService(ConnectivityInterceptorImpl(this.context!!))
+
+        // create an instance to work with request data
+        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
+
+        // handle response data
+        weatherNetworkDataSource.downloadCurrentWeather.observe(this, androidx.lifecycle.Observer {
+            textView.text = it.location.toString() + "\n" + it.request.toString() + "\n" + it.currentWeatherEntry.toString();
+        })
 
         GlobalScope.launch (Dispatchers.Main) {
-            val currentWeatherResponse = apiService.getCurrentWeather("London", "en").await();
-            textView.text = currentWeatherResponse.location.toString() + "\n" + currentWeatherResponse.request.toString() + "\n" + currentWeatherResponse.currentWeatherEntry.toString();
+            // call the api to get the data
+           weatherNetworkDataSource.fetchCurrentWeather("London", "en")
+
         }
     }
 
