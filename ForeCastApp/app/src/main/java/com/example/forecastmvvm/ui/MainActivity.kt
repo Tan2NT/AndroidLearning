@@ -19,11 +19,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // find the navigation controler
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
+        // connect the navigation button to the controler
         bottom_nav.setupWithNavController(navController)
 
         try{
+            // setup the action bar with navigation controler
             NavigationUI.setupActionBarWithNavController(this, navController)
         }
         catch (e: Exception){
