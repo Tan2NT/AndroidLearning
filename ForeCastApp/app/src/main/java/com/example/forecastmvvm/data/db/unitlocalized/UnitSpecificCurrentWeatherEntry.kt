@@ -8,9 +8,9 @@ interface UnitSpecificCurrentWeatherEntry {
     val precip: Int
     val temperature: Int
     val visibility: Int
-    //    @SerializedName("weather_descriptions")
-////    val weatherDescriptions: List<String>,
-////    @SerializedName("weather_icons")
+//    @SerializedName("weather_descriptions")
+//    val weatherDescriptions: List<String>,
+//    @SerializedName("weather_icons")
 //    val weatherIcons: List<String>,
 
     val windDegree: Int
