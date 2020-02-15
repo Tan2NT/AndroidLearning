@@ -13,6 +13,10 @@ class ImperialCurrentWeatherEntry(
     override val temperature: Int,
     @ColumnInfo(name = "visibility")
     override val visibility: Int,
+    @ColumnInfo(name = "weatherDescriptions")
+    override val weatherDescriptions: List<String>,
+    @ColumnInfo(name = "weatherIcons")
+    override val weatherIcons: List<String>,
     @ColumnInfo(name = "windDegree")
     override val windDegree: Int,
     @ColumnInfo(name = "windDir")

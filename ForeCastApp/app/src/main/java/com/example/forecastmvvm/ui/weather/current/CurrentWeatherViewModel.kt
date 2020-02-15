@@ -1,7 +1,21 @@
 package com.example.forecastmvvm.ui.weather.current
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.forecastmvvm.data.repository.ForecastRepository
+import com.example.forecastmvvm.internal.UnitSystem
+import com.example.forecastmvvm.internal.lazyDeferred
 
-class CurrentWeatherViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class CurrentWeatherViewModel(
+    forecastRepository: ForecastRepository
+) : ViewModel() {
+    private val unitSystem = UnitSystem.IMPERIAL
+
+    val isImperial : Boolean
+    get() = unitSystem == UnitSystem.IMPERIAL
+
+    val weather by lazyDeferred(){
+        Log.i("TDebug", "CurrentWeatherViewModel isImperrial :" + isImperial)
+        forecastRepository.getCurrentWeather(isImperial)
+    }
 }
