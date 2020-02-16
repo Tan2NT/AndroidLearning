@@ -14,7 +14,7 @@
             android:key="CUSTOM_LOCATION"
             android:title="Location"
             android:summary="The location for which the weather is displayed"
-            android:defaultValue="Da Nang"
+            android:defaultValue="Hue"
             android:dependency="USE_DEVICE_LOCATION"
             />
     </PreferenceCategory>
