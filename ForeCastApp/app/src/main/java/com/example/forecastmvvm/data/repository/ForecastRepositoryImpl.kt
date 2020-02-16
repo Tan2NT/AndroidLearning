@@ -55,10 +55,10 @@ class ForecastRepositoryImpl(
     }
 
     private suspend fun fetchCurrentWeather(){
-        Log.i("TDebug", "TT fetchCurrentWeather for New York" )
+        Log.i("TDebug", "TT fetchCurrentWeather " )
         weatherNetworkDataSource.fetchCurrentWeather(
-            "New York",
-            "en" //Locale.getDefault().language
+            "DaNang",
+            Locale.getDefault().language
         )
     }
 

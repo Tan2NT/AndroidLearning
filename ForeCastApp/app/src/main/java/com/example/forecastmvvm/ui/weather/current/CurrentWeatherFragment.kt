@@ -84,6 +84,7 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
 
             group_loading.visibility = View.GONE
 
+
             updateLocation("Da Nang")
             updateDateToday()
             updateTemperature(it.temperature, it.feelslike)

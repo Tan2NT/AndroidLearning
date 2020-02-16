@@ -1,14 +1,18 @@
 package com.example.forecastmvvm
 
 import android.app.Application
+import androidx.preference.PreferenceManager
 import com.example.forecastmvvm.data.ApixuWeatherApiService
 import com.example.forecastmvvm.data.db.ForecastDatabase
 import com.example.forecastmvvm.data.network.ConnectivityInterceptor
 import com.example.forecastmvvm.data.network.ConnectivityInterceptorImpl
 import com.example.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.example.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
+import com.example.forecastmvvm.data.provider.UnitProvider
+import com.example.forecastmvvm.data.provider.UnitProviderImpl
 import com.example.forecastmvvm.data.repository.ForecastRepository
 import com.example.forecastmvvm.data.repository.ForecastRepositoryImpl
+import com.example.forecastmvvm.internal.UnitSystem
 import com.example.forecastmvvm.ui.weather.current.CurrentWeatherViewModalFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
@@ -33,12 +37,14 @@ class ForecastApplication : Application(), KodeinAware {
         bind() from singleton { ApixuWeatherApiService(instance())}
         bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance())}
         bind<ForecastRepository>() with singleton { ForecastRepositoryImpl(instance(), instance())}
-        bind() from provider { CurrentWeatherViewModalFactory(instance())}
+        bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
+        bind() from provider { CurrentWeatherViewModalFactory(instance(), instance())}
     }
 
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
 }
