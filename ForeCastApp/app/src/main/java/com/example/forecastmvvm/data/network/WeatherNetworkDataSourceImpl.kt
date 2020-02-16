@@ -20,7 +20,7 @@ class WeatherNetworkDataSourceImpl(
             val fetchCurrentWeather = apixuWeatherApiService
                 .getCurrentWeather(location, languageCode)
                 .await()
-
+            Log.i("TDebug", "TT fetchCurrentWeather receive response" )
             Log.i("TDebug", "TT currentWeatherEntry 111: " + fetchCurrentWeather.currentWeatherEntry.toString() )
 
             _downloadCurrentWeather.postValue((fetchCurrentWeather))

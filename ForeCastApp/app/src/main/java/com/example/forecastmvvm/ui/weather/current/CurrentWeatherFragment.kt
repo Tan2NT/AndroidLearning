@@ -72,6 +72,16 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
 
     private fun bindUI() = launch {
         Log.i("TDebug", "CurentWeatherFragment bindUI" )
+
+        val weatherLocation = viewModel.weatherLocation.await()
+        weatherLocation.observe(this@CurrentWeatherFragment, androidx.lifecycle.Observer { location ->
+            if(location == null) return@Observer
+
+            Log.i("TDebug", "weather location is ready")
+
+            updateLocation(location.name)
+        })
+
         val currentWeather = viewModel.weather.await()
         currentWeather.observe(this@CurrentWeatherFragment, androidx.lifecycle.Observer {
 
@@ -84,8 +94,6 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
 
             group_loading.visibility = View.GONE
 
-
-            updateLocation("Da Nang")
             updateDateToday()
             updateTemperature(it.temperature, it.feelslike)
             updateOtherInfo(it.precip, it.windSpeed, it.visibility)
@@ -107,13 +115,13 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
         (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today"
     }
 
-    private fun updateTemperature(tempareture: Int, feelLike: Int){
+    private fun updateTemperature(tempareture: Double, feelLike: Double){
         val tempType = if (viewModel.isImperial) "°F" else "°C"
         textView_temperature.text = "$tempareture$tempType"
         textView_feels_like_temperature.text = "Feels like $feelLike$tempType"
     }
 
-    private fun updateOtherInfo(precip: Int, wind: Int, visibility: Int){
+    private fun updateOtherInfo(precip: Double, wind: Double, visibility: Double){
         textView_precipitation.text = "precipitation: $precip mm"
         textView_wind.text = "Wind speed: $wind m/s"
         textView_visibility.text = "Visibitily: $visibility km"

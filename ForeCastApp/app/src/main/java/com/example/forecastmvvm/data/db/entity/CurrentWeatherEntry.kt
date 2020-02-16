@@ -11,12 +11,12 @@ const val CURRENT_WEATHER_ID = 0
 
 @Entity(tableName = "current_weather")
 data class CurrentWeatherEntry(
-    val feelslike: Int,
+    val feelslike: Double,
     @SerializedName("is_day")
     val isDay: String,
-    val precip: Int,
-    val temperature: Int,
-    val visibility: Int,
+    val precip: Double,
+    val temperature: Double,
+    val visibility: Double,
     @TypeConverters(ListStringConvertor::class)
     @SerializedName("weather_descriptions")
     val weatherDescriptions: List<String> = listOf(),
@@ -24,11 +24,11 @@ data class CurrentWeatherEntry(
     @SerializedName("weather_icons")
     val weatherIcons: List<String> = listOf(),
     @SerializedName("wind_degree")
-    val windDegree: Int,
+    val windDegree: Double,
     @SerializedName("wind_dir")
     val windDir: String,
     @SerializedName("wind_speed")
-    val windSpeed: Int
+    val windSpeed: Double
 ){
     @PrimaryKey(autoGenerate = false)
     var id: Int = CURRENT_WEATHER_ID
