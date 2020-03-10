@@ -1,5 +1,6 @@
 package com.example.forecastmvvm.data.network
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,13 +15,20 @@ class WeatherNetworkDataSourceImpl(
     override val downloadCurrentWeather: LiveData<CurrentWeatherResponseWeatherbit>
         get() = _downloadCurrentWeather
 
-    override suspend fun fetchCurrentWeather(location: String, languageCode: String) {
+    override suspend fun fetchCurrentWeather(isUsingDeviceLocation : Boolean, deviceLocation: Location? , location: String, languageCode: String) {
         var fetchCurrentWeather : CurrentWeatherResponseWeatherbit;
         try{
             Log.i("TDebug", "TT fetchCurrentWeather 111" )
-            fetchCurrentWeather = apixuWeatherApiService
-                .getCurrentWeather(location)
-                .await()
+            if(isUsingDeviceLocation){
+                fetchCurrentWeather = apixuWeatherApiService
+                    .getCurrentWeatherOfDeviceLocation("${deviceLocation?.latitude}", "${deviceLocation?.longitude}")
+                    .await()
+            }
+            else{
+                fetchCurrentWeather = apixuWeatherApiService
+                    .getCurrentWeatherByCityName(location)
+                    .await()
+            }
             Log.i("TDebug", "TT fetchCurrentWeather receive response" )
             Log.i("TDebug",  fetchCurrentWeather.toString() )
     

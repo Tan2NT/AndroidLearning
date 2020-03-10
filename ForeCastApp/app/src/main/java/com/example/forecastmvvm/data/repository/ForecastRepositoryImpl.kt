@@ -60,6 +60,8 @@ class ForecastRepositoryImpl(
     private suspend fun fetchCurrentWeather(){
         Log.i("TDebug", "TT fetchCurrentWeather location: " + locationProvider.getPreferredLocationString() )
         weatherNetworkDataSource.fetchCurrentWeather(
+            locationProvider.isUsingDeviceLocation(),
+            locationProvider.getDeviceLocation(),
             locationProvider.getPreferredLocationString(),
             Locale.getDefault().language
         )

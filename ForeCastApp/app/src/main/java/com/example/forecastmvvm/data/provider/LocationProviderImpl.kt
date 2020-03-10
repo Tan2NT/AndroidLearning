@@ -46,6 +46,14 @@ class LocationProviderImpl(
             return "${getCustomLocationName()}"
         }
     }
+    override suspend fun isUsingDeviceLocation() : Boolean {
+        return preferences.getBoolean(USE_DEVICE_LOCATION, true)
+    }
+
+    override suspend fun getDeviceLocation(): Location? {
+        val deviceLocation = getLastDeviceLocation().await()
+        return deviceLocation
+    }
 
     private suspend fun hasDeviceLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean {
         if(!isUsingDeviceLocation())
@@ -73,13 +81,9 @@ class LocationProviderImpl(
         return ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun hasCustomLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean{
+    private fun hasCustomLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean {
         val customLocationName = getCustomLocationName()
         return customLocationName != lastImperialCurrentWeatherEntry.cityName
-    }
-
-    private fun isUsingDeviceLocation() : Boolean {
-        return preferences.getBoolean(USE_DEVICE_LOCATION, true)
     }
 
     private fun getCustomLocationName() : String? {

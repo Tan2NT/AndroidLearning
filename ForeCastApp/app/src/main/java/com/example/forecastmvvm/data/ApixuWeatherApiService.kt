@@ -30,8 +30,14 @@ const val API_KEY = "c7ce4a9cd7e64318b1a3aa17f42ba918"
 interface ApixuWeatherApiService {
 
     @GET("current?")
-    fun getCurrentWeather(
+    fun getCurrentWeatherByCityName(
         @Query("city") location: String
+    ): Deferred<CurrentWeatherResponseWeatherbit>
+
+    @GET("current?")
+    fun getCurrentWeatherOfDeviceLocation(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String
     ): Deferred<CurrentWeatherResponseWeatherbit>
 
     companion object {
