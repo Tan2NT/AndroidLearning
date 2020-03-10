@@ -1,10 +1,10 @@
 package com.example.forecastmvvm.data.network
 
 import androidx.lifecycle.LiveData
-import com.example.forecastmvvm.data.network.response.CurrentWeatherResponse
+import com.example.forecastmvvm.data.network.response.CurrentWeatherResponseWeatherbit
 
 interface WeatherNetworkDataSource {
-    val downloadCurrentWeather : LiveData<CurrentWeatherResponse>
+    val downloadCurrentWeather : LiveData<CurrentWeatherResponseWeatherbit>
 
     suspend fun fetchCurrentWeather(
         location: String,

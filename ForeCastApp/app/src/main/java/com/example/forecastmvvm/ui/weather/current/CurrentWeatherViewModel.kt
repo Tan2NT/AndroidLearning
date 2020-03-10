@@ -20,8 +20,4 @@ class CurrentWeatherViewModel(
         Log.i("TDebug", "CurrentWeatherViewModel isImperrial :" + isImperial)
         forecastRepository.getCurrentWeather(isImperial)
     }
-
-    val weatherLocation by lazyDeferred() {
-        forecastRepository.getWeatherLocation()
-    }
 }

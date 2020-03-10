@@ -25,15 +25,13 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import java.util.*
 
+const val BASE_ICON_URL : String = "https://www.weatherbit.io/static/img/icons/"
+const val ICON_EXTENTION : String = ".png"
+
 class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
 
     override  val kodein by closestKodein()
     private val viewModalFactory: CurrentWeatherViewModalFactory by instance()
-
-//    companion object {
-//        fun newInstance() =
-//            CurrentWeatherFragment()
-//    }
 
     private lateinit var viewModel: CurrentWeatherViewModel
 
@@ -51,36 +49,10 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
             .get(CurrentWeatherViewModel::class.java)
 
        bindUI()
-
-        // call the current Weather service
-//        val apiService = ApixuWeatherApiService(ConnectivityInterceptorImpl(this.context!!))
-//
-//        // create an instance to work with request data
-//        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
-//
-//        // handle response data
-//        weatherNetworkDataSource.downloadCurrentWeather.observe(this, androidx.lifecycle.Observer {
-//            textView.text = it.location.toString() + "\n" + it.request.toString() + "\n" + it.currentWeatherEntry.toString();
-//        })
-//
-//        GlobalScope.launch (Dispatchers.Main) {
-//            // call the api to get the data
-//           weatherNetworkDataSource.fetchCurrentWeather("London", "en")
-//
-//        }
     }
 
     private fun bindUI() = launch {
         Log.i("TDebug", "CurentWeatherFragment bindUI" )
-
-        val weatherLocation = viewModel.weatherLocation.await()
-        weatherLocation.observe(this@CurrentWeatherFragment, androidx.lifecycle.Observer { location ->
-            if(location == null) return@Observer
-
-            Log.i("TDebug", "weather location is ready")
-
-            updateLocation(location.name)
-        })
 
         val currentWeather = viewModel.weather.await()
         currentWeather.observe(this@CurrentWeatherFragment, androidx.lifecycle.Observer {
@@ -90,19 +62,19 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
                 return@Observer
             }
 
-            //Log.i("TDebug", "CurentWeatherFragment bindUI has data" + it.weatherDescriptions.toString() )
+            Log.i("TDebug", "CurentWeatherFragment bindUI has data" + it.weatherDescriptionWeatherbit.description )
 
             group_loading.visibility = View.GONE
-
             updateDateToday()
-            updateTemperature(it.temperature, it.feelslike)
-            updateOtherInfo(it.precip, it.windSpeed, it.visibility)
+            updateLocation(it.cityName)
+            updateTemperature(it.temp, it.precip)
+            updateOtherInfo(it.precip, it.windSpd, it.vis)
 
             GlideApp.with(this@CurrentWeatherFragment)
-                .load(it.weatherIcons[0])
+                .load(BASE_ICON_URL + it.weatherDescriptionWeatherbit.icon + ICON_EXTENTION)
                 .into(imageView_condition_icon)
 
-            textView_condition.text = it.weatherDescriptions[0]
+            textView_condition.text = it.weatherDescriptionWeatherbit.description
 
         })
     }

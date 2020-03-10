@@ -1,26 +1,39 @@
 package com.example.forecastmvvm.data.db.unitlocalized
 
 import androidx.room.ColumnInfo
+import com.example.forecastmvvm.data.db.entity.WeatherDescriptionWeatherbit
 
 class ImperialCurrentWeatherEntry(
-    @ColumnInfo(name = "feelslike")
-    override val feelslike: Double,
-    @ColumnInfo(name = "isDay")
-    override val isDay: String,
+    @ColumnInfo(name = "appTemp")
+    override val appTemp: Double,
+    @ColumnInfo(name = "cityName")
+    override val cityName: String,
+    @ColumnInfo(name = "countryCode")
+    override val countryCode: String,
+    @ColumnInfo(name = "datetime")
+    override val datetime: String,
+    @ColumnInfo(name = "obTime")
+    override val obTime: String,
     @ColumnInfo(name = "precip")
     override val precip: Double,
-    @ColumnInfo(name = "temperature")
-    override val temperature: Double,
-    @ColumnInfo(name = "visibility")
-    override val visibility: Double,
-    @ColumnInfo(name = "weatherDescriptions")
-    override val weatherDescriptions: List<String>,
-    @ColumnInfo(name = "weatherIcons")
-    override val weatherIcons: List<String>,
-    @ColumnInfo(name = "windDegree")
-    override val windDegree: Double,
-    @ColumnInfo(name = "windDir")
-    override val windDir: String,
-    @ColumnInfo(name = "windSpeed")
-    override val windSpeed: Double
-) : UnitSpecificCurrentWeatherEntry
+    @ColumnInfo(name = "vis")
+    override val vis: Double,
+    @ColumnInfo(name = "pres")
+    override val pres: Double,
+    @ColumnInfo(name = "temp")
+    override val temp: Double,
+    @ColumnInfo(name = "timezone")
+    override val timezone: String,
+    @ColumnInfo(name = "lon")
+    override  val lon : Double,
+    @ColumnInfo(name = "lat")
+    override  val lat : Double,
+    @ColumnInfo(name = "ts")
+    override val ts: Int,
+    @ColumnInfo(name = "weatherDescriptionWeatherbit")
+    override val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit,
+    @ColumnInfo(name = "windCdirFull")
+    override val windCdirFull: String,
+    @ColumnInfo(name = "windSpd")
+    override val windSpd: Double
+    ) : UnitSpecificCurrentWeatherEntry

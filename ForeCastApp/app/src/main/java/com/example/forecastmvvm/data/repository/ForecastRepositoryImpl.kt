@@ -4,12 +4,9 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.forecastmvvm.data.db.CurrentWeatherDao
-import com.example.forecastmvvm.data.db.WeatherLocationDao
-import com.example.forecastmvvm.data.db.entity.WeatherLocation
 import com.example.forecastmvvm.data.db.unitlocalized.ImperialCurrentWeatherEntry
-import com.example.forecastmvvm.data.db.unitlocalized.UnitSpecificCurrentWeatherEntry
 import com.example.forecastmvvm.data.network.WeatherNetworkDataSource
-import com.example.forecastmvvm.data.network.response.CurrentWeatherResponse
+import com.example.forecastmvvm.data.network.response.CurrentWeatherResponseWeatherbit
 import com.example.forecastmvvm.data.provider.LocationProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,7 +17,6 @@ import java.util.*
 
 class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,                   // to
-    private val weatherLocationDao: WeatherLocationDao,
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
     private val locationProvider: LocationProvider
 ) : ForecastRepository {
@@ -40,25 +36,18 @@ class ForecastRepositoryImpl(
         }
     }
 
-    override suspend fun getWeatherLocation(): LiveData<WeatherLocation> {
-        return withContext(Dispatchers.IO) {
-            return@withContext weatherLocationDao.getLocation()
-        }
-    }
-
-    private fun persistFetchedCurrentWeather(fetchedWeather : CurrentWeatherResponse){
+    private fun persistFetchedCurrentWeather(fetchedWeather : CurrentWeatherResponseWeatherbit){
         GlobalScope.launch(Dispatchers.IO) {
-            Log.i("TDebug", "persistFetchedCurrentWeather: " + fetchedWeather.currentWeatherEntry.toString())
-            currentWeatherDao.upsert(fetchedWeather.currentWeatherEntry)
-            weatherLocationDao.upsert(fetchedWeather.location)
+            Log.i("TDebug", "persistFetchedCurrentWeather: " + fetchedWeather.toString())
+            currentWeatherDao.upsert(fetchedWeather.data[0])
         }
     }
 
     private suspend fun initWeatherData(){
         Log.i("TDebug", "initWeatherData ---- ")
 
-        val lastWeatherLocation = weatherLocationDao.getLocation().value
-        if(lastWeatherLocation == null || locationProvider.hasLocationChanged(lastWeatherLocation)){
+        val lastCurrentWeatherEntry = currentWeatherDao.getWeatherImperial().value
+        if(lastCurrentWeatherEntry == null || locationProvider.hasLocationChanged(lastCurrentWeatherEntry)){
             fetchCurrentWeather()
             return;
         }
@@ -66,7 +55,6 @@ class ForecastRepositoryImpl(
        if(isFetchCurrentNeed(ZonedDateTime.now().minusHours(1))){
             fetchCurrentWeather()
        }
-
     }
 
     private suspend fun fetchCurrentWeather(){

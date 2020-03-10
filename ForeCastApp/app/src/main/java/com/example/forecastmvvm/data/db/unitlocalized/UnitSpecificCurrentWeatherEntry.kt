@@ -1,16 +1,22 @@
 package com.example.forecastmvvm.data.db.unitlocalized
 
-import com.google.gson.annotations.SerializedName
+import com.example.forecastmvvm.data.db.entity.WeatherDescriptionWeatherbit
 
 interface UnitSpecificCurrentWeatherEntry {
-    val feelslike: Double
-    val isDay: String
+    val appTemp: Double
+    val cityName: String
+    val countryCode: String
+    val datetime: String
+    val obTime: String
     val precip: Double
-    val temperature: Double
-    val visibility: Double
-    val weatherDescriptions: List<String>
-    val weatherIcons: List<String>
-    val windDegree: Double
-    val windDir: String
-    val windSpeed: Double
+    val vis: Double
+    val pres: Double
+    val temp: Double
+    val timezone: String
+    val lon : Double
+    val lat : Double
+    val ts: Int
+    val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit
+    val windCdirFull: String
+    val windSpd: Double
 }

@@ -25,7 +25,7 @@
             android:key="UNIT_SYSTEM"
             android:title="Unit system"
             android:summary="%s"
-            android:defaultValue="IMPERIAL"
+            android:defaultValue="METRIC"
             android:entries="@array/UnitSystemEntries"
             android:entryValues="@array/UnitSystemValues"
             />

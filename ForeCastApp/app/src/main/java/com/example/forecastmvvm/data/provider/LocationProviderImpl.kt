@@ -5,12 +5,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.core.content.ContextCompat
-import com.example.forecastmvvm.data.db.entity.WeatherLocation
+import com.example.forecastmvvm.data.db.unitlocalized.ImperialCurrentWeatherEntry
 import com.example.forecastmvvm.internal.LocationPermissionNotGranted
 import com.example.forecastmvvm.internal.asDeferred
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.Deferred
-import java.util.jar.Manifest
 
 const val USE_DEVICE_LOCATION = "USE_DEVICE_LOCATION"
 const val CUSTOM_LOCATIOM = "CUSTOM_LOCATION"
@@ -21,15 +20,15 @@ class LocationProviderImpl(
 
     private val appContext = context.applicationContext
 
-    override suspend fun hasLocationChanged(lastWeatherLocation: WeatherLocation): Boolean {
+    override suspend fun hasLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry): Boolean {
 
         val deviceLocationChanged = try {
-            hasDeviceLocationChanged(lastWeatherLocation)
+            hasDeviceLocationChanged(lastImperialCurrentWeatherEntry)
         }catch (e: LocationPermissionNotGranted){
             false
         }
 
-        return deviceLocationChanged || hasCustomLocationChanged(lastWeatherLocation)
+        return deviceLocationChanged || hasCustomLocationChanged(lastImperialCurrentWeatherEntry)
     }
 
     override suspend fun getPreferredLocationString(): String {
@@ -48,7 +47,7 @@ class LocationProviderImpl(
         }
     }
 
-    private suspend fun hasDeviceLocationChanged(lastWeatherLocation: WeatherLocation) : Boolean {
+    private suspend fun hasDeviceLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean {
         if(!isUsingDeviceLocation())
             return false
 
@@ -58,8 +57,8 @@ class LocationProviderImpl(
         // comparing double can not be done with "=="
         val comparisonThreshold = 0.03
 
-        return Math.abs(deviceLocation.latitude - lastWeatherLocation.lat.toDouble()) > comparisonThreshold &&
-                Math.abs(deviceLocation.longitude - lastWeatherLocation.lon.toDouble()) > comparisonThreshold
+        return Math.abs(deviceLocation.latitude - lastImperialCurrentWeatherEntry.lat.toDouble()) > comparisonThreshold &&
+                Math.abs(deviceLocation.longitude - lastImperialCurrentWeatherEntry.lon.toDouble()) > comparisonThreshold
     }
 
     @SuppressLint("MissingPermission")
@@ -74,9 +73,9 @@ class LocationProviderImpl(
         return ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun hasCustomLocationChanged(lastWeatherLocation: WeatherLocation) : Boolean{
+    private fun hasCustomLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean{
         val customLocationName = getCustomLocationName()
-        return customLocationName != lastWeatherLocation.name
+        return customLocationName != lastImperialCurrentWeatherEntry.cityName
     }
 
     private fun isUsingDeviceLocation() : Boolean {
