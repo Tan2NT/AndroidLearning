@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.core.content.ContextCompat
-import com.example.forecastmvvm.data.db.unitlocalized.ImperialCurrentWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.current.ImperialCurrentWeatherEntry
 import com.example.forecastmvvm.internal.LocationPermissionNotGranted
 import com.example.forecastmvvm.internal.asDeferred
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -81,9 +81,13 @@ class LocationProviderImpl(
         return ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun hasCustomLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean {
-        val customLocationName = getCustomLocationName()
-        return customLocationName != lastImperialCurrentWeatherEntry.cityName
+    private suspend fun hasCustomLocationChanged(lastImperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean {
+        if(!isUsingDeviceLocation()){
+            val customLocationName = getCustomLocationName()
+            return customLocationName != lastImperialCurrentWeatherEntry.cityName
+        }else{
+            return false;
+        }
     }
 
     private fun getCustomLocationName() : String? {

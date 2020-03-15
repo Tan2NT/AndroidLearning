@@ -67,7 +67,7 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
             group_loading.visibility = View.GONE
             updateDateToday()
             updateLocation(it.cityName)
-            updateTemperature(it.temp, it.precip)
+            updateTemperature(it.temp, it.appTemp)
             updateOtherInfo(it.precip, it.windSpd, it.vis)
 
             GlideApp.with(this@CurrentWeatherFragment)

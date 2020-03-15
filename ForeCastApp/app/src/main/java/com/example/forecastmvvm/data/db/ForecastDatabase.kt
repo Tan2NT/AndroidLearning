@@ -7,14 +7,17 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.forecastmvvm.data.db.entity.CurrentWeatherEntry
 import com.example.forecastmvvm.data.db.entity.DataTypeConvertor
+import com.example.forecastmvvm.data.db.entity.LocalDateTimeConverter
+import com.example.forecastmvvm.data.network.response.FutureWeatherEntry
 
 @Database(
-    entities = [CurrentWeatherEntry::class],
-    version = 3
+    entities = [CurrentWeatherEntry::class, FutureWeatherEntry::class],
+    version = 1
 )
-@TypeConverters(DataTypeConvertor::class)
+@TypeConverters(DataTypeConvertor::class, LocalDateTimeConverter::class)
 abstract class ForecastDatabase : RoomDatabase(){
     abstract  fun currentWeatherDao() : CurrentWeatherDao
+    abstract  fun futureWeatherDao() : FutureWeatherDao
 
     companion object {
         @Volatile private var instance : ForecastDatabase? = null

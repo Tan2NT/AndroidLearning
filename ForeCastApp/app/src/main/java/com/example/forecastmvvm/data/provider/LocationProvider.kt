@@ -1,6 +1,6 @@
 package com.example.forecastmvvm.data.provider
 import android.location.Location
-import com.example.forecastmvvm.data.db.unitlocalized.ImperialCurrentWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.current.ImperialCurrentWeatherEntry
 
 interface LocationProvider {
     suspend fun hasLocationChanged(imperialCurrentWeatherEntry: ImperialCurrentWeatherEntry) : Boolean

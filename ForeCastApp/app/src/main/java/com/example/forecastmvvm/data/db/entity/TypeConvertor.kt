@@ -4,7 +4,10 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDateTime
 import java.util.*
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 
 class DataTypeConvertor{
     private val gson = Gson()
@@ -45,6 +48,28 @@ class DataTypeConvertor{
     @TypeConverter
     fun jsonToString(someObject : JsonObject) : String {
         return gson.toJson(someObject)
+    }
+}
+
+object LocalDateTimeConverter {
+    @TypeConverter
+    @JvmStatic
+    fun toDate(dateString: String?):LocalDate? {
+        return if (dateString == null) {
+            null
+        } else {
+            LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toDateString(date: org.threeten.bp.LocalDate?): String? {
+        return if (date == null) {
+            null
+        } else {
+            date.toString()
+        }
     }
 }
 

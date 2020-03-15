@@ -1,4 +1,4 @@
-package com.example.forecastmvvm.data.db.unitlocalized
+package com.example.forecastmvvm.data.db.unitlocalized.current
 
 import com.example.forecastmvvm.data.db.entity.WeatherDescriptionWeatherbit
 
