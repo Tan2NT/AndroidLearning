@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.example.forecastmvvm.data.db.entity.CurrentWeatherEntry
 import com.example.forecastmvvm.data.db.entity.DataTypeConvertor
 import com.example.forecastmvvm.data.db.entity.LocalDateTimeConverter
-import com.example.forecastmvvm.data.network.response.FutureWeatherEntry
+import com.example.forecastmvvm.data.db.entity.FutureWeatherEntry
 
 @Database(
     entities = [CurrentWeatherEntry::class, FutureWeatherEntry::class],

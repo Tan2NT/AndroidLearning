@@ -16,16 +16,15 @@ import com.example.forecastmvvm.data.provider.UnitProviderImpl
 import com.example.forecastmvvm.data.repository.ForecastRepository
 import com.example.forecastmvvm.data.repository.ForecastRepositoryImpl
 import com.example.forecastmvvm.ui.weather.current.CurrentWeatherViewModalFactory
+import com.example.forecastmvvm.ui.weather.future.detail.FutureDetailWeatherViewModalFactory
 import com.example.forecastmvvm.ui.weather.future.list.FutureListWeatherViewModalFactory
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
-import org.kodein.di.generic.singleton
+import org.kodein.di.generic.*
+import org.threeten.bp.LocalDate
 
 
 class ForecastApplication : Application(), KodeinAware {
@@ -45,6 +44,7 @@ class ForecastApplication : Application(), KodeinAware {
         bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
         bind() from provider { CurrentWeatherViewModalFactory(instance(), instance())}
         bind() from provider { FutureListWeatherViewModalFactory(instance(), instance())}
+        bind() from factory { detailDate : LocalDate -> FutureDetailWeatherViewModalFactory(detailDate, instance(), instance())}
     }
 
     override fun onCreate() {

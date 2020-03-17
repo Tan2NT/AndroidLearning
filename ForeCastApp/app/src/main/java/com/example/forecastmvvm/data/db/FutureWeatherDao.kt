@@ -5,11 +5,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.forecastmvvm.data.db.entity.CURRENT_WEATHER_ID
-import com.example.forecastmvvm.data.db.entity.CurrentWeatherEntry
-import com.example.forecastmvvm.data.db.unitlocalized.current.ImperialCurrentWeatherEntry
-import com.example.forecastmvvm.data.db.unitlocalized.future.ImprerialFutureWeatherEntry
-import com.example.forecastmvvm.data.network.response.FutureWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.future.list.ImprerialFutureWeatherEntry
+import com.example.forecastmvvm.data.db.entity.FutureWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.future.detail.ImperialSpecificFutureDetailWeather
 import org.threeten.bp.LocalDate
 
 @Dao
@@ -20,6 +18,9 @@ interface FutureWeatherDao {
 
     @Query("select * from future_weather where date(datetime) >= date(:startDay)")
     fun getSimpleFutureWeatherImperial(startDay: LocalDate): LiveData<List<ImprerialFutureWeatherEntry>>
+
+    @Query("select  * from future_weather where date(datetime) == date(:detailDate)")
+    fun getWeatherDetailByDay(detailDate : LocalDate) : LiveData<ImperialSpecificFutureDetailWeather>
 
     @Query("select count(id) from future_weather where date(datetime) >= date(:startDay)")
     fun countFutureWeather(startDay: LocalDate): Int

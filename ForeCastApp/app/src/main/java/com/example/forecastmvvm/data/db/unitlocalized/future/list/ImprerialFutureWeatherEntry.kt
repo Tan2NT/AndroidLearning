@@ -1,4 +1,4 @@
-package com.example.forecastmvvm.data.db.unitlocalized.future
+package com.example.forecastmvvm.data.db.unitlocalized.future.list
 
 import androidx.room.ColumnInfo
 import org.threeten.bp.LocalDate

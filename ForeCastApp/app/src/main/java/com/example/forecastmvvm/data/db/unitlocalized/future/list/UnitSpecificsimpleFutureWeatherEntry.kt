@@ -1,4 +1,4 @@
-package com.example.forecastmvvm.data.db.unitlocalized.future
+package com.example.forecastmvvm.data.db.unitlocalized.future.list
 import org.threeten.bp.LocalDate
 
 interface UnitSpecificsimpleFutureWeatherEntry {

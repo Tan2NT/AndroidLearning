@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import com.example.forecastmvvm.data.db.CurrentWeatherDao
 import com.example.forecastmvvm.data.db.FutureWeatherDao
 import com.example.forecastmvvm.data.db.unitlocalized.current.ImperialCurrentWeatherEntry
-import com.example.forecastmvvm.data.db.unitlocalized.future.UnitSpecificsimpleFutureWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.future.detail.UnitSpecificFutureDetailWeather
+import com.example.forecastmvvm.data.db.unitlocalized.future.list.UnitSpecificsimpleFutureWeatherEntry
 import com.example.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.example.forecastmvvm.data.network.response.CurrentWeatherResponseWeatherbit
 import com.example.forecastmvvm.data.network.response.FutureWeatherResponseWeatherbit
@@ -14,8 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
-import java.time.LocalDate
 import java.util.*
 
 const val FORECAST_DAY_COUNT = 16
@@ -55,6 +56,17 @@ class ForecastRepositoryImpl(
             Log.i("TDebug", "getFutureWEatherList")
             return@withContext futureWeatherDao.getSimpleFutureWeatherImperial(startDay)
         }
+    }
+
+    override suspend fun getFutureWeatherDetailByDate(
+        date: LocalDate,
+        isImperial: Boolean
+    ): LiveData<out UnitSpecificFutureDetailWeather> {
+       return withContext(Dispatchers.IO){
+           Log.i("TDebug", "getFutureWeatherDetailByDate")
+           initWeatherData()
+           return@withContext futureWeatherDao.getWeatherDetailByDay(date)
+       }
     }
 
     private fun persistFetchedCurrentWeather(fetchedWeather : CurrentWeatherResponseWeatherbit){

@@ -1,14 +1,12 @@
 package com.example.forecastmvvm.ui.weather.future.list
 
 import com.example.forecastmvvm.R
-import com.example.forecastmvvm.data.db.unitlocalized.future.UnitSpecificsimpleFutureWeatherEntry
-import com.example.forecastmvvm.data.network.response.FutureWeatherEntry
+import com.example.forecastmvvm.data.db.unitlocalized.future.list.UnitSpecificsimpleFutureWeatherEntry
 import com.example.forecastmvvm.internal.glide.GlideApp
 import com.example.forecastmvvm.ui.weather.current.BASE_ICON_URL
 import com.example.forecastmvvm.ui.weather.current.ICON_EXTENTION
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.android.synthetic.main.item_future_weather.*
 import kotlinx.android.synthetic.main.item_future_weather.imageView_condition_icon
 import kotlinx.android.synthetic.main.item_future_weather.textView_condition
@@ -16,7 +14,8 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 
 class FutureWeatherItem (
-    val weatherEntry : UnitSpecificsimpleFutureWeatherEntry) : Item() {
+    val weatherEntry : UnitSpecificsimpleFutureWeatherEntry
+) : Item() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.apply {
             textView_condition.text = weatherEntry.description

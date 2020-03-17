@@ -1,8 +1,7 @@
-package com.example.forecastmvvm.data.network.response
+package com.example.forecastmvvm.data.db.entity
 
 
 import androidx.room.*
-import com.example.forecastmvvm.data.db.entity.LocalDateTimeConverter
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "future_weather", indices = [Index(value = ["datetime"], unique = true)])
