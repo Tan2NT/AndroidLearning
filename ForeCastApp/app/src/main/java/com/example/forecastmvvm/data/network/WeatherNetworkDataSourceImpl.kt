@@ -8,6 +8,7 @@ import com.example.forecastmvvm.data.ApixuWeatherApiService
 import com.example.forecastmvvm.data.network.response.CurrentWeatherResponseWeatherbit
 import com.example.forecastmvvm.data.network.response.FutureWeatherResponseWeatherbit
 import com.example.forecastmvvm.internal.NoConnectivityException
+import com.example.forecastmvvm.ui.MainActivity
 
 class WeatherNetworkDataSourceImpl(
     private val apixuWeatherApiService: ApixuWeatherApiService
@@ -22,6 +23,14 @@ class WeatherNetworkDataSourceImpl(
 
     // Current weather
     override suspend fun fetchCurrentWeather(isUsingDeviceLocation : Boolean, deviceLocation: Location? , location: String, languageCode: String) {
+
+        Log.i("TDebug", "fetchCurrentWeather - WeatherNetworkDataSourceImpl")
+
+        if(!MainActivity.hasLocationPermission()){
+            Log.i("TDebug", "fetchCurrentWeather - WeatherNetworkDataSourceImpl - location permission did not grant -> waiting")
+            return
+        }
+
         var fetchCurrentWeather : CurrentWeatherResponseWeatherbit;
         try{
             Log.i("TDebug", "TT fetchCurrentWeather 111" )

@@ -11,6 +11,7 @@ import com.example.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.example.forecastmvvm.data.network.response.CurrentWeatherResponseWeatherbit
 import com.example.forecastmvvm.data.network.response.FutureWeatherResponseWeatherbit
 import com.example.forecastmvvm.data.provider.LocationProvider
+import com.example.forecastmvvm.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,6 +28,8 @@ class ForecastRepositoryImpl(
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
     private val locationProvider: LocationProvider
 ) : ForecastRepository {
+
+    private var lastFetchedCurrentWeatherTime : ZonedDateTime = ZonedDateTime.now().minusHours(1)
 
     init {
         weatherNetworkDataSource.apply {
@@ -94,15 +97,29 @@ class ForecastRepositoryImpl(
     private suspend fun initWeatherData(){
         Log.i("TDebug", "initWeatherData ---- ")
 
+        if(!MainActivity.hasLocationPermission()){
+            Log.i("TDebug", "initWeatherData - location permission is NOT granted -> waiting")
+            return
+        }
+
         val lastCurrentWeatherEntry = currentWeatherDao.getWeatherImperial().value
         if(lastCurrentWeatherEntry == null || locationProvider.hasLocationChanged(lastCurrentWeatherEntry)){
+            if(lastCurrentWeatherEntry == null)
+                Log.i("TDebug", "initWeatherData ---- lastCurrentWeatherEntry")
+
+            if(locationProvider.hasLocationChanged(lastCurrentWeatherEntry))
+                Log.i("TDebug", "initWeatherData ---- location changed")
+
             fetchCurrentWeather()
             fetchFutureWeather()
             return;
         }
 
-       if(isFetchCurrentNeed(ZonedDateTime.now().minusHours(1))){
-            fetchCurrentWeather()
+       if(isFetchCurrentNeed(lastFetchedCurrentWeatherTime)){
+           Log.i("TDebug", "initWeatherData ---- need to fetch currenty weather data")
+           fetchCurrentWeather()
+       }else{
+           Log.i("TDebug", "initWeatherData ---- no need to fetch currenty weather data")
        }
 
         if(isFetchFutureWeatherNeeded()){
@@ -112,12 +129,15 @@ class ForecastRepositoryImpl(
 
     private suspend fun fetchCurrentWeather(){
         Log.i("TDebug", "TT fetchCurrentWeather location: " + locationProvider.getPreferredLocationString() )
+
         weatherNetworkDataSource.fetchCurrentWeather(
             locationProvider.isUsingDeviceLocation(),
             locationProvider.getDeviceLocation(),
             locationProvider.getPreferredLocationString(),
             Locale.getDefault().language
         )
+
+        lastFetchedCurrentWeatherTime = ZonedDateTime.now()
     }
 
     private fun isFetchCurrentNeed(lastFetchTime: ZonedDateTime): Boolean{
