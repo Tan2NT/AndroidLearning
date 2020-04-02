@@ -8,9 +8,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    var isNumberGenerated : Boolean = false;
-
-    val MIN_NUMBER : Int = 0
+    val MIN_NUMBER : Int = 1
     val MAX_NUMBER : Int = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,24 +17,17 @@ class MainActivity : AppCompatActivity() {
 
         btn_rollNumber.setOnClickListener(View.OnClickListener {
             val ranNumber = (MIN_NUMBER..MAX_NUMBER).random()
-            txt_randomNumber.text = ranNumber.toString()
 
-            isNumberGenerated = true;
+            val imageResourceId = when (ranNumber){
+                1 -> R.drawable.dice_1
+                2 -> R.drawable.dice_2
+                3 -> R.drawable.dice_3
+                4 -> R.drawable.dice_4
+                5 -> R.drawable.dice_5
+                else -> R.drawable.dice_6
+            }
+
+            img_diceImage.setImageResource(imageResourceId)
         })
-
-        btn_countUp.setOnClickListener ( View.OnClickListener {
-
-            var newNum : Int
-
-            if(!isNumberGenerated){
-                newNum = MIN_NUMBER + 1
-            }else
-                newNum = txt_randomNumber.text.toString().toInt() + 1
-
-            if(newNum == MAX_NUMBER + 1)
-                newNum --
-
-            txt_randomNumber.text = newNum.toString()
-        } )
     }
 }
