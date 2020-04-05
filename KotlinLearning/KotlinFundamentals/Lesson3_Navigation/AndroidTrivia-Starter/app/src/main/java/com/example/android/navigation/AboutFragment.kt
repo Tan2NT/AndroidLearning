@@ -32,7 +32,7 @@ class AboutFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentAboutBinding>(inflater, R.layout.fragment_about, container, false)
 
         binding.playButton.setOnClickListener {
-            it.findNavController().navigate(R.id.action_aboutFragment_to_gameFragment)
+            it.findNavController().navigate(AboutFragmentDirections.actionAboutFragmentToGameFragment())
         }
 
         // Inflate the layout for this fragment
