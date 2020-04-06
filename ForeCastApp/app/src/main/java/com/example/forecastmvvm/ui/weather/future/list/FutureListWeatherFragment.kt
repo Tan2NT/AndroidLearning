@@ -62,6 +62,7 @@ class FutureListWeatherFragment : ScopeFragment(), KodeinAware{
     }
 
     private fun updateWeatherToNext16Days(){
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Next 16 days"
         (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Next 16 days"
     }
 

@@ -13,7 +13,7 @@ import org.threeten.bp.LocalDate
 @Dao
 interface FutureWeatherDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert( onConflict = OnConflictStrategy.REPLACE)
     fun upsert(weatherEntry: List<FutureWeatherEntry>)
 
     @Query("select * from future_weather where date(datetime) >= date(:startDay)")

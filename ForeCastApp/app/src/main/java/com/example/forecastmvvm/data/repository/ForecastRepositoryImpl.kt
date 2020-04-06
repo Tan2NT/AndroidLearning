@@ -90,7 +90,7 @@ class ForecastRepositoryImpl(
             Log.i("TDebug", "persistFetchedFutureWeather: " + fetchedWeather.toString())
             deleteOldWeatherEntries()
             val futureWeatherList = fetchedWeather.futureWeatherEntries
-            futureWeatherDao.upsert(futureWeatherList)
+            futureWeatherDao.upsert( futureWeatherList)
         }
     }
 
