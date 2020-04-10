@@ -22,10 +22,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.android.guesstheword.R
 import com.example.android.guesstheword.databinding.ScoreFragmentBinding
+import kotlinx.android.synthetic.main.score_fragment.*
 
 /**
  * Fragment where the final score is shown, after the game is over
@@ -53,7 +56,21 @@ class ScoreFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ScoreViewModel::class.java)
 
-        binding.scoreText.text = viewModel.score.toString()
+        viewModel.score.observe(viewLifecycleOwner, Observer { finalScore ->
+            binding.scoreText.text = viewModel.score.toString()
+        })
+
+        viewModel.playAgainEvent.observe(viewLifecycleOwner, Observer<Boolean> { shouldPlay ->
+            if(shouldPlay){
+                val action = ScoreFragmentDirections.actionRestart()
+                NavHostFragment.findNavController(this).navigate(action)
+                viewModel.onPlayAgainCompleted()
+            }
+        })
+
+        play_again_button.setOnClickListener { it ->
+            viewModel.onPlayAgain()
+        }
 
         return binding.root
     }
