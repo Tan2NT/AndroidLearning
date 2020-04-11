@@ -26,12 +26,17 @@ abstract class SleepDatabase : RoomDatabase() {
     abstract val sleepDatabaseDao: SleepDatabaseDao
 
     companion object {
+
+        // all write and read are done from main memory => it makes sure the value of INSTANCE
+        // is always Up-to-date, mean the value is same for all thread at the same time
+        // so 2 threads can not access to the Room database at the same time
         @Volatile
         private var INSTANCE: SleepDatabase? = null
 
         fun getInstance(context: Context): SleepDatabase {
 
-            /* wrap the code with 'synchronized' to make sure only one thread can access the code block at the same time */
+            /* wrap the code with 'synchronized' to make sure only one thread can access
+             the code block at the same time */
             synchronized(this){
                 var instance = INSTANCE
 

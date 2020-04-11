@@ -23,7 +23,9 @@
      the whole ViewModel, so that we can access the LiveData,
      click handlers, and state variables. -->
     <data>
-
+        <variable
+            name="sleepQualityViewModel"
+            type="com.example.android.trackmysleepquality.sleepquality.SleepQualityViewModel" />
     </data>
 
     <!-- Start of the visible fragment layout using ConstraintLayout -->
@@ -48,6 +50,7 @@
 
         <ImageView
             android:id="@+id/quality_zero_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(0)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginStart="@dimen/margin"
@@ -60,6 +63,7 @@
 
         <ImageView
             android:id="@+id/quality_one_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(1)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:contentDescription="@string/quality_1"
@@ -70,6 +74,7 @@
 
         <ImageView
             android:id="@+id/quality_two_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(2)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginEnd="@dimen/margin"
@@ -81,6 +86,7 @@
 
         <ImageView
             android:id="@+id/quality_three_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(3)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginStart="@dimen/margin"
@@ -96,6 +102,7 @@
 
         <ImageView
             android:id="@+id/quality_four_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(4)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:contentDescription="@string/quality_4"
@@ -107,6 +114,7 @@
 
         <ImageView
             android:id="@+id/quality_five_image"
+            android:onClick="@{() -> sleepQualityViewModel.onSetSleepQuality(5)}"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginEnd="@dimen/margin"
