@@ -91,7 +91,14 @@ class SleepTrackerViewModel(
         uiScope.launch {
             val newNight = SleepNight()
             insert(newNight)
-            tonight.value = newNight
+            getTonight()
+        }
+    }
+
+    private suspend fun getTonight() {
+        withContext(Dispatchers.IO) {
+            val night = database.getTonight()
+            tonight.postValue(night)
         }
     }
 
