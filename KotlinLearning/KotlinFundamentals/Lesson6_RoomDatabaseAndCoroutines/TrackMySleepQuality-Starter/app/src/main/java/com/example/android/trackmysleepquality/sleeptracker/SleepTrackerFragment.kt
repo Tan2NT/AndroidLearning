@@ -17,6 +17,7 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,9 +57,19 @@ class SleepTrackerFragment : Fragment() {
 
         val sleepTrackerViewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(SleepTrackerViewModel::class.java)
-
         binding.setLifecycleOwner(this)
         binding.sleepTrackerViewModel = sleepTrackerViewModel
+
+        // setup for recyclerview
+        val adapter = SleepNightAdapter()
+        binding.sleepList.adapter = adapter
+        Log.i("SleepTrackerFragment", "onCreateView binding an adapter")
+        sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.data = it
+            }
+        })
+
         sleepTrackerViewModel.navigateToSleepQuality.observe(this, Observer { night ->
             night?.let {
                 this.findNavController().navigate(SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepQualityFragment(night.nightId))
