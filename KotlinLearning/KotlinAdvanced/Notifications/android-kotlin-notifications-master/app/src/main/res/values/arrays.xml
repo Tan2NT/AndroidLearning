@@ -29,8 +29,8 @@
     <!--Cooking time intervals in minutes -->
     <integer-array name="minutes_array">
         <item>0</item>
-        <item>4</item>
-        <item>6</item>
+        <item>1</item>
+        <item>1</item>
         <item>10</item>
         <item>12</item>
     </integer-array>

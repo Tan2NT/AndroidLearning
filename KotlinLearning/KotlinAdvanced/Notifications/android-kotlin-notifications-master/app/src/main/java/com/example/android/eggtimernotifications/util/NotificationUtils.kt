@@ -78,8 +78,7 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
 
     // TODO: Step 1.3 set title, text and icon to builder
         .setSmallIcon(R.drawable.cooked_egg)
-        .setContentTitle(applicationContext
-            .getString(R.string.notification_title))
+        .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
 
     // TODO: Step 1.13 set content intent
