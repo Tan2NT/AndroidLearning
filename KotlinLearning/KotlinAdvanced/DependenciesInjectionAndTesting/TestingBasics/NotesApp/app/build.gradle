@@ -72,4 +72,6 @@ dependencies {
 
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
+    // allow run coroutine in test
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
 }
