@@ -31,4 +31,10 @@
 
     <!--Shared Preference Keys -->
     <string name="preference_fact_type_key">fact_type_pref</string>
+
+    <!--Facebook app -->
+    <string name="fb_app_id">568034547465752</string>
+    <string name="fb_login_protocol_scheme">fb568034547465752</string>
+    <string name="fb_login">Login Facebook</string>
+
 </resources>

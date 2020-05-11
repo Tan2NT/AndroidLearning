@@ -55,6 +55,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
 
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
+
+    implementation 'com.facebook.android:facebook-login:5.15.3'
+    implementation 'com.google.firebase:firebase-common-ktx:19.3.0'
+    implementation 'com.facebook.android:facebook-share:[5,6)'
+
+
+
     testImplementation 'junit:junit:4.12'
 }
 
