@@ -6,7 +6,7 @@ interface UnitSpecificsimpleFutureWeatherEntry {
     val temp: Double
     val icon: String
     val description: String
-    val cityName : String
+//    val cityName : String
 
 //    val maxTemp: Double
 //    val minTemp: Double

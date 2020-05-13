@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // find the navigation controler
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
-        // connect the navigation button to the controler
+        // connect the navigation button to the controller
         bottom_nav.setupWithNavController(navController)
 
         NavigationUI.setupActionBarWithNavController(this, navController)

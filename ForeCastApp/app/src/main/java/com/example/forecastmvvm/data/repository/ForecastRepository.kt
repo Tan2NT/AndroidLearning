@@ -7,6 +7,13 @@ import com.example.forecastmvvm.data.db.unitlocalized.future.list.UnitSpecificsi
 import org.threeten.bp.LocalDate
 
 interface ForecastRepository {
+
+    var cityName: String
+
+    fun getRequestedCity() : String {
+        return cityName
+    }
+
     suspend fun getCurrentWeather(isImperial : Boolean) : LiveData<out UnitSpecificCurrentWeatherEntry>
 
     suspend fun getFutureWeatherList(startDay: LocalDate, isImperial: Boolean) : LiveData<out List<UnitSpecificsimpleFutureWeatherEntry>>

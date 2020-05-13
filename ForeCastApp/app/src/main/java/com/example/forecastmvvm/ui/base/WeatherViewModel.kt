@@ -6,7 +6,7 @@ import com.example.forecastmvvm.data.repository.ForecastRepository
 import com.example.forecastmvvm.internal.UnitSystem
 
 abstract class WeatherViewModel(
-    private val forecastRepository: ForecastRepository,
+    val forecastRepository: ForecastRepository,
     unitProvider: UnitProvider
 ) : ViewModel() {
     // TODO: Implement the ViewModel

@@ -15,4 +15,8 @@ class FutureDetailWeatherViewModel (
     val weather by lazyDeferred {
         repository.getFutureWeatherDetailByDate(date, isImperial)
     }
+
+    fun getRequestedCity() : String {
+        return forecastRepository.cityName
+    }
 }

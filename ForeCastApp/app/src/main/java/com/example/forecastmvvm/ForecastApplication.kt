@@ -40,7 +40,7 @@ class ForecastApplication : Application(), KodeinAware {
         bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance())}
         bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context> ()) }
         bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
-        bind<ForecastRepository>() with singleton { ForecastRepositoryImpl(instance(), instance(), instance(), instance())}
+        bind<ForecastRepository>() with singleton { ForecastRepositoryImpl(instance(), instance(), instance(), instance(), "")}
         bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
         bind() from provider { CurrentWeatherViewModalFactory(instance(), instance())}
         bind() from provider { FutureListWeatherViewModalFactory(instance(), instance())}

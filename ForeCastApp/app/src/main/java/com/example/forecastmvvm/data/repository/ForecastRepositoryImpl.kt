@@ -26,7 +26,7 @@ class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,
     private val futureWeatherDao : FutureWeatherDao,
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider, override var cityName: String
 ) : ForecastRepository {
 
     private var lastFetchedCurrentWeatherTime : ZonedDateTime = ZonedDateTime.now().minusHours(1)
@@ -91,6 +91,7 @@ class ForecastRepositoryImpl(
             deleteOldWeatherEntries()
             val futureWeatherList = fetchedWeather.futureWeatherEntries
             futureWeatherDao.upsert( futureWeatherList)
+            cityName = fetchedWeather.cityName
         }
     }
 

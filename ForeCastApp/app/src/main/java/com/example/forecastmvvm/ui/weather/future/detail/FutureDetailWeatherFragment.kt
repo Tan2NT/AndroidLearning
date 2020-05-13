@@ -62,7 +62,7 @@ class FutureDetailWeatherFragment : ScopeFragment(), KodeinAware {
         val futureWeather = viewModel.weather.await()
 
         futureWeather.observe(this@FutureDetailWeatherFragment, Observer {
-           // updateLocation(it.)
+            updateLocation(viewModel.getRequestedCity())
             updateTemperature(it.temp, it.minTemp, it.maxTemp)
             updateDate(it.datetime.toString())
             updateOtherInfo(it.precip, it.windSpd, it.vis)

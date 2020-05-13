@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 import com.example.forecastmvvm.R
 import com.example.forecastmvvm.data.ApixuWeatherApiService
+import com.example.forecastmvvm.data.db.entity.LocalDateTimeConverter
 import com.example.forecastmvvm.data.network.ConnectivityInterceptorImpl
 import com.example.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
 import com.example.forecastmvvm.internal.glide.GlideApp
@@ -23,6 +24,7 @@ import okhttp3.internal.Internal.instance
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import org.threeten.bp.LocalDate
 import java.util.*
 
 const val BASE_ICON_URL : String = "https://www.weatherbit.io/static/img/icons/"
@@ -47,6 +49,8 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
         Log.i("TDebug", "CurentWeatherFragment onActivityCreated" )
         viewModel = ViewModelProviders.of(this, viewModalFactory)
             .get(CurrentWeatherViewModel::class.java)
+
+        viewModel.getCurrentWeather()
 
        bindUI()
     }
@@ -84,7 +88,8 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
     }
 
     private fun updateDateToday(){
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today"
+        val dateString = LocalDateTimeConverter.toDateString(LocalDate.now())!!
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today " + dateString
     }
 
     private fun updateTemperature(tempareture: Double, feelLike: Double){

@@ -11,7 +11,7 @@ class ImprerialFutureWeatherEntry(
     @ColumnInfo(name = "weather_icon")
     override val icon: String,
     @ColumnInfo(name = "weather_description")
-    override val description: String,
-    @ColumnInfo(name = "cityName")
-    override val cityName: String
+    override val description: String
+//    @ColumnInfo(name = "cityName")
+//    override val cityName: String
 ) : UnitSpecificsimpleFutureWeatherEntry

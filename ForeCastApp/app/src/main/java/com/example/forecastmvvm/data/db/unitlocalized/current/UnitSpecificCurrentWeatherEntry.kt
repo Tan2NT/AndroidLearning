@@ -13,9 +13,9 @@ interface UnitSpecificCurrentWeatherEntry {
     val pres: Double
     val temp: Double
     val timezone: String
+    val ts: Int
     val lon : Double
     val lat : Double
-    val ts: Int
     val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit
     val windCdirFull: String
     val windSpd: Double
