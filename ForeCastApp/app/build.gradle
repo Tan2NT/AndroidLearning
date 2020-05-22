@@ -9,10 +9,26 @@ apply plugin: "androidx.navigation.safeargs"
 apply plugin: "kotlin-kapt"
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:\\HocLapTrinh\\Android\\AndroidLearning\\KotlinLearning\\KotlinAdvanced\\FireBaseLogin\\AndroidLoginFirebase\\keystore.jks')
+            storePassword '111111'
+            keyAlias = 'key'
+            keyPassword '111111'
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.forecastmvvm"
+        applicationId "com.tantnt.forecastmvvm"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
@@ -23,6 +39,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
