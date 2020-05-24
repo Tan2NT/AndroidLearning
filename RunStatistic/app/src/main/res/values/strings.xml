@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">RunStatistic</string>
+    <string name="title_home">Home</string>
+    <string name="title_practice">Practice</string>
+    <string name="title_profile">Profile</string>
+    <string name="best_practice_day">Best Practice day</string>
+    <string name="history">History</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="distance_km">Distance (Km)</string>
+    <string name="title_weather">Weather</string>
+    <string name="speed_km">Speed (Km/h)</string>
+    <string name="time_min">Time (Min)</string>
+</resources>
