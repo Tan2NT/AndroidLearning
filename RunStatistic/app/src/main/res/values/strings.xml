@@ -12,4 +12,9 @@
     <string name="title_weather">Weather</string>
     <string name="speed_km">Speed (Km/h)</string>
     <string name="time_min">Time (Min)</string>
+
+    <!-- Google map -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAX38GQpUkkUpjQuOX1Tz1pq0opqDThQiM</string>
+    <string name="current_location">Current Location</string>
+
 </resources>
