@@ -1,7 +1,7 @@
 package com.tantnt.android.runstatistic.ui.practice
 
-import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -10,12 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.location.*
@@ -25,10 +22,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.tantnt.android.runstatistic.R
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_practice.*
-import kotlin.concurrent.fixedRateTimer
 
 class PracticeFragment : Fragment(), OnMapReadyCallback {
 
@@ -37,10 +32,10 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     // map & location
     private val REQUEST_LOCATION_PERMISSION = 1
     private var mLocationRequest : LocationRequest? = null
-    private val LOCATION_UPDATE_INTERVAL = (19 * 1000).toLong()     // 10 seconds
+    private val LOCATION_UPDATE_INTERVAL = (2 * 1000).toLong()     // 10 seconds
     private val LOCATION_FASTEST_INTERVAL : Long = 2000                    // 2 seconds
     private lateinit var mGoogleMap: GoogleMap
-    //private var mapFragment : SupportMapFragment? = null
+    private var isMapReady : Boolean = false
 
     private var latitude = 0.0
     private var longitude = 0.0
@@ -64,16 +59,72 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             mapFragment?.getMapAsync(this)
         }
 
-        Log.i(TAG, "onCreateView done!")
+        practiceViewModel.shouldStartNewPractice.observe(viewLifecycleOwner, Observer {
+            if (it == true){
+                Log.i(TAG, "update the marker")
+                // add the Marker at the starting point
+                mGoogleMap!!.addMarker(MarkerOptions().position(practiceViewModel.currentLocation.value!!).title(getString(
+                    R.string.current_location)))
 
+                moveCameraWithZoom(practiceViewModel.currentLocation.value!!, 15.0f)
+
+            }
+        })
+
+        practiceViewModel.routedLine.observe(viewLifecycleOwner, Observer {
+            if(practiceViewModel.isLocationGranted && isMapReady ) {
+                // update the routes
+                if(practiceViewModel.routedLine.value != null && practiceViewModel.routedLine.value!!.size > 1)
+                    addMapDirections()
+            }
+        })
+        Log.i(TAG, "onCreateView done!")
         return root
     }
 
+    private fun moveCameraWithZoom(target: LatLng, zoomLevel: Float) {
+        /*
+         1: World
+        5: Landmass/continent
+        10: City
+        15: Streets
+        20: Buildings
+        * */
+        mGoogleMap!!.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                target,
+                zoomLevel
+            )
+        )
+    }
+
+    private fun addMapDirections() {
+        Log.i(TAG, "addMapDirections !")
+        var polyLineOptions : PolylineOptions = PolylineOptions()
+        polyLineOptions.color(Color.RED)
+        polyLineOptions.width(5f)
+
+        val routes : ArrayList<LatLng> = practiceViewModel.routedLine.value!!
+        for(i in 0 until routes!!.size){
+            val point : LatLng = routes!!.get(i)
+            //Log.i(TAG, "addMapDirections add point Lat: " + point.latitude + " - Lon:" + point.longitude)
+            polyLineOptions.add(routes!!.get(i))
+        }
+       // polyLineOptions.add(LatLng(85.0, 5.0))
+        //.add(LatLng(-85.0, 5.0))
+        mGoogleMap.addPolyline(polyLineOptions)
+        mGoogleMap!!.addMarker(MarkerOptions().position(routes.get(routes.size - 1)).title(getString(
+            R.string.current_location)))
+        practiceViewModel.routeBounds.value?.let {
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(practiceViewModel.routeBounds.value, 70))
+        }
+    }
+
     override fun onMapReady(p0: GoogleMap?) {
-        Log.i(TAG, "onMapReady !")
         if (p0 != null) {
             Log.i(TAG, "onMapReady - map is ready!")
             mGoogleMap = p0
+            isMapReady = true
             mGoogleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             mGoogleMap!!.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).title(getString(
                             R.string.current_location)))
@@ -121,28 +172,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // 4. add permission if android version is greater than 23
         if(Build.VERSION.SDK_INT >= 23 && checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             activity?.applicationContext?.let { LocationServices.getFusedLocationProviderClient(it).requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper())}
+            practiceViewModel.isLocationGranted = true
         }
     }
 
     private fun onLocationChanged(location: Location) {
-        // craete message for taost with updated latitude and longitude
-        var msg = "Updated Location: " + location.latitude + " , " + location.longitude
-        Log.d(TAG, "onLocationChanged " + msg)
-
-        // Show toast message with updated location
-        //Toast.makeText()
-        val location = LatLng(location.latitude, location.longitude)
-        mGoogleMap!!.clear()
-        mGoogleMap!!.addMarker(MarkerOptions().position(location).title(getString(R.string.current_location)))
-        /*
-        *   1: World
-            5: Landmass/continent
-            10: City
-            15: Streets
-            20: Buildings
-        * */
-        val zoomLevel = 18f
-        mGoogleMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
+        practiceViewModel.addLocation(location)
     }
 
     private fun checkPermission(permission : String): Boolean {
@@ -179,3 +214,4 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 }
+
