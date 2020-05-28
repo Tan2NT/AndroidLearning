@@ -1,5 +1,7 @@
 package com.tantnt.android.runstatistic.utils
 
+import com.google.android.gms.maps.model.LatLng
+
 object MathUtils {
 
     // distance in kilometer
@@ -27,5 +29,16 @@ object MathUtils {
 
     fun rad2deg(rad: Double): Double {
         return rad * 180.0 / Math.PI
+    }
+
+    // in Degrees
+    fun angleBetweenTwoPoints(p1: LatLng, p2: LatLng) : Double {
+        val dLon = p2.longitude - p1.longitude
+        val y = Math.sin(dLon) * Math.cos(p2.latitude)
+        val x = Math.cos(p1.latitude) * Math.sin(p2.latitude)
+        - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(dLon)
+        var brng = Math.toDegrees(Math.atan2(y, x))
+        brng = (360 - ((brng + 360) % 360))
+        return brng
     }
 }

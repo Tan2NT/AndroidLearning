@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.PolyUtil
 import com.tantnt.android.runstatistic.network.service.GoogleDirectionsNetwork
 import com.tantnt.android.runstatistic.utils.MathUtils
+import com.tantnt.android.runstatistic.utils.USE_GOOGLE_DIRECTIONS_SERVICE
 import com.tantnt.android.runstatistic.utils.nofifyObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,8 +25,6 @@ import java.time.LocalDateTime
 class PracticeViewModel : ViewModel() {
 
     private val TAG : String = "TDebug"
-
-    private val DIRECTION_REQUEST_TEMPLATE : String = "https://maps.googleapis.com/maps/api/directions/json?"
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"
@@ -68,6 +67,9 @@ class PracticeViewModel : ViewModel() {
         isLocationGranted = isGranted
     }
 
+    // path direction
+    var currentDirectionAngle : Double = 0.0
+
     // Coroutine
     private var viewModelJob : Job = Job()
     private val coroutineScope : CoroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
@@ -94,8 +96,8 @@ class PracticeViewModel : ViewModel() {
             location.longitude,
             _currentLocation.value!!.latitude,
             _currentLocation.value!!.longitude ) * 1000
-        val MIN_DISTANCE = 5
-        return (distance >= 5)
+        val MIN_DISTANCE = 3
+        return (distance >= 3)
     }
 
     // add new location into the routed
@@ -108,54 +110,56 @@ class PracticeViewModel : ViewModel() {
                 val start = LatLng(location.latitude, location.longitude)
                 Log.i(TAG, "addLocation add start location")
                 _routedLine.value = arrayListOf(start)
+                currentDirectionAngle = 0.0
                 _routedLine.nofifyObserver()
                 _currentLocation.value = start
                 _shouldStartNewPractice.value = true
             }
             else {
                 val to : LatLng = LatLng(location.latitude, location.longitude)
-                val from : LatLng = _currentLocation.value!!
-                val origin = from.latitude.toString() + "," + from.longitude.toString()
-                val dest = to.latitude.toString() + "," + to.longitude.toString()
-                Log.i(TAG, "find path from " + origin +  " to  " + dest)
+                if(USE_GOOGLE_DIRECTIONS_SERVICE) {
+                    val from : LatLng = _currentLocation.value!!
+                    val origin = from.latitude.toString() + "," + from.longitude.toString()
+                    val dest = to.latitude.toString() + "," + to.longitude.toString()
+                    Log.i(TAG, "find path from " + origin +  " to  " + dest)
 
-                coroutineScope.launch {
-                    // get the directions from current location to new location via Google Directions Service
-                    val directionsString = getGoogleDirections(origin, dest)
-                    //Log.i(TAG, "respone: " + directionsString)
-                    var directionsJson = JSONObject(directionsString)
-                    val routes = directionsJson.getJSONArray("routes")
-                    if(!routes.isNull(0))
-                    {
-                        // get bounds
-                        val boundJson : JSONObject = routes.getJSONObject(0).getJSONObject("bounds")
-                        Log.i(TAG, "bounds: " + boundJson.toString())
-                        val bound1 = LatLng(
-                            boundJson.getJSONObject("northeast").getDouble("lat"),
-                            boundJson.getJSONObject("northeast").getDouble("lng"))
-                        val bound2 = LatLng(
-                            boundJson.getJSONObject("southwest").getDouble("lat"),
-                            boundJson.getJSONObject("southwest").getDouble("lng"))
+                    coroutineScope.launch {
+                        // get the directions from current location to new location via Google Directions Service
+                        val directionsString = getGoogleDirections(origin, dest)
+                        //Log.i(TAG, "respone: " + directionsString)
+                        var directionsJson = JSONObject(directionsString)
+                        val routes = directionsJson.getJSONArray("routes")
+                        if(!routes.isNull(0))
+                        {
+                            // get bounds
+                            val boundJson : JSONObject = routes.getJSONObject(0).getJSONObject("bounds")
+                            Log.i(TAG, "bounds: " + boundJson.toString())
+                            val bound1 = LatLng(
+                                boundJson.getJSONObject("northeast").getDouble("lat"),
+                                boundJson.getJSONObject("northeast").getDouble("lng"))
+                            val bound2 = LatLng(
+                                boundJson.getJSONObject("southwest").getDouble("lat"),
+                                boundJson.getJSONObject("southwest").getDouble("lng"))
 
-                        val builder = LatLngBounds.Builder()
-                        builder.include(bound1)
-                        builder.include(bound2)
-                        _routeBounds.value = builder.build()
-                        //Log.i(TAG, "routes: " + routes.toString())
+                            val builder = LatLngBounds.Builder()
+                            builder.include(bound1)
+                            builder.include(bound2)
+                            _routeBounds.value = builder.build()
+                            //Log.i(TAG, "routes: " + routes.toString())
 
-                        // parse the routes
-                        val firstRoute = routes.get(0) as JSONObject
-                        val legs = firstRoute?.getJSONArray("legs")
-                        val firstLeg = legs?.let {
-                            it[0] as JSONObject
-                        }
-                        val steps = firstLeg?.getJSONArray("steps")
+                            // parse the routes
+                            val firstRoute = routes.get(0) as JSONObject
+                            val legs = firstRoute?.getJSONArray("legs")
+                            val firstLeg = legs?.let {
+                                it[0] as JSONObject
+                            }
+                            val steps = firstLeg?.getJSONArray("steps")
 
-                        if (steps == null) {
-                            Log.i(TAG, " no routed found!")
-                        }
+                            if (steps == null) {
+                                Log.i(TAG, " no routed found!")
+                            }
 
-                        //for(i in 0 until steps!!.length()) {
+                            //for(i in 0 until steps!!.length()) {
                             // get the polyline info
                             val points = steps!!.getJSONObject(0).getJSONObject("polyline").getString("points")
                             val polyPoints = PolyUtil.decode(points)
@@ -165,16 +169,27 @@ class PracticeViewModel : ViewModel() {
                                 Log.i(TAG, "Add Points " + polyPoints.get(j).toString())
                                 _routedLine.value!!.add(polyPoints.get(j))
                             }
-                            _routedLine.value!!.add(to)
-                            _routedLine.nofifyObserver()
-                        //}
-
-                        _currentLocation.value = to
-                        _shouldStartNewPractice.value = false
+                            calculatecurrentDirectionDegrees(to)
+                            updateNewLocation(to)
+                        }
                     }
+                } else {
+                    calculatecurrentDirectionDegrees(to)
+                    updateNewLocation(to)
                 }
             }
         }
+    }
+
+    private fun calculatecurrentDirectionDegrees(newLocation: LatLng) : Double {
+        return MathUtils.angleBetweenTwoPoints(currentLocation.value!!, newLocation)
+    }
+
+    private fun updateNewLocation(newLocation : LatLng) {
+        _routedLine.value!!.add(newLocation)
+        _currentLocation.value = newLocation
+        _routedLine.nofifyObserver()
+        _shouldStartNewPractice.value = false
     }
 
     private suspend fun getGoogleDirections(origin : String, dest : String) =

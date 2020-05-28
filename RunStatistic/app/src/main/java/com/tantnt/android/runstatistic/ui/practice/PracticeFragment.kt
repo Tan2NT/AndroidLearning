@@ -1,17 +1,14 @@
 package com.tantnt.android.runstatistic.ui.practice
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Location
-import android.os.Build
 import android.os.Bundle
-import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -20,11 +17,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.tantnt.android.runstatistic.R
+import com.tantnt.android.runstatistic.utils.LifecycleBoundLocationManager
+import com.tantnt.android.runstatistic.utils.LocationUtils
+import com.tantnt.android.runstatistic.utils.PermissionUtils
 
+@Suppress("DEPRECATION")
 class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private val TAG = "TDebug" //PracticeFragment::class.java.simpleName
@@ -39,8 +38,17 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private var latitude = 0.0
     private var longitude = 0.0
+    private lateinit var mMarker : Marker
 
     private lateinit var practiceViewModel: PracticeViewModel
+
+    private lateinit var fusedLocationProviderClient : FusedLocationProviderClient
+    // Location callback when ever location is changed
+    private val mLocationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult?) {
+            practiceViewModel.addLocation(result!!.lastLocation)
+        }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -63,10 +71,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             if (it == true){
                 Log.i(TAG, "update the marker")
                 // add the Marker at the starting point
-                mGoogleMap!!.addMarker(MarkerOptions().position(practiceViewModel.currentLocation.value!!).title(getString(
-                    R.string.current_location)))
+                val option = MarkerOptions().position(practiceViewModel.currentLocation.value!!).title(getString(
+                    R.string.current_location))
+                option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.direction_blue))
+                mMarker = mGoogleMap!!.addMarker(option)
 
-                moveCameraWithZoom(practiceViewModel.currentLocation.value!!, 15.0f)
+                moveCameraWithZoom(practiceViewModel.currentLocation.value!!, 17.0f)
 
             }
         })
@@ -78,8 +88,25 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     addMapDirections()
             }
         })
+
+        fusedLocationProviderClient = activity?.let {
+            LocationServices.getFusedLocationProviderClient(
+                it
+            )
+        }!!
+
+        startLocationUpdates()
+
         Log.i(TAG, "onCreateView done!")
         return root
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun moveCameraWithZoom(target: LatLng, zoomLevel: Float) {
@@ -102,19 +129,21 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         Log.i(TAG, "addMapDirections !")
         var polyLineOptions : PolylineOptions = PolylineOptions()
         polyLineOptions.color(Color.RED)
-        polyLineOptions.width(5f)
+        polyLineOptions.width(20f)
 
         val routes : ArrayList<LatLng> = practiceViewModel.routedLine.value!!
         for(i in 0 until routes!!.size){
             val point : LatLng = routes!!.get(i)
-            //Log.i(TAG, "addMapDirections add point Lat: " + point.latitude + " - Lon:" + point.longitude)
+            Log.i(TAG, "addMapDirections add point Lat: " + point.latitude + " - Lon:" + point.longitude)
             polyLineOptions.add(routes!!.get(i))
         }
-       // polyLineOptions.add(LatLng(85.0, 5.0))
-        //.add(LatLng(-85.0, 5.0))
+//        polyLineOptions.add(LatLng(85.0, 5.0))
+//        .add(LatLng(-85.0, 5.0))
+//        mGoogleMap!!.addMarker(MarkerOptions().position(routes.get(routes.size - 1)).title(getString(
+//            R.string.current_location)))
+        mMarker?.position = practiceViewModel.currentLocation.value!!
+        mMarker?.rotation = practiceViewModel.currentDirectionAngle.toFloat()
         mGoogleMap.addPolyline(polyLineOptions)
-        mGoogleMap!!.addMarker(MarkerOptions().position(routes.get(routes.size - 1)).title(getString(
-            R.string.current_location)))
         practiceViewModel.routeBounds.value?.let {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(practiceViewModel.routeBounds.value, 70))
         }
@@ -126,74 +155,50 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             mGoogleMap = p0
             isMapReady = true
             mGoogleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-            mGoogleMap!!.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).title(getString(
-                            R.string.current_location)))
-            startLocationUpdates()
+            //startLocationUpdates()
         }
         else Log.w(TAG, "onMapReady - map is  NOT ready!")
     }
 
     protected fun startLocationUpdates() {
         Log.i(TAG, "start Location update")
-        // init location request object
-        mLocationRequest = LocationRequest.create()
-        mLocationRequest!!.run {
-            setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            setInterval(LOCATION_UPDATE_INTERVAL)
-            setFastestInterval(LOCATION_FASTEST_INTERVAL)
-        }
+        var isPermissionEnable = true
 
-        // initialize location setting request buulder object
-        val builder = LocationSettingsRequest.Builder()
-        builder.addLocationRequest(mLocationRequest!!)
-        val locationSettingsRequest = builder.build()
+        activity?.let { myActivity ->
+                            activity?.applicationContext?.let { appContext ->
+                                isPermissionEnable = PermissionUtils.checkPermissions(
+                                    appContext,
+                                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    )
+                                if(!isPermissionEnable)
+                                    requestPermissions(
+                                        arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                            android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                                        REQUEST_LOCATION_PERMISSION
+                                    )
+                }
+            }!!
 
-        //initialize location service object
-        val settingsClient = activity?.applicationContext?.let {
-            LocationServices.getSettingsClient(
-                it
-            )
-        }
-        settingsClient!!.checkLocationSettings(locationSettingsRequest)
+        if (!isPermissionEnable)
+            return
 
-        // call register location listerner
-        registerLocationListener()
+        practiceViewModel.isLocationGranted = true
 
-    }
-
-    private fun registerLocationListener() {
-        // initialize location callback object
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                onLocationChanged(p0!!.lastLocation)
-            }
-        }
-
-        // 4. add permission if android version is greater than 23
-        if(Build.VERSION.SDK_INT >= 23 && checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            activity?.applicationContext?.let { LocationServices.getFusedLocationProviderClient(it).requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper())}
-            practiceViewModel.isLocationGranted = true
-        }
-    }
-
-    private fun onLocationChanged(location: Location) {
-        practiceViewModel.addLocation(location)
-    }
-
-    private fun checkPermission(permission : String): Boolean {
         activity?.applicationContext?.let {
-            if (ContextCompat.checkSelfPermission(it, permission) ==  PackageManager.PERMISSION_GRANTED)
-                return true
-            else {
-                requestPermission(permission)
-                return false
+            Log.i(TAG, "startLocationUpdates enable location setting")
+            if(!LocationUtils.isLocationEnable(it)){
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }else {
             }
         }
-        return false
+
+        Log.i(TAG, "startLocationUpdates bindLoctionManager")
+        bindLocationManager()
     }
 
-    private fun requestPermission(permission : String) {
-        activity?.let { ActivityCompat.requestPermissions(it, arrayOf(permission), REQUEST_LOCATION_PERMISSION) }
+    private fun bindLocationManager() {
+        LifecycleBoundLocationManager(this, fusedLocationProviderClient, mLocationCallback )
     }
 
     override fun onRequestPermissionsResult(
@@ -208,7 +213,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 if(grantResults.contains( PackageManager.PERMISSION_GRANTED)) {
                     Log.i(TAG, "Location permission granted!")
                     mGoogleMap.isMyLocationEnabled = true
-                    registerLocationListener()
+                    practiceViewModel.isLocationGranted = true
+                    startLocationUpdates()
                 }
             }
         }
