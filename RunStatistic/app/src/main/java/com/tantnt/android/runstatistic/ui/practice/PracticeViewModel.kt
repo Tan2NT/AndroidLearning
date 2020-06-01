@@ -70,6 +70,11 @@ class PracticeViewModel : ViewModel() {
     // path direction
     var currentDirectionAngle : Double = 0.0
 
+    // length of the route
+    private val _totalDistance = MutableLiveData<Double>()
+    val totalDistance : LiveData<Double>
+        get() = _totalDistance
+
     // Coroutine
     private var viewModelJob : Job = Job()
     private val coroutineScope : CoroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
@@ -83,10 +88,11 @@ class PracticeViewModel : ViewModel() {
         _routedLine.value = null
         _currentLocation.value = null
         _totalPracticingTime.value = 0
+        _totalDistance.value = 0.0
         //_currentTime.value = LocalDateTime.now()
     }
 
-    // the distance at least 5 meter
+    // the distance at least 3 meters
     private fun isLocationChanged(location: Location): Boolean {
         if (_currentLocation.value == null)
             return true
@@ -175,6 +181,10 @@ class PracticeViewModel : ViewModel() {
                     }
                 } else {
                     calculatecurrentDirectionDegrees(to)
+                    _totalDistance.value = _totalDistance.value!! + MathUtils.distance(
+                        to.latitude, to.longitude,
+                        _currentLocation.value!!.latitude, _currentLocation.value!!.longitude
+                    )
                     updateNewLocation(to)
                 }
             }
