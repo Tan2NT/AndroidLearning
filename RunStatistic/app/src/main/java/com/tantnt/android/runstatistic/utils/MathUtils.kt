@@ -41,4 +41,8 @@ object MathUtils {
         brng = (360 - ((brng + 360) % 360))
         return brng
     }
+
+    fun timeBetween2EpochDays(start: Long, end: Long) : Long {
+        return end - start
+    }
 }

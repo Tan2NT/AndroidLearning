@@ -29,6 +29,7 @@ import com.tantnt.android.runstatistic.BuildConfig
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.ForegroundOnlyLocationService
 import com.tantnt.android.runstatistic.utils.*
+import kotlinx.android.synthetic.main.fragment_practice.*
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
@@ -54,7 +55,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    private var locationUpdatesRequested : Boolean = false
+    private var isLaunched : Boolean = false
 
     // Monitor connection to the while-in-use service.
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
@@ -65,17 +66,27 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             foregroundOnlyLocationService = binder.service
             foregroundOnlyLocationServiceBound = true
 
-            if(!locationUpdatesRequested){
+            val enabled = sharedPreferences.getBoolean(
+                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
+
+            if (enabled && isLaunched) {
+                foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+            } else {
                 if (foregroundPermissionApproved()) {
                     if(locationSettingEnabled()) {
-                        foregroundOnlyLocationService?.subscribeToLocationUpdates()
-                        locationUpdatesRequested = true
-                    }
-                    else
+                       foregroundOnlyLocationService?.subscribeToLocationUpdates()
+                    } else
                         enableLocationSetting()
                 } else {
                     requestForegroundPermissions()
                 }
+            }
+
+            isLaunched = false
+
+            // register button listener
+            start_practice_btn.setOnClickListener {
+                foregroundOnlyLocationService?.startPractice()
             }
         }
 
@@ -130,6 +141,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         sharedPreferences =
             activity?.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)!!
 
+        isLaunched = true
         Log.i(TAG, "onCreateView done!")
         return root
     }
@@ -146,6 +158,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onPause() {
+        Log.i(TAG, "onPause")
         LocalBroadcastManager.getInstance(activity?.applicationContext!!).unregisterReceiver(
             foregroundOnlyBroadcastReceiver
         )
@@ -154,6 +167,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onResume() {
+        Log.i(TAG, "onResume")
         super.onResume()
 
         // register a broadcast receiver
@@ -165,6 +179,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onStop() {
+        Log.d(TAG, "onStop() ---- ")
         super.onStop()
         if (foregroundOnlyLocationServiceBound) {
             activity?.let {
@@ -172,6 +187,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             }
             foregroundOnlyLocationServiceBound = false
         }
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy() ---")
+        foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+        super.onDestroy()
     }
 
     private fun moveCameraWithZoom(target: LatLng, zoomLevel: Float) {
@@ -240,7 +261,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     //foregroundOnlyLocationService?.subscribeToLocationUpdates()
                     if(locationSettingEnabled()){
                         foregroundOnlyLocationService?.subscribeToLocationUpdates()
-                        locationUpdatesRequested = true
                     }
                     else
                         enableLocationSetting()
@@ -344,7 +364,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             REQUEST_ENBALE_LOCATION_SETTING -> {
                 if(locationSettingEnabled()) {
                     foregroundOnlyLocationService?.subscribeToLocationUpdates()
-                    locationUpdatesRequested = true
                 }
                 else
                     enableLocationSetting()
@@ -362,7 +381,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             )
 
             if(location != null) {
-                Log.d(TAG, "ForegroundOnlyBroadcastReceiver add location " + location.toString())
+                //Log.d(TAG, "ForegroundOnlyBroadcastReceiver add location " + location.toString())
                 practiceViewModel!!.addLocation(location)
             }
         }
