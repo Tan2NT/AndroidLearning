@@ -13,7 +13,7 @@ interface PracticeDao {
     fun insert(practice: DatabasePractice)
 
     @Query("SELECT * FROM databasepractice ORDER BY start_time DESC LIMIT 1")
-    fun getLastPractice(): LiveData<DatabasePractice>
+    fun getLatestPractice(): LiveData<DatabasePractice>
 
     // Todo: get practices by range of days/months/years
 }

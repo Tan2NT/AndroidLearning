@@ -20,7 +20,7 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 data class DatabasePractice constructor(
     @PrimaryKey
     var start_time: Long,      // timestamp    - start time of this practice
-    var duration: Int,          // in second    - duration of this practice
+    var duration: Long,          // in second    - duration of this practice
     var distance: Double,       // in Km        - how far which the user has been passed
     var calo: Double,           // in Kcal      - how much Calo user has spent
     var speed: Double,          // km/h         - the average speed of user during the practice

@@ -3,7 +3,6 @@ package com.tantnt.android.runstatistic.base
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.location.Location
 import android.os.Binder
@@ -20,15 +19,12 @@ import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.models.asDatabasePractice
-import com.tantnt.android.runstatistic.repository.PracticeRepository
-import com.tantnt.android.runstatistic.ui.practice.PracticeFragment
+import com.tantnt.android.runstatistic.repository.RunstatisticRepository
 import com.tantnt.android.runstatistic.utils.*
 import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 import java.util.concurrent.TimeUnit
 import kotlin.toString
 
@@ -38,15 +34,20 @@ import kotlin.toString
  * itself to a foreground service to insure location updates interrupted
  */
 
+var foregroundServiceIsRunning = false
+var foregroundServiceSubscribeLocationUpdate = false
+var  isPracticeRunning = false
+const val PRACTICE_UPDATE_INTERVAL = 2   // seconds
+
 class ForegroundOnlyLocationService  : Service() {
 
     /**
      * Store the information of this practice
      */
-    private var practiceStarted = false
+    private var lastUpdateTime : Long = System.currentTimeMillis()
 
     private var currentPractice : PracticeModel = PracticeModel(
-        start_time = LocalDate.now().toEpochDay(),
+        start_time = TimeUtils.getTimeInMilisecond(),
         duration = 0,
         distance = 0.0,
         calo = 0.0,
@@ -58,7 +59,7 @@ class ForegroundOnlyLocationService  : Service() {
     // Coroutines scope to allow repository to safe access the database
     private lateinit var coroutineScope : CoroutineScope
 
-    private lateinit var repository: PracticeRepository
+    private lateinit var repository: RunstatisticRepository
 
     /**
      * checks whether the bound activity has really gone away (foreground service with notification
@@ -91,7 +92,7 @@ class ForegroundOnlyLocationService  : Service() {
     private var currentLocation: Location? = null
 
     override fun onCreate() {
-        Log.d(TAG, "onCreate() ---- ")
+        Log.d(TAG, "ForegroundService onCreate() ---- ")
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -101,62 +102,112 @@ class ForegroundOnlyLocationService  : Service() {
         // Create a LocationRequest
         locationRequest = LocationRequest().apply {
             // how often the location is updated
-            interval = TimeUnit.SECONDS.toMillis(5)
+            interval = TimeUnit.SECONDS.toMillis(3)
 
             // your application will never receive updates more frequently than this value
-            fastestInterval = TimeUnit.SECONDS.toMillis(3)
+            fastestInterval = TimeUnit.SECONDS.toMillis(1)
 
             // sets the maximum time when batched location updates are delivered. Updates may be
             // delivered sooner than this interval
-            maxWaitTime = TimeUnit.SECONDS.toMillis(20)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(10)
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-        repository = PracticeRepository(getDatabase(application))
+        repository = RunstatisticRepository(getDatabase(application))
         coroutineScope = CoroutineScope(Dispatchers.Default)
 
         // Initialize the LocationCallback
         locationCallback = object: LocationCallback() {
             override fun onLocationResult(p0: LocationResult?) {
                 super.onLocationResult(p0)
+                Log.d(TAG, "onLocationResult lastLocation:  " + p0?.lastLocation.toString())
 
-                if(p0?.lastLocation != null) {
-                    // Todo: Save a new location to a database
+                if(p0?.lastLocation != null ) {
 
-                    onNewLocation(p0.lastLocation)
-
-                    // Updates notification content if this service is running as a foreground service
-                    if(serviceRunningInForeground) {
-                        notificationManager.notify(
-                            NOTIFICATION_ID,
-                            generateNotification(currentLocation))
-                    } else {
-                        // now for test: send a broadcast to pass the current location to Fragment
-                    /*    val intent = Intent(ACTION_FORGROUND_ONLY_LOCATION_BROADCAST)
-                        intent.putExtra(EXTRA_LOCATION, currentLocation)
-                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)*/
-                    }
+                   if(isPracticeRunning){
+                       onNewLocation(p0.lastLocation)
+                   }else {
+                       currentLocation = p0?.lastLocation
+                       val intent = Intent(ACTION_FORGROUND_ONLY_LOCATION_BROADCAST)
+                       intent.putExtra(EXTRA_LOCATION, currentLocation)
+                       LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+                   }
                 }
+            }
+        }
+        foregroundServiceIsRunning = true
+    }
+
+    fun startPractice() {
+        if(currentPractice.status == PRACTICE_STATUS.PAUSING.value) {
+            resumePractice()
+        }
+        else {
+            isPracticeRunning = true
+            currentLocation = null
+            currentPractice = PracticeModel(
+                start_time = TimeUtils.getTimeInMilisecond(),
+                duration = 0,
+                distance = 0.0,
+                calo = 0.0,
+                speed = 0.0,
+                status = PRACTICE_STATUS.RUNNING.value,
+                path = arrayListOf())
+            if (currentLocation != null) {
+                currentPractice.path.add(
+                    LatLng(
+                        currentLocation!!.latitude,
+                        currentLocation!!.longitude
+                    )
+                )
+                savePractice()
             }
         }
     }
 
-    fun startPractice() {
-        practiceStarted = true
+    fun stopPractice() {
+        currentPractice.status = PRACTICE_STATUS.COMPETED.value
+        isPracticeRunning = false
+        savePractice()
+        unsubscribeToLocationUpdates()
+        stopSelf()
+    }
+
+    fun pausePractice() {
+        currentPractice.status = PRACTICE_STATUS.PAUSING.value
+        savePractice()
+    }
+
+    fun resumePractice() {
+        currentPractice.status = PRACTICE_STATUS.RUNNING.value
+        lastUpdateTime = TimeUtils.getTimeInMilisecond()
+    }
+
+    fun savePractice() {
+        coroutineScope.launch {
+            try {
+                Log.d(TAG, "try to insert a practice into database " + currentPractice.toString())
+                repository.insertPractice(currentPractice.asDatabasePractice())
+            } catch (e: Exception) {
+                Log.e(TAG, "insert to database failed : " + e.toString())
+            }
+        }
     }
 
     private fun onNewLocation(location: Location?) {
-        Log.d(LOG_TAG, "onNewLocation practiceStarted: " + practiceStarted.toString())
-        if(!practiceStarted)
-            return
+        Log.d(LOG_TAG, "onNewLocation practiceStarted: " + isPracticeRunning.toString())
+//        if(!practiceStarted || currentPractice.status != PRACTICE_STATUS.RUNNING.value)
+////            return
 
         // check the location
-        if(currentLocation == null) {
+        if(currentPractice.path.size == 0) {
             // Start a new practice
             currentLocation = location
             currentPractice.path.add(LatLng(location!!.latitude, location!!.longitude))
-            currentPractice.start_time = LocalDate.now().toEpochDay()
+            currentPractice.start_time = System.currentTimeMillis()
+            savePractice()
+            updateForegroundNotificationifNeed()
             return
         }
 
@@ -171,27 +222,32 @@ class ForegroundOnlyLocationService  : Service() {
             // update the practice
             currentPractice.path.add(LatLng(location!!.latitude, location!!.longitude))
             currentPractice.distance += distance
-            currentPractice.duration = (MathUtils.timeBetween2EpochDays(
-                currentPractice.start_time,
-                LocalDate.now().toEpochDay())/60000).toInt()    // minute
-            currentPractice.speed = 0.0 //currentPractice.distance/(currentPractice.duration * 60)    // Km/h
+            currentPractice.duration += TimeUtils.getElapseTimeFrom(lastUpdateTime)
+            lastUpdateTime = TimeUtils.getTimeInMilisecond()
+            currentPractice.speed = (currentPractice.distance/(currentPractice.duration / 3600) )   // Km/h
             currentPractice.status = PRACTICE_STATUS.RUNNING.value
-            currentPractice.calo = 0.0 //currentPractice.duration * KcalCaclator.burnedByyWalkingPerMinute(USER_WEIGHT_DEFAULT, currentPractice.speed, USER_HEIGHT_DEFAULT)
+            currentPractice.calo = (currentPractice.duration * KcalCaclator.burnedByyWalkingPerMinute(
+                USER_WEIGHT_DEFAULT, currentPractice.speed, USER_HEIGHT_DEFAULT)
+                    ).aroundPlace(2)
 
             // save updated practice into the database
-            coroutineScope.launch {
-                try {
-                    Log.d(TAG, "try to insert a practice into database " + currentPractice.toString())
-                    repository.insertPractice(currentPractice.asDatabasePractice())
-                } catch (e: Exception) {
-                    Log.e(TAG, "insert to database failed : " + e.toString())
-                }
-            }
+            savePractice()
         }
 
         // update current location
         currentLocation!!.latitude = location!!.latitude
         currentLocation!!.longitude = location!!.longitude
+        updateForegroundNotificationifNeed()
+    }
+
+    private fun updateForegroundNotificationifNeed(){
+        // @Todo
+        // Updates notification content if this service is running as a foreground service
+        if(serviceRunningInForeground) {
+            notificationManager.notify(
+                NOTIFICATION_ID,
+                generateNotification(currentLocation))
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -250,7 +306,8 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy()")
+        Log.d(TAG, "foregroundService onDestroy()")
+        foregroundServiceIsRunning = false
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -262,6 +319,7 @@ class ForegroundOnlyLocationService  : Service() {
         Log.d(TAG, "subscribeToLocationUpdates()")
 
         SharedPreferenceUtil.saveLocationTrackingPref(this, true)
+        foregroundServiceSubscribeLocationUpdate = true
 
         // Binding to this service doesn't actually trigger onStartCommand(). That is needed to
         // ensure this Service can be promoted to a foreground service, i.e., the service needs to
@@ -274,6 +332,7 @@ class ForegroundOnlyLocationService  : Service() {
                 locationRequest, locationCallback, Looper.myLooper())
         } catch (unlikely: SecurityException) {
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
+            foregroundServiceSubscribeLocationUpdate = false
             Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
         }
     }
@@ -295,8 +354,10 @@ class ForegroundOnlyLocationService  : Service() {
 
             }
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
+            foregroundServiceSubscribeLocationUpdate = false
         } catch (unlikely: SecurityException) {
             SharedPreferenceUtil.saveLocationTrackingPref(this, true)
+            foregroundServiceSubscribeLocationUpdate = true
             Log.e(TAG, "Lost location permissions. Couldn;t remove updates")
         }
     }

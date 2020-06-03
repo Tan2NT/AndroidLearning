@@ -15,3 +15,8 @@ fun Location?.toString() : String {
         "Unknow location"
     }
 }
+
+fun Double.aroundPlace(numOfPlace: Int) : Double {
+    val k = Math.pow(10.0, numOfPlace.toDouble())
+    return (this * k) / k
+}

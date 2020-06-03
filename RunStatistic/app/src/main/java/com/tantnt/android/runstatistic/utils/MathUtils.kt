@@ -20,7 +20,8 @@ object MathUtils {
         dist = Math.acos(dist)
         dist = rad2deg(dist)
         dist = dist * 60 * 1.1515
-        return dist
+
+        return (Math.round(dist * 100.0) / 100.0)
     }
 
     fun deg2rad(deg: Double): Double {

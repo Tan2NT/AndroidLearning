@@ -28,6 +28,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.tantnt.android.runstatistic.BuildConfig
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.ForegroundOnlyLocationService
+import com.tantnt.android.runstatistic.base.foregroundServiceIsRunning
+import com.tantnt.android.runstatistic.base.foregroundServiceSubscribeLocationUpdate
+import com.tantnt.android.runstatistic.base.isPracticeRunning
+import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.utils.*
 import kotlinx.android.synthetic.main.fragment_practice.*
 
@@ -61,16 +65,18 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.i(TAG, "onServiceConnected! + " + name.toString())
             val binder = service as ForegroundOnlyLocationService.LocalBinder
             foregroundOnlyLocationService = binder.service
             foregroundOnlyLocationServiceBound = true
 
-            val enabled = sharedPreferences.getBoolean(
-                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
+            // check if has location service is running?
+            val enabled = foregroundServiceIsRunning && foregroundServiceSubscribeLocationUpdate
+                //sharedPreferences.getBoolean(
+                //SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
+            Log.i(TAG, "onServiceConnected! foregroundServiceEnable? " + enabled.toString())
 
-            if (enabled && isLaunched) {
-                foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+            if (enabled) {
+                //foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
             } else {
                 if (foregroundPermissionApproved()) {
                     if(locationSettingEnabled()) {
@@ -83,11 +89,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             }
 
             isLaunched = false
-
-            // register button listener
-            start_practice_btn.setOnClickListener {
-                foregroundOnlyLocationService?.startPractice()
-            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -102,8 +103,14 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        val activity = requireNotNull(this.activity) {
+            "you can only access the viewModel after onActivityCreated"
+        }
+
         practiceViewModel =
-                ViewModelProviders.of(this).get(PracticeViewModel::class.java)
+                ViewModelProviders.of(this, PracticeViewModelFactory(activity.application)).
+                    get(PracticeViewModel::class.java)
+
         val root = inflater.inflate(R.layout.fragment_practice, container, false)
 
         val mapFragment  = childFragmentManager?.findFragmentById(R.id.map) as SupportMapFragment
@@ -114,25 +121,47 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             mapFragment?.getMapAsync(this)
         }
 
-        practiceViewModel.shouldStartNewPractice.observe(viewLifecycleOwner, Observer {
-            if (it == true){
-                Log.i(TAG, "update the marker")
-                // add the Marker at the starting point
-                val option = MarkerOptions().position(practiceViewModel.currentLocation.value!!).title(getString(
-                    R.string.current_location))
-                option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.direction_blue))
-                mMarker = mGoogleMap!!.addMarker(option)
+        practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
+            if (isMapReady && it != null && it.path.size >= 1  && isPracticeRunning){
 
-                moveCameraWithZoom(practiceViewModel.currentLocation.value!!, 17.0f)
+                Log.i(TAG, "PracticeFragment - latestPractice: " + it.toString())
 
-            }
-        })
+                if(it.path.size == 1) {
+                    Log.i(TAG, "PracticeFragment - start Practice")
+                    // add the Marker at the starting point
+                    val option = MarkerOptions().position(it.path[0]).title(getString(
+                        R.string.current_location))
+                    option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange))
+                    mGoogleMap!!.addMarker(option)
+                    moveCameraWithZoom(it.path[0], 16.0f)
+                }
 
-        practiceViewModel.routedLine.observe(viewLifecycleOwner, Observer {
-            if(practiceViewModel.isLocationGranted && isMapReady ) {
-                // update the routes
-                if(practiceViewModel.routedLine.value != null && practiceViewModel.routedLine.value!!.size > 1)
-                    addMapDirections()
+                // adding path
+                addPath(it.path)
+
+                // update the UI
+                updateUI(it)
+
+                // update button status
+                when(it.status) {
+                    PRACTICE_STATUS.RUNNING.value -> {
+                        stop_practice_btn.visibility = View.VISIBLE
+                        pause_practice_btn.visibility = View.VISIBLE
+                        start_practice_btn.visibility = View.GONE
+                    }
+
+                    PRACTICE_STATUS.PAUSING.value -> {
+                        stop_practice_btn.visibility = View.VISIBLE
+                        pause_practice_btn.visibility = View.GONE
+                        start_practice_btn.visibility = View.VISIBLE
+                    }
+
+                    else -> {
+                        stop_practice_btn.visibility = View.GONE
+                        pause_practice_btn.visibility = View.GONE
+                        start_practice_btn.visibility = View.VISIBLE
+                    }
+                }
             }
         })
 
@@ -142,8 +171,55 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             activity?.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)!!
 
         isLaunched = true
+
         Log.i(TAG, "onCreateView done!")
         return root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        // register button listener
+        // start a practice
+        start_practice_btn.setOnClickListener {
+            foregroundOnlyLocationService?.startPractice()
+
+            stop_practice_btn.visibility = View.VISIBLE
+            pause_practice_btn.visibility = View.VISIBLE
+            start_practice_btn.visibility = View.GONE
+        }
+
+        // stop the practice
+        stop_practice_btn.setOnClickListener {
+            foregroundOnlyLocationService?.stopPractice()
+
+            stop_practice_btn.visibility = View.GONE
+            pause_practice_btn.visibility = View.GONE
+            start_practice_btn.visibility = View.VISIBLE
+        }
+
+        // pause the practice
+        pause_practice_btn.setOnClickListener {
+            foregroundOnlyLocationService?.pausePractice()
+
+            stop_practice_btn.visibility = View.VISIBLE
+            pause_practice_btn.visibility = View.GONE
+            start_practice_btn.visibility = View.VISIBLE
+        }
+
+        initButtonStatus()
+    }
+
+    private fun updateUI(it: PracticeModel?) {
+        textView_distance.text = it!!.distance.toString()
+        //textView_timer.text = it.duration!!.toString()
+        //textView_calo.text = it!!.calo.toString()
+        textView_speed.text = it!!.speed.toString()
+    }
+
+    private fun initButtonStatus() {
+        stop_practice_btn.visibility = View.GONE
+        pause_practice_btn.visibility = View.GONE
+        start_practice_btn.visibility = View.VISIBLE
     }
 
     override fun onStart() {
@@ -191,7 +267,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() ---")
-        foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+//        foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
         super.onDestroy()
     }
 
@@ -211,25 +287,31 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-    private fun addMapDirections() {
+    private fun addPath(path : ArrayList<LatLng>) {
         Log.i(TAG, "addMapDirections !")
         var polyLineOptions : PolylineOptions = PolylineOptions()
         polyLineOptions.color(Color.RED)
         polyLineOptions.width(20f)
 
-        val routes : ArrayList<LatLng> = practiceViewModel.routedLine.value!!
-        for(i in 0 until routes!!.size){
-            val point : LatLng = routes!!.get(i)
-            Log.i(TAG, "addMapDirections add point Lat: " + point.latitude + " - Lon:" + point.longitude)
-            polyLineOptions.add(routes!!.get(i))
+        for(i in 0 until path.size){
+            Log.i(TAG, path.get(i).toString())
+            polyLineOptions.add(path.get(i))
         }
 
-        mMarker?.position = practiceViewModel.currentLocation.value!!
-        mMarker?.rotation = practiceViewModel.currentDirectionAngle.toFloat()
-        mGoogleMap.addPolyline(polyLineOptions)
-        practiceViewModel.routeBounds.value?.let {
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(practiceViewModel.routeBounds.value, 70))
+        if(mMarker == null ) {
+            val option = MarkerOptions().position(path.get(path.size - 1)).title(getString(
+                R.string.current_location))
+            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
+            mMarker = mGoogleMap!!.addMarker(option)
         }
+        mMarker?.position = path.get(path.size - 1)
+        moveCameraWithZoom(path.get(path.size - 1), 16.5f)
+        mGoogleMap.addPolyline(polyLineOptions)
+
+//        Adding bounds
+//        practiceViewModel.routeBounds.value?.let {
+//            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(practiceViewModel.routeBounds.value, 70))
+//        }
     }
 
     override fun onMapReady(p0: GoogleMap?) {
@@ -377,12 +459,14 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val location = intent?.getParcelableExtra<Location>(
-                ForegroundOnlyLocationService.EXTRA_LOCATION
-            )
-
-            if(location != null) {
-                //Log.d(TAG, "ForegroundOnlyBroadcastReceiver add location " + location.toString())
-                practiceViewModel!!.addLocation(location)
+                ForegroundOnlyLocationService.EXTRA_LOCATION)
+            if(isMapReady) {
+                val point = LatLng(location!!.latitude, location!!.longitude)
+                val option = MarkerOptions().position(point).title(getString(
+                    R.string.current_location))
+                option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
+                mMarker = mGoogleMap!!.addMarker(option)
+                moveCameraWithZoom(point, 16.0f)
             }
         }
     }

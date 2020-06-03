@@ -15,9 +15,15 @@ import kotlinx.coroutines.withContext
  * Repository for storing the practice on disk
 */
 
-class PracticeRepository(private val database: PracticeDatabase) {
-    val lastPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getLastPractice()) {
-        it.asModel()
+class RunstatisticRepository(private val database: PracticeDatabase) {
+
+    /**
+     * latestPractice
+     */
+    val latestPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getLatestPractice()) {
+        it?.let {
+            it.asModel()
+        }
     }
 
     /**

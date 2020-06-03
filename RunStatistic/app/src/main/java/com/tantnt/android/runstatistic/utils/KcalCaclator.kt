@@ -18,6 +18,8 @@ object KcalCaclator {
         val k3 = k2 / bodyHeight
 
         // Calories burned per minute
-        return k1 + k3 * 0.029 * 60
+        val result =  k1 + k3 * 0.029 * 60
+
+        return result.aroundPlace(2)
     }
 }
