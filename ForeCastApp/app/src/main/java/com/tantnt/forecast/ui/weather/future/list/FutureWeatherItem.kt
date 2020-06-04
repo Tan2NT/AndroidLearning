@@ -1,8 +1,8 @@
 package com.tantnt.forecast.ui.weather.future.list
 
+import com.bumptech.glide.Glide
 import com.tantnt.forecast.R
 import com.tantnt.forecast.data.db.unitlocalized.future.list.UnitSpecificsimpleFutureWeatherEntry
-import com.tantnt.forecast.internal.glide.GlideApp
 import com.tantnt.forecast.ui.weather.current.BASE_ICON_URL
 import com.tantnt.forecast.ui.weather.current.ICON_EXTENTION
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -39,7 +39,7 @@ class FutureWeatherItem (
     }
 
     private fun ViewHolder.updateWeatherIcon(){
-        GlideApp.with(this.containerView)
+        Glide.with(this.containerView)
             .load(BASE_ICON_URL + weatherEntry.icon + ICON_EXTENTION)
             .into(imageView_condition_icon)
     }

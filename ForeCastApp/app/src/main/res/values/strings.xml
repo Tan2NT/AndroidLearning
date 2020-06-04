@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Weather Forecast</string>
+    <string name="next_16_days">Next 16 days</string>
+    <string name="to_day">Today</string>
 </resources>

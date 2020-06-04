@@ -2,6 +2,7 @@ package com.tantnt.forecast.ui.weather.future.list
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,7 @@ class FutureListWeatherFragment : ScopeFragment(), KodeinAware{
         viewModel = ViewModelProviders.of(this, viewModalFactory)
 		.get(FutureListWeatherViewModel::class.java)
         bindUI()
+        (activity as? AppCompatActivity)?.supportActionBar?.title =  getString(R.string.next_16_days)
     }
 
     private fun bindUI() = launch (Dispatchers.Main){
@@ -62,7 +64,7 @@ class FutureListWeatherFragment : ScopeFragment(), KodeinAware{
 
     private fun updateWeatherToNext16Days(){
         (activity as? AppCompatActivity)?.supportActionBar?.title = viewModel.getRequestedCity()
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Next 16 days"
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = getString(R.string.next_16_days)
     }
 
     private fun List<UnitSpecificsimpleFutureWeatherEntry>.toFutureWeatherItems() : List<FutureWeatherItem>{

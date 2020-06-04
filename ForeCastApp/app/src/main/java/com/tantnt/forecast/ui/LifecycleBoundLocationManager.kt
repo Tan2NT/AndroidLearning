@@ -8,7 +8,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 
-class LifecycleBoundLocationManager (
+class LifecycleBoundLocationManager(
     lifecycleOwner : LifecycleOwner,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     private val locationCallback: LocationCallback

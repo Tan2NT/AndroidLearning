@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 
 import com.tantnt.forecast.R
 import com.tantnt.forecast.data.db.entity.LocalDateTimeConverter
-import com.tantnt.forecast.internal.glide.GlideApp
 import com.tantnt.forecast.ui.base.ScopeFragment
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.coroutines.launch
@@ -47,6 +47,8 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
         viewModel.getCurrentWeather()
 
        bindUI()
+
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.to_day)
     }
 
     private fun bindUI() = launch {
@@ -56,11 +58,8 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
         currentWeather.observe(this@CurrentWeatherFragment, androidx.lifecycle.Observer {
 
             if(it == null){
-                Log.d(TAG, "CurentWeatherFragment bindUI return NULL" )
                 return@Observer
             }
-
-            Log.d(TAG, "CurentWeatherFragment bindUI has data" + it.weatherDescriptionWeatherbit.description )
 
             group_loading.visibility = View.GONE
             updateDateToday()
@@ -68,11 +67,11 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
             updateTemperature(it.temp, it.appTemp)
             updateOtherInfo(it.precip, it.windSpd, it.vis)
 
-            GlideApp.with(this@CurrentWeatherFragment)
-                .load(BASE_ICON_URL + it.weatherDescriptionWeatherbit.icon + ICON_EXTENTION)
+            Glide.with(this@CurrentWeatherFragment)
+                .load(BASE_ICON_URL + it.weatherIcon + ICON_EXTENTION)
                 .into(imageView_condition_icon)
 
-            textView_condition.text = it.weatherDescriptionWeatherbit.description
+            textView_condition.text = it.weatherDescription
 
         })
     }
@@ -83,7 +82,7 @@ class CurrentWeatherFragment : ScopeFragment(), KodeinAware {
 
     private fun updateDateToday(){
         val dateString = LocalDateTimeConverter.toDateString(LocalDate.now())!!
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today " + dateString
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = getString(R.string.to_day) + " " + dateString
     }
 
     private fun updateTemperature(tempareture: Double, feelLike: Double){

@@ -2,6 +2,7 @@ package com.tantnt.forecast.ui.weather.future.detail
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,11 +53,13 @@ class FutureDetailWeatherFragment : ScopeFragment(), KodeinAware {
         // TODO: Use the ViewModel
 
         bindUI()
+
+        (activity as? AppCompatActivity)?.supportActionBar?.title = safeArg?.dateString
     }
 
     private fun bindUI() = launch(Dispatchers.Main) {
         val futureWeather = viewModel.weather.await()
-
+        Log.i("TDebug", "DetailFragment - bindUI")
         futureWeather.observe(this@FutureDetailWeatherFragment, Observer {
             updateLocation(viewModel.getRequestedCity())
             updateTemperature(it.temp, it.minTemp, it.maxTemp)

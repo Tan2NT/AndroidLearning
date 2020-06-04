@@ -30,10 +30,16 @@ class ImperialCurrentWeatherEntry(
     override  val lat : Double,
     @ColumnInfo(name = "ts")
     override val ts: Int,
-    @ColumnInfo(name = "weatherDescriptionWeatherbit")
-    override val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit,
+    //@ColumnInfo(name = "weatherDescriptionWeatherbit")
+    //override val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit,
     @ColumnInfo(name = "windCdirFull")
     override val windCdirFull: String,
+    @ColumnInfo(name = "weather_code")
+    override  val weatherCode : String,
+    @ColumnInfo(name = "weather_description")
+    override  val weatherDescription: String,
+    @ColumnInfo(name = "weather_icon")
+    override  val weatherIcon: String,
     @ColumnInfo(name = "windSpd")
     override val windSpd: Double
     ) :

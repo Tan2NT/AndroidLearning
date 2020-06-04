@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.tantnt.forecast.data.db.CurrentWeatherDao
 import com.tantnt.forecast.data.db.FutureWeatherDao
 import com.tantnt.forecast.data.db.unitlocalized.current.ImperialCurrentWeatherEntry
+import com.tantnt.forecast.data.db.unitlocalized.current.UnitSpecificCurrentWeatherEntry
 import com.tantnt.forecast.data.db.unitlocalized.future.detail.UnitSpecificFutureDetailWeather
 import com.tantnt.forecast.data.db.unitlocalized.future.list.UnitSpecificsimpleFutureWeatherEntry
 import com.tantnt.forecast.data.network.WeatherNetworkDataSource
@@ -46,7 +47,7 @@ class ForecastRepositoryImpl(
         }
     }
 
-    override suspend fun getCurrentWeather(isImperial : Boolean): LiveData<out ImperialCurrentWeatherEntry> {
+    override suspend fun getCurrentWeather(isImperial : Boolean): LiveData<out UnitSpecificCurrentWeatherEntry> {
         return withContext(Dispatchers.IO) {
             initWeatherData()
             Log.d(TAG, "getCurrentWeather 222:")
@@ -68,15 +69,19 @@ class ForecastRepositoryImpl(
     ): LiveData<out UnitSpecificFutureDetailWeather> {
        return withContext(Dispatchers.IO){
            Log.d(TAG, "getFutureWeatherDetailByDate")
-           initWeatherData()
+           //initWeatherData()
            return@withContext futureWeatherDao.getWeatherDetailByDay(date)
        }
     }
 
     private fun persistFetchedCurrentWeather(fetchedWeather : CurrentWeatherResponseWeatherbit){
         GlobalScope.launch(Dispatchers.IO) {
-            Log.d(TAG, "persistFetchedCurrentWeather: " + fetchedWeather.toString())
-            currentWeatherDao.upsert(fetchedWeather.data[0])
+            Log.d(TAG, "persistFetchedCurrentWeather: save to data" + fetchedWeather.toString())
+            try {
+                currentWeatherDao.upsert(fetchedWeather.data[0])
+            } catch (e: Exception){
+                Log.d(TAG, "persistFetchedCurrentWeather: save data erroe: " + e.toString())
+            }
         }
     }
 
@@ -104,13 +109,8 @@ class ForecastRepositoryImpl(
             return
         }
 
-        val lastCurrentWeatherEntry = currentWeatherDao.getWeatherImperial().value
+        val lastCurrentWeatherEntry = currentWeatherDao.getCurrentWeatherImperialNonLive()
         if(lastCurrentWeatherEntry == null || locationProvider.hasLocationChanged(lastCurrentWeatherEntry)){
-            if(lastCurrentWeatherEntry == null)
-                Log.d(TAG, "initWeatherData ---- lastCurrentWeatherEntry")
-
-            if(locationProvider.hasLocationChanged(lastCurrentWeatherEntry))
-                Log.d(TAG, "initWeatherData ---- location changed")
 
             fetchCurrentWeather()
             fetchFutureWeather()
@@ -118,10 +118,7 @@ class ForecastRepositoryImpl(
         }
 
        if(isFetchCurrentNeed(lastFetchedCurrentWeatherTime)){
-           Log.d(TAG, "initWeatherData ---- need to fetch currenty weather data")
            fetchCurrentWeather()
-       }else{
-           Log.d(TAG, "initWeatherData ---- no need to fetch currenty weather data")
        }
 
         if(isFetchFutureWeatherNeeded()){

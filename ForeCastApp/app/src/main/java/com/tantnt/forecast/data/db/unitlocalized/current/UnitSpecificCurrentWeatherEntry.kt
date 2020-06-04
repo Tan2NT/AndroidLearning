@@ -16,7 +16,10 @@ interface UnitSpecificCurrentWeatherEntry {
     val ts: Int
     val lon : Double
     val lat : Double
-    val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit
+    //val weatherDescriptionWeatherbit: WeatherDescriptionWeatherbit
+    val weatherCode: String
+    val weatherDescription: String
+    val weatherIcon: String
     val windCdirFull: String
     val windSpd: Double
 }
