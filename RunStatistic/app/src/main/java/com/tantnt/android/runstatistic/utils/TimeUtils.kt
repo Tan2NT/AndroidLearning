@@ -23,7 +23,7 @@ object TimeUtils {
         val second = TimeUnit.SECONDS.convert(durationMilli, TimeUnit.MILLISECONDS)
         val minutes = TimeUnit.MINUTES.convert(durationMilli, TimeUnit.MILLISECONDS)
         val hours = TimeUnit.HOURS.convert(durationMilli, TimeUnit.MILLISECONDS)
-        return String.format("%02d:%02d:%02d", hours, minutes, second)
+        return String.format("%02d:%02d", hours, minutes)
     }
 
     fun getDateFromMilli(timeMilli: Long) : Date {

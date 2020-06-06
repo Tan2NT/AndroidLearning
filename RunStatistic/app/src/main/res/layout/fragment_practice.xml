@@ -48,18 +48,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_status"
+                app:layout_constraintBottom_toTopOf="@id/gridLayout"
                 tools:textStyle="bold" />
 
             <GridLayout
                 android:id="@+id/gridLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_medium"
-                android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:columnCount="3"
                 android:orientation="vertical"
                 android:rowCount="3"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_timer">

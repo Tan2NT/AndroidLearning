@@ -14,7 +14,6 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.tantnt.android.runstatistic.MainActivity
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
@@ -25,7 +24,6 @@ import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.sql.Time
 import java.util.concurrent.TimeUnit
 import kotlin.toString
 
@@ -48,7 +46,7 @@ class ForegroundOnlyLocationService  : Service() {
     /**
      * Store the information of this practice
      */
-    private var lastUpdateTime : Long = System.currentTimeMillis()
+    private var lastUpdatedTime : Long = System.currentTimeMillis()
 
     private var currentPractice : PracticeModel? = PracticeModel(
         start_time = TimeUtils.getTimeInMilisecond(),
@@ -128,7 +126,6 @@ class ForegroundOnlyLocationService  : Service() {
                 Log.d(TAG, "onLocationResult lastLocation:  " + p0?.lastLocation.toString())
 
                 if(p0?.lastLocation != null ) {
-
                    if(isPracticeRunning){
                        onNewLocation(p0.lastLocation)
                    }else {
@@ -202,7 +199,6 @@ class ForegroundOnlyLocationService  : Service() {
 
     fun resumePractice() {
         currentPractice!!.status = PRACTICE_STATUS.RUNNING.value
-        lastUpdateTime = TimeUtils.getTimeInMilisecond()
         if (currentLocation != null) {
             currentPractice!!.path.add(
                 LatLng(
@@ -215,6 +211,7 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun savePractice() {
+        lastUpdatedTime = TimeUtils.getTimeInMilisecond()
         coroutineScope.launch {
             try {
                 Log.d(TAG, "try to insert a practice into database " + currentPractice!!.toString())
@@ -228,8 +225,7 @@ class ForegroundOnlyLocationService  : Service() {
     fun updatePractice(location: Location?, distance: Double) {
         currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
         currentPractice!!.distance += distance.around3Place()
-        currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdateTime)
-        lastUpdateTime = TimeUtils.getTimeInMilisecond()
+        currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
         val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
         if (currentPractice!!.duration > 0)
             currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
@@ -244,8 +240,10 @@ class ForegroundOnlyLocationService  : Service() {
     private fun onNewLocation(location: Location?) {
         Log.d(LOG_TAG, "onNewLocation practiceStarted: " + isPracticeRunning.toString())
 
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value)
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value) {
+            lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
+        }
 
         // check the location
         if(currentPractice!!.path.size == 0) {
@@ -265,7 +263,7 @@ class ForegroundOnlyLocationService  : Service() {
             location!!.longitude).around3Place()
 
         // only allow to add new location if it's not too close with the previous location
-        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && (TimeUtils.getDurationTimeMilliFrom(lastUpdateTime) >= MIN_UPDATE_TIME_IN_MILLI )) {
+        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && (TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime) >= MIN_UPDATE_TIME_IN_MILLI )) {
             // update the practice
             updatePractice(location, distance)
 
@@ -273,7 +271,6 @@ class ForegroundOnlyLocationService  : Service() {
             savePractice()
         } else {
             currentPractice!!.status = PRACTICE_STATUS.NOT_ACTIVE.value
-            lastUpdateTime = TimeUtils.getTimeInMilisecond()
             savePractice()
         }
 
@@ -311,7 +308,7 @@ class ForegroundOnlyLocationService  : Service() {
     override fun onBind(intent: Intent?): IBinder? {
         Log.d(TAG, "onBind() --- ")
 
-        // MainActivity (client) comes into forground and binds service, so the service can become a
+        // client comes into forground and binds service, so the service can become a
         // background service
         stopForeground(true)
         serviceRunningInForeground = false
@@ -322,7 +319,7 @@ class ForegroundOnlyLocationService  : Service() {
     override fun onRebind(intent: Intent?) {
         Log.d(TAG, "onRebind -----")
 
-        // MainActivity (client) return to the foreground and rebinds to service, so the service
+        // client return to the foreground and rebinds to service, so the service
         // can become a background service
         stopForeground(true)
         serviceRunningInForeground = false
@@ -333,7 +330,7 @@ class ForegroundOnlyLocationService  : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         Log.d(TAG, "onUnbind ---")
 
-        // MainActivity (client) leaves foreground, so service needs to become a foreground service
+        // client leaves foreground, so service needs to become a foreground service
         // to update the practicing info
         // NOTE: If this method is called due to a configuration change in MainActivity, we do nothing
 
@@ -344,7 +341,7 @@ class ForegroundOnlyLocationService  : Service() {
             serviceRunningInForeground = true
         }
 
-        // ensure onREbind() is call if MainActivity (client) rebinds.
+        // ensure onREbind() is call if client rebinds.
         return true
     }
 
@@ -428,9 +425,9 @@ class ForegroundOnlyLocationService  : Service() {
             .setBigContentTitle(titleTExt)
 
         // 4. Set up the main Intent.Pending intents for notification
-        val launchActivityIntent = Intent(this, MainActivity::class.java)
-        val activityPendingIntent = PendingIntent.getActivity(
-            this, 0, launchActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        val launchActivityIntent = Intent(this, LaunchAppService::class.java)
+        val activityPendingIntent = PendingIntent.getService(
+            this, NOTIFICATION_ID, launchActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val cancelIntent = Intent(this, ForegroundOnlyLocationService::class.java)
@@ -439,10 +436,10 @@ class ForegroundOnlyLocationService  : Service() {
             this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // 5. Build and issue the notification
-        val notificationCompatbuuilder =
+        val notificationCompatbuilder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
-        return notificationCompatbuuilder
+        val nof =  notificationCompatbuilder
             .setStyle(bigTextStyle)
             .setContentTitle(titleTExt)
             .setContentText(mainNotificationText)
@@ -460,6 +457,11 @@ class ForegroundOnlyLocationService  : Service() {
                 servicePendingIntent
             )
             .build()
+
+        nof.contentIntent = activityPendingIntent
+        nof.deleteIntent = servicePendingIntent
+
+        return nof
     }
 
     companion object {

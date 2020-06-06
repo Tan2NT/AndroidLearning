@@ -3,11 +3,9 @@ package com.tantnt.android.runstatistic.utils
 import android.util.Log
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.isPracticeRunning
 import com.tantnt.android.runstatistic.base.shouldShowPracticeResult
 import com.tantnt.android.runstatistic.models.PracticeModel
-import org.w3c.dom.Text
 
 @BindingAdapter("practiceDurationFormatted")
 fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
@@ -17,7 +15,7 @@ fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
             Log.i(LOG_TAG, "practioce duration string: " + TimeUtils.convertDutationToFormmated(practice.duration.toLong()))
             text = TimeUtils.convertDutationToFormmated(practice.duration.toLong())
         } else
-            text = "00:00:00"
+            text = "00:00"
     }
 }
 

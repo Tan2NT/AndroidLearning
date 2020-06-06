@@ -8,6 +8,9 @@ const val LOG_TAG = "TDebug"
 const val USER_HEIGHT_DEFAULT = 1.70
 const val USER_WEIGHT_DEFAULT = 60.0
 
+const val PACKAGE_NAME = "com.tantnt.android.runstatistic"
+const val CLASS_NAME = "$PACKAGE_NAME.MainActivity"
+
 enum class PRACTICE_STATUS (val value: Int) {
     COMPETED(0),
     RUNNING(1),

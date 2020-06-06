@@ -39,6 +39,9 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <service android:name=".base.LaunchAppService"
+            android:exported="false"/>
     </application>
 
 </manifest>
