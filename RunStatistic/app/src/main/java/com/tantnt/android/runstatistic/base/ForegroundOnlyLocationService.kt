@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
@@ -419,10 +420,14 @@ class ForegroundOnlyLocationService  : Service() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
-        // 3. Build the BIG_TEXT_STYLE
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .bigText(mainNotificationText)
-            .setBigContentTitle(titleTExt)
+        // 3. custom notification
+        val notificationLayout = RemoteViews(PACKAGE_NAME, R.layout.custom_notification_practice)
+        notificationLayout.setTextViewText(R.id.textView_distance_value,
+            currentPractice!!.distance.around3Place().toString() + " Km")
+        notificationLayout.setTextViewText(R.id.textView_time_value,
+            TimeUtils.convertDutationToFormmated(currentPractice!!.duration.toLong()).toString() + " min")
+        notificationLayout.setTextViewText(R.id.textView_practice_type, currentPractice!!.getTypeString())
+        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString())
 
         // 4. Set up the main Intent.Pending intents for notification
         val launchActivityIntent = Intent(this, LaunchAppService::class.java)
@@ -440,22 +445,23 @@ class ForegroundOnlyLocationService  : Service() {
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
         val nof =  notificationCompatbuilder
-            .setStyle(bigTextStyle)
-            .setContentTitle(titleTExt)
-            .setContentText(mainNotificationText)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(notificationLayout)
+            //.setContentTitle(titleTExt)
+            //.setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setOngoing(true)
+            //.setDefaults(NotificationCompat.DEFAULT_ALL)
+            //.setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .addAction(
-                R.drawable.ic_launch, "Launch activity",
-                activityPendingIntent
-            )
-            .addAction(
-                R.drawable.ic_cancel,
-                getString(R.string.stop_location_updates_button_text),
-                servicePendingIntent
-            )
+//            .addAction(
+//                R.drawable.ic_launch, "Launch activity",
+//                activityPendingIntent
+//            )
+//            .addAction(
+//                R.drawable.ic_cancel,
+//                getString(R.string.stop_location_updates_button_text),
+//                servicePendingIntent
+//            )
             .build()
 
         nof.contentIntent = activityPendingIntent

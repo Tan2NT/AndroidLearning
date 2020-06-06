@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:weightSum="4"
+    android:orientation="horizontal"
+    android:background="#D32F2F">
+
+    <ImageView
+        android:layout_margin="@dimen/margin_small"
+        android:id="@+id/practice_icon"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@drawable/foot"
+        />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/layout_practice_status"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_practice_type"
+                    style="@style/TextWhiteBoldMedium"
+                    android:layout_marginTop="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Walk" />
+                <TextView
+                    android:id="@+id/textView_practice_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:maxLines="2"
+                    tools:text="You are not active"
+                    style="@style/TextWhiteMedium" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_practice_time"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_time_title"
+                    style="@style/TextWhiteMedium"
+                    android:layout_marginTop="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Time" />
+                <TextView
+                    android:id="@+id/textView_time_value"
+                    android:layout_marginBottom="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="2"
+                    tools:text="00:00"
+                    android:paddingBottom="0dp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    style="@style/TextWhiteBoldMedium"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_practice_distance"
+                android:layout_gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_distance_title"
+                    style="@style/TextWhiteMedium"
+                    android:layout_marginTop="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Distance" />
+                <TextView
+                    android:id="@+id/textView_distance_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="2"
+                    tools:text="0.00 Km"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginBottom="0dp"
+                    style="@style/TextWhiteBoldMedium" />
+
+            </LinearLayout>
+        </LinearLayout>-->
+
+</LinearLayout>
