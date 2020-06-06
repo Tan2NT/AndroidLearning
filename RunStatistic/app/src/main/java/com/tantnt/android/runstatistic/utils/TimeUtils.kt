@@ -1,56 +1,40 @@
 package com.tantnt.android.runstatistic.utils
 
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class TIME (
-    var HOUR : Int,
-    var MINUTE : Int,
-    var SECOND : Int) {
-
-    fun gettring() : String {
-        var minute = MINUTE.toString()
-        if (MINUTE < 10)
-            minute = "0" + minute
-
-        var seconds = SECOND.toString()
-        if (SECOND < 10)
-            seconds = "0" + seconds
-
-        return "$HOUR : $minute + : $seconds"
-    }
-}
+val ONE_MINUTE_MILLI = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
+val ONE_HOUR_MILLI = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
 
 object TimeUtils {
-
     fun getTimeInMilisecond() : Long {
         return System.currentTimeMillis()
     }
 
-    fun getElapseTime(from : Long, to: Long): Long {
-        return to - from
+    fun getDurationTimeMilli(startTimeMilli : Long, endTimeMilli: Long): Long {
+        return endTimeMilli - startTimeMilli
     }
 
-    fun getElapseTimeFrom(from: Long) : Long {
-        return getTimeInMilisecond() - from
+    fun getDurationTimeMilliFrom(startTimeMilli : Long): Long {
+        return System.currentTimeMillis() - startTimeMilli
     }
 
-    // convert milliseconds to string
-    fun getDateStringFromMilliseconds(value: Long): String {
-        val simpleDateFormat = SimpleDateFormat("MM dd,yyyy HH:mm")
-        var resultDate = Date(value)
-        return simpleDateFormat.format(resultDate)
-
-        System.nanoTime()
+    fun convertDutationToFormmated(durationMilli: Long): String {
+        val second = TimeUnit.SECONDS.convert(durationMilli, TimeUnit.MILLISECONDS)
+        val minutes = TimeUnit.MINUTES.convert(durationMilli, TimeUnit.MILLISECONDS)
+        val hours = TimeUnit.HOURS.convert(durationMilli, TimeUnit.MILLISECONDS)
+        return String.format("%02d:%02d:%02d", hours, minutes, second)
     }
 
-    // in milliseconds
-/*    fun calculateElapsedTime(start: Long, end: Long) : Long {
-    }*/
+    fun getDateFromMilli(timeMilli: Long) : Date {
+        var currentTime = System.currentTimeMillis()
+        val tz = TimeZone.getDefault()
+        val cal = GregorianCalendar.getInstance(tz)
+        val offsetInMillis = tz.getOffset(cal.timeInMillis)
 
-    // convert elapse time to TIME(Hour:Minute:Second)
-/*    fun convertElapseTimeToTIME(elapse: Long) : TIME {
+        currentTime -= offsetInMillis.toLong()
+        val date = Date(currentTime)
+        return date
+    }
 
-    }*/
 }

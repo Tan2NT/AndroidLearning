@@ -21,7 +21,7 @@ object MathUtils {
         dist = rad2deg(dist)
         dist = dist * 60 * 1.1515
 
-        return (Math.round(dist * 100.0) / 100.0)
+        return dist.around3Place()
     }
 
     fun deg2rad(deg: Double): Double {

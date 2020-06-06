@@ -16,7 +16,7 @@ import com.tantnt.android.runstatistic.database.DatabasePractice
 
 data class PracticeModel(
     var start_time : Long,
-    var duration: Long,
+    var duration: Double,
     var distance: Double,
     var calo: Double,
     var speed: Double,

@@ -9,8 +9,9 @@ const val USER_HEIGHT_DEFAULT = 1.70
 const val USER_WEIGHT_DEFAULT = 60.0
 
 enum class PRACTICE_STATUS (val value: Int) {
-    COMPETED(2),
-    RUNNING(3),
-    NOT_RUNNING(4),
-    PAUSING (5)
+    COMPETED(0),
+    RUNNING(1),
+    NOT_RUNNING(2),
+    PAUSING(3),
+    NOT_ACTIVE(4)
 }

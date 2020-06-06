@@ -18,12 +18,26 @@ import kotlinx.coroutines.withContext
 class RunstatisticRepository(private val database: PracticeDatabase) {
 
     /**
-     * latestPractice
+     * latestPractice LiveData
      */
-    val latestPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getLatestPractice()) {
+    val latestInCompletedPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getlatestUncompletedPractice()) {
         it?.let {
             it.asModel()
         }
+    }
+
+    /**
+     * latestPractice non-Live
+     */
+    /**
+     * latestPractice
+     */
+    suspend fun getLatestIncompletedPracticeNonLive() : PracticeModel? {
+        var practice : PracticeModel? = null
+        withContext(Dispatchers.IO) {
+            practice = database.practiceDao.getlatestUncompletedPracticeNonLive()?.asModel()
+        }
+        return practice
     }
 
     /**
@@ -36,7 +50,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     suspend fun insertPractice(practice: DatabasePractice) {
         withContext(Dispatchers.IO) {
             Log.i(LOG_TAG, "insertPractice --- ")
+            database.practiceDao.insert(practice)
         }
-        database.practiceDao.insert(practice)
     }
 }

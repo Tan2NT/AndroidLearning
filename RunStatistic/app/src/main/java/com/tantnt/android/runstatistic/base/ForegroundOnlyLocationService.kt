@@ -25,6 +25,7 @@ import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.sql.Time
 import java.util.concurrent.TimeUnit
 import kotlin.toString
 
@@ -37,7 +38,10 @@ import kotlin.toString
 var foregroundServiceIsRunning = false
 var foregroundServiceSubscribeLocationUpdate = false
 var  isPracticeRunning = false
-const val PRACTICE_UPDATE_INTERVAL = 2   // seconds
+var shouldShowPracticeResult = false
+
+const val MIN_UPDATE_TIME_IN_MILLI = 5000  // 5 seconds
+const val MIN_DISTANCE_ALLOW_IN_KM = 0.002              // 2 metres
 
 class ForegroundOnlyLocationService  : Service() {
 
@@ -46,10 +50,10 @@ class ForegroundOnlyLocationService  : Service() {
      */
     private var lastUpdateTime : Long = System.currentTimeMillis()
 
-    private var currentPractice : PracticeModel = PracticeModel(
+    private var currentPractice : PracticeModel? = PracticeModel(
         start_time = TimeUtils.getTimeInMilisecond(),
-        duration = 0,
-        distance = 0.0,
+        duration = 0.00,
+        distance = 0.00,
         calo = 0.0,
         speed = 0.0,
         status = PRACTICE_STATUS.NOT_RUNNING.value,
@@ -140,72 +144,115 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun startPractice() {
-        if(currentPractice.status == PRACTICE_STATUS.PAUSING.value) {
+        shouldShowPracticeResult = false
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value) {
             resumePractice()
         }
         else {
             isPracticeRunning = true
-            currentLocation = null
             currentPractice = PracticeModel(
                 start_time = TimeUtils.getTimeInMilisecond(),
-                duration = 0,
+                duration = 0.0,
                 distance = 0.0,
                 calo = 0.0,
                 speed = 0.0,
                 status = PRACTICE_STATUS.RUNNING.value,
                 path = arrayListOf())
             if (currentLocation != null) {
-                currentPractice.path.add(
+                currentPractice!!.path.add(
                     LatLng(
                         currentLocation!!.latitude,
                         currentLocation!!.longitude
                     )
                 )
-                savePractice()
             }
+            savePractice()
         }
     }
 
+    fun continueTheIncompletedPractice() {
+        Log.d(LOG_TAG, "continueTheIncompletedPractice ....")
+        if(currentPractice != null) {
+            // only allow to resume practice within the same date, otherwise just mark this practice as complete
+            val currentDay = TimeUtils.getDateFromMilli(TimeUtils.getTimeInMilisecond())
+            val practiceStartDay = TimeUtils.getDateFromMilli(currentPractice!!.start_time)
+            if (currentDay.date != practiceStartDay.date) {
+                currentPractice!!.status = PRACTICE_STATUS.COMPETED.value
+                savePractice()
+                startPractice()
+                return
+            }
+        }
+        startPractice()
+    }
+
     fun stopPractice() {
-        currentPractice.status = PRACTICE_STATUS.COMPETED.value
+        currentPractice!!.status = PRACTICE_STATUS.COMPETED.value
         isPracticeRunning = false
+        shouldShowPracticeResult = true
         savePractice()
         unsubscribeToLocationUpdates()
         stopSelf()
     }
 
     fun pausePractice() {
-        currentPractice.status = PRACTICE_STATUS.PAUSING.value
+        currentPractice!!.status = PRACTICE_STATUS.PAUSING.value
         savePractice()
     }
 
     fun resumePractice() {
-        currentPractice.status = PRACTICE_STATUS.RUNNING.value
+        currentPractice!!.status = PRACTICE_STATUS.RUNNING.value
         lastUpdateTime = TimeUtils.getTimeInMilisecond()
+        if (currentLocation != null) {
+            currentPractice!!.path.add(
+                LatLng(
+                    currentLocation!!.latitude,
+                    currentLocation!!.longitude
+                )
+            )
+        }
+        savePractice()
     }
 
     fun savePractice() {
         coroutineScope.launch {
             try {
-                Log.d(TAG, "try to insert a practice into database " + currentPractice.toString())
-                repository.insertPractice(currentPractice.asDatabasePractice())
+                Log.d(TAG, "try to insert a practice into database " + currentPractice!!.toString())
+                repository.insertPractice(currentPractice!!.asDatabasePractice())
             } catch (e: Exception) {
                 Log.e(TAG, "insert to database failed : " + e.toString())
             }
         }
     }
 
+    fun updatePractice(location: Location?, distance: Double) {
+        currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
+        currentPractice!!.distance += distance.around3Place()
+        currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdateTime)
+        lastUpdateTime = TimeUtils.getTimeInMilisecond()
+        val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
+        if (currentPractice!!.duration > 0)
+            currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
+        currentPractice!!.status = PRACTICE_STATUS.RUNNING.value
+        currentPractice!!.calo = ((currentPractice!!.duration / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
+            USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
+                ).around2Place()
+        Log.i(LOG_TAG, "updated practice " + currentPractice!!.toString())
+
+    }
+
     private fun onNewLocation(location: Location?) {
         Log.d(LOG_TAG, "onNewLocation practiceStarted: " + isPracticeRunning.toString())
-//        if(!practiceStarted || currentPractice.status != PRACTICE_STATUS.RUNNING.value)
-////            return
+
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value)
+            return
 
         // check the location
-        if(currentPractice.path.size == 0) {
+        if(currentPractice!!.path.size == 0) {
             // Start a new practice
             currentLocation = location
-            currentPractice.path.add(LatLng(location!!.latitude, location!!.longitude))
-            currentPractice.start_time = System.currentTimeMillis()
+            currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
+            currentPractice!!.start_time = System.currentTimeMillis()
             savePractice()
             updateForegroundNotificationifNeed()
             return
@@ -215,22 +262,18 @@ class ForegroundOnlyLocationService  : Service() {
             currentLocation!!.latitude,
             currentLocation!!.longitude,
             location!!.latitude,
-            location!!.longitude)
+            location!!.longitude).around3Place()
 
         // only allow to add new location if it's not too close with the previous location
-        if(distance >= 0.000) {
+        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && (TimeUtils.getDurationTimeMilliFrom(lastUpdateTime) >= MIN_UPDATE_TIME_IN_MILLI )) {
             // update the practice
-            currentPractice.path.add(LatLng(location!!.latitude, location!!.longitude))
-            currentPractice.distance += distance
-            currentPractice.duration += TimeUtils.getElapseTimeFrom(lastUpdateTime)
-            lastUpdateTime = TimeUtils.getTimeInMilisecond()
-            currentPractice.speed = (currentPractice.distance/(currentPractice.duration / 3600) )   // Km/h
-            currentPractice.status = PRACTICE_STATUS.RUNNING.value
-            currentPractice.calo = (currentPractice.duration * KcalCaclator.burnedByyWalkingPerMinute(
-                USER_WEIGHT_DEFAULT, currentPractice.speed, USER_HEIGHT_DEFAULT)
-                    ).aroundPlace(2)
+            updatePractice(location, distance)
 
-            // save updated practice into the database
+            // save the updated practice into the database
+            savePractice()
+        } else {
+            currentPractice!!.status = PRACTICE_STATUS.NOT_ACTIVE.value
+            lastUpdateTime = TimeUtils.getTimeInMilisecond()
             savePractice()
         }
 

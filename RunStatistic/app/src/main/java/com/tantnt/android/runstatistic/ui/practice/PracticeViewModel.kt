@@ -1,26 +1,15 @@
 package com.tantnt.android.runstatistic.ui.practice
 
 import android.app.Application
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.maps.android.PolyUtil
-import com.jakewharton.threetenabp.AndroidThreeTen.init
+import com.tantnt.android.runstatistic.base.isPracticeRunning
 import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.network.service.GoogleDirectionsNetwork
 import com.tantnt.android.runstatistic.repository.RunstatisticRepository
-import com.tantnt.android.runstatistic.utils.MathUtils
-import com.tantnt.android.runstatistic.utils.USE_GOOGLE_DIRECTIONS_SERVICE
-import com.tantnt.android.runstatistic.utils.nofifyObserver
 import kotlinx.coroutines.*
-import org.json.JSONObject
-import java.time.LocalDateTime
 
 
 /** A method to download json data from url  */
@@ -52,7 +41,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
     /**
      * a practice displayed on the screen
      */
-    val practice : LiveData<PracticeModel> = runstatisticRepository.latestPractice
+    val practice : LiveData<PracticeModel> = runstatisticRepository.latestInCompletedPractice
 
     val _grade = MutableLiveData<Int>()
     val grade : LiveData<Int>
@@ -64,6 +53,16 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
     init {
         Log.d(TAG, "PracticeViewModel Init ---- ")
         _grade.value = 2
+    }
+
+    fun getCurrentPractice() : PracticeModel? {
+        var prac : PracticeModel? = null
+        isPracticeRunning?.let {
+            viewModelScope.launch {
+                prac = runstatisticRepository.getLatestIncompletedPracticeNonLive()
+            }
+        }
+        return prac
     }
 
     override fun onCleared() {
