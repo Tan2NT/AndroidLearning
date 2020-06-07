@@ -22,11 +22,3 @@ val ONE_HOUR_MILLI = ONE_MINUTE_MILLI * 60 //TimeUnit.MILLISECONDS.convert(1, Ti
 
 const val PACKAGE_NAME = "com.tantnt.android.runstatistic"
 const val CLASS_NAME = "$PACKAGE_NAME.MainActivity"
-
-enum class PRACTICE_STATUS (val value: Int) {
-    COMPETED(0),
-    RUNNING(1),
-    NOT_RUNNING(2),
-    PAUSING(3),
-    NOT_ACTIVE(4)
-}

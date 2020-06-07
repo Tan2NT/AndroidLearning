@@ -17,6 +17,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.database.getDatabase
+import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
+import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.models.asDatabasePractice
 import com.tantnt.android.runstatistic.repository.RunstatisticRepository
@@ -50,12 +52,13 @@ class ForegroundOnlyLocationService  : Service() {
     private var lastUpdatedTime : Long = System.currentTimeMillis()
 
     private var currentPractice : PracticeModel? = PracticeModel(
-        start_time = TimeUtils.getTimeInMilisecond(),
+        startTime = TimeUtils.getTimeInMilisecond(),
+        practiceType = PRACTICE_TYPE.WALKING,
         duration = 0.00,
         distance = 0.00,
         calo = 0.0,
         speed = 0.0,
-        status = PRACTICE_STATUS.NOT_RUNNING.value,
+        status = PRACTICE_STATUS.NOT_RUNNING,
         path = arrayListOf()
     )
 
@@ -93,6 +96,8 @@ class ForegroundOnlyLocationService  : Service() {
 
     // current location
     private var currentLocation: Location? = null
+
+    private var practiceType = PRACTICE_TYPE.WALKING
 
     override fun onCreate() {
         Log.d(TAG, "ForegroundService onCreate() ---- ")
@@ -141,20 +146,26 @@ class ForegroundOnlyLocationService  : Service() {
         foregroundServiceIsRunning = true
     }
 
-    fun startPractice() {
+    fun setPracticeType(type: PRACTICE_TYPE) {
+        practiceType = type
+    }
+
+    fun startPractice(pType: PRACTICE_TYPE) {
         shouldShowPracticeResult = false
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value) {
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING) {
             resumePractice()
         }
         else {
+            setPracticeType(pType)
             isPracticeRunning = true
             currentPractice = PracticeModel(
-                start_time = TimeUtils.getTimeInMilisecond(),
+                startTime = TimeUtils.getTimeInMilisecond(),
+                practiceType = practiceType,
                 duration = 0.0,
                 distance = 0.0,
                 calo = 0.0,
                 speed = 0.0,
-                status = PRACTICE_STATUS.RUNNING.value,
+                status = PRACTICE_STATUS.RUNNING,
                 path = arrayListOf())
             if (currentLocation != null) {
                 currentPractice!!.path.add(
@@ -169,7 +180,7 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun stopPractice() {
-        currentPractice!!.status = PRACTICE_STATUS.COMPETED.value
+        currentPractice!!.status = PRACTICE_STATUS.COMPETED
         isPracticeRunning = false
         shouldShowPracticeResult = true
         savePractice()
@@ -178,12 +189,12 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun pausePractice() {
-        currentPractice!!.status = PRACTICE_STATUS.PAUSING.value
+        currentPractice!!.status = PRACTICE_STATUS.PAUSING
         savePractice()
     }
 
     fun resumePractice() {
-        currentPractice!!.status = PRACTICE_STATUS.RUNNING.value
+        currentPractice!!.status = PRACTICE_STATUS.RUNNING
         if (currentLocation != null) {
             currentPractice!!.path.add(
                 LatLng(
@@ -213,7 +224,7 @@ class ForegroundOnlyLocationService  : Service() {
         val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
         if (currentPractice!!.duration > 0)
             currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
-        currentPractice!!.status = PRACTICE_STATUS.RUNNING.value
+        currentPractice!!.status = PRACTICE_STATUS.RUNNING
         currentPractice!!.calo = ((currentPractice!!.duration / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
             USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
                 ).around2Place()
@@ -221,7 +232,7 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     private fun onNewLocation(location: Location?) {
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value) {
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING) {
             Log.d(LOG_TAG, "onNewLocation is pausing")
             lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
@@ -232,7 +243,7 @@ class ForegroundOnlyLocationService  : Service() {
             // Start a new practice
             currentLocation = location
             currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
-            currentPractice!!.start_time = System.currentTimeMillis()
+            currentPractice!!.startTime = System.currentTimeMillis()
             savePractice()
             updateForegroundNotificationifNeed()
             return
@@ -256,7 +267,7 @@ class ForegroundOnlyLocationService  : Service() {
             // save the updated practice into the database
             savePractice()
         } else {
-            currentPractice!!.status = PRACTICE_STATUS.NOT_ACTIVE.value
+            currentPractice!!.status = PRACTICE_STATUS.NOT_ACTIVE
             savePractice()
         }
 

@@ -4,9 +4,9 @@ import androidx.room.TypeConverter
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
+import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
-import java.util.*
 import kotlin.collections.ArrayList
 
 class DataConvertor {
@@ -38,6 +38,38 @@ class DataConvertor {
     @TypeConverter
     fun longToLocalDate(epochTime : Long) : LocalDate {
         return LocalDate.ofEpochDay(epochTime)
+    }
+
+    @TypeConverter
+    fun practiceTypeToInt(type: PRACTICE_TYPE) : Int {
+        return type.value
+    }
+
+    @TypeConverter
+    fun intToPracticeType(value: Int) : PRACTICE_TYPE {
+        when (value) {
+            PRACTICE_TYPE.WALKING.value -> return PRACTICE_TYPE.WALKING
+            PRACTICE_TYPE.RUNNING.value -> return PRACTICE_TYPE.RUNNING
+            PRACTICE_TYPE.CYCLING.value -> return PRACTICE_TYPE.CYCLING
+            else ->                        return PRACTICE_TYPE.WALKING
+        }
+    }
+
+    @TypeConverter
+    fun practiceStatusToInt(status: PRACTICE_STATUS) : Int {
+        return status.value
+    }
+
+    @TypeConverter
+    fun intToPracticeStatus(value: Int) : PRACTICE_STATUS {
+        when (value) {
+            PRACTICE_STATUS.COMPETED.value      -> return PRACTICE_STATUS.COMPETED
+            PRACTICE_STATUS.RUNNING.value       -> return PRACTICE_STATUS.RUNNING
+            PRACTICE_STATUS.NOT_ACTIVE.value    -> return PRACTICE_STATUS.NOT_ACTIVE
+            PRACTICE_STATUS.PAUSING.value       -> return PRACTICE_STATUS.PAUSING
+            PRACTICE_STATUS.NOT_RUNNING.value   -> return PRACTICE_STATUS.NOT_RUNNING
+            else                                -> return PRACTICE_STATUS.NOT_ACTIVE
+        }
     }
 
 }

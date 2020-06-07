@@ -33,6 +33,8 @@ import com.tantnt.android.runstatistic.base.foregroundServiceIsRunning
 import com.tantnt.android.runstatistic.base.foregroundServiceSubscribeLocationUpdate
 import com.tantnt.android.runstatistic.base.isPracticeRunning
 import com.tantnt.android.runstatistic.databinding.FragmentPracticeBinding
+import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
+import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.utils.*
 import kotlinx.android.synthetic.main.fragment_practice.*
@@ -51,6 +53,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var practiceViewModel: PracticeViewModel
 
+    private var practiceType = PRACTICE_TYPE.WALKING
+
     private var foregroundOnlyLocationServiceBound = false
 
     // Provides location updates for while -in-use features
@@ -58,10 +62,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     // Listens for location broadcast from ForegroundOnlyLocationService
     private lateinit var foregroundOnlyBroadcastReceiver: ForegroundOnlyBroadcastReceiver
-
-    private lateinit var sharedPreferences: SharedPreferences
-
-    private var isLaunched : Boolean = false
 
     // Monitor connection to the while-in-use service.
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
@@ -91,8 +91,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     requestForegroundPermissions()
                 }
             }
-
-            isLaunched = false
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -160,11 +158,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         foregroundOnlyBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
 
-        sharedPreferences =
-            activity?.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)!!
-
-        isLaunched = true
-
         Log.i(TAG, "onCreateView done!")
         return binding.root
     }
@@ -174,7 +167,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // register button listener
         // start a practice
         start_practice_btn.setOnClickListener {
-            foregroundOnlyLocationService?.startPractice()
+            foregroundOnlyLocationService?.startPractice(practiceType)
 
             stop_practice_btn.visibility = View.VISIBLE
             pause_practice_btn.visibility = View.VISIBLE
@@ -213,13 +206,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         {
             Log.i(LOG_TAG, "updateStatusButton has practice")
             when(practiceModel.status) {
-                PRACTICE_STATUS.RUNNING.value -> {
+                PRACTICE_STATUS.RUNNING -> {
                     stop_practice_btn.visibility = View.VISIBLE
                     pause_practice_btn.visibility = View.VISIBLE
                     start_practice_btn.visibility = View.GONE
                 }
 
-                PRACTICE_STATUS.PAUSING.value -> {
+                PRACTICE_STATUS.PAUSING -> {
                     stop_practice_btn.visibility = View.VISIBLE
                     pause_practice_btn.visibility = View.GONE
                     start_practice_btn.visibility = View.VISIBLE

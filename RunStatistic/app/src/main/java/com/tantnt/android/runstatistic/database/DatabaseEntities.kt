@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.android.gms.maps.model.LatLng
+import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
+import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 
 /**
@@ -19,12 +21,15 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 @Entity
 data class DatabasePractice constructor(
     @PrimaryKey
-    var start_time: Long,      // timestamp    - start time of this practice
-    var duration: Double,          // in second    - duration of this practice
-    var distance: Double,       // in Km        - how far which the user has been passed
-    var calo: Double,           // in Kcal      - how much Calo user has spent
-    var speed: Double,          // km/h         - the average speed of user during the practice
-    var status: Int, //             - the status of this practice
+    var start_time: Long,               // timestamp    - start time of this practice
+    @TypeConverters(DataConvertor::class)
+    var practice_type: PRACTICE_TYPE,   // type         - walking/running/cycling
+    var duration: Double,               // in second    - duration of this practice
+    var distance: Double,               // in Km        - how far which the user has been passed
+    var calo: Double,                   // in Kcal      - how much Calo user has spent
+    var speed: Double,                  // km/h         - the average speed of user during the practice
+    @TypeConverters(DataConvertor::class)
+    var status: PRACTICE_STATUS,          //             - the status of this practice
     @TypeConverters(DataConvertor::class)
     var path : ArrayList<LatLng> //             - list of location user has pass through, use to draw the route
 )
@@ -36,7 +41,8 @@ data class DatabasePractice constructor(
 fun List<DatabasePractice>.asModel(): List<PracticeModel> {
     return map {
         PracticeModel(
-            start_time = it.start_time,
+            startTime = it.start_time,
+            practiceType = it.practice_type,
             duration = it.duration,
             distance = it.distance,
             calo = it.calo,
@@ -49,7 +55,8 @@ fun List<DatabasePractice>.asModel(): List<PracticeModel> {
 
 fun DatabasePractice.asModel() : PracticeModel {
     return PracticeModel(
-        start_time = this.start_time,
+        startTime = this.start_time,
+        practiceType = this.practice_type,
         duration = this.duration,
         distance = this.distance,
         calo = this.calo,
