@@ -168,22 +168,6 @@ class ForegroundOnlyLocationService  : Service() {
         }
     }
 
-    fun continueTheIncompletedPractice() {
-        Log.d(LOG_TAG, "continueTheIncompletedPractice ....")
-        if(currentPractice != null) {
-            // only allow to resume practice within the same date, otherwise just mark this practice as complete
-            val currentDay = TimeUtils.getDateFromMilli(TimeUtils.getTimeInMilisecond())
-            val practiceStartDay = TimeUtils.getDateFromMilli(currentPractice!!.start_time)
-            if (currentDay.date != practiceStartDay.date) {
-                currentPractice!!.status = PRACTICE_STATUS.COMPETED.value
-                savePractice()
-                startPractice()
-                return
-            }
-        }
-        startPractice()
-    }
-
     fun stopPractice() {
         currentPractice!!.status = PRACTICE_STATUS.COMPETED.value
         isPracticeRunning = false
@@ -215,7 +199,6 @@ class ForegroundOnlyLocationService  : Service() {
         lastUpdatedTime = TimeUtils.getTimeInMilisecond()
         coroutineScope.launch {
             try {
-                Log.d(TAG, "try to insert a practice into database " + currentPractice!!.toString())
                 repository.insertPractice(currentPractice!!.asDatabasePractice())
             } catch (e: Exception) {
                 Log.e(TAG, "insert to database failed : " + e.toString())
@@ -234,19 +217,17 @@ class ForegroundOnlyLocationService  : Service() {
         currentPractice!!.calo = ((currentPractice!!.duration / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
             USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
                 ).around2Place()
-        Log.i(LOG_TAG, "updated practice " + currentPractice!!.toString())
 
     }
 
     private fun onNewLocation(location: Location?) {
-        Log.d(LOG_TAG, "onNewLocation practiceStarted: " + isPracticeRunning.toString())
-
         if(currentPractice!!.status == PRACTICE_STATUS.PAUSING.value) {
+            Log.d(LOG_TAG, "onNewLocation is pausing")
             lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
         }
 
-        // check the location
+         //check the location
         if(currentPractice!!.path.size == 0) {
             // Start a new practice
             currentLocation = location
@@ -263,8 +244,12 @@ class ForegroundOnlyLocationService  : Service() {
             location!!.latitude,
             location!!.longitude).around3Place()
 
+        val elapsedTime = TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
+
+        Log.i(TAG, "onNewLocation distance: $distance  - elapsed time: $elapsedTime")
+
         // only allow to add new location if it's not too close with the previous location
-        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && (TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime) >= MIN_UPDATE_TIME_IN_MILLI )) {
+        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && ( elapsedTime >= MIN_UPDATE_TIME_IN_MILLI )) {
             // update the practice
             updatePractice(location, distance)
 
@@ -298,8 +283,7 @@ class ForegroundOnlyLocationService  : Service() {
             intent?.getBooleanExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, false)
 
         if (cancelLocationTrackingFromNotification!!) {
-            unsubscribeToLocationUpdates()
-            stopSelf()
+            stopPractice()
         }
 
         // Tells the system not to recreate the service after it's been killed
@@ -392,7 +376,6 @@ class ForegroundOnlyLocationService  : Service() {
                 else {
                     Log.d(TAG, "Failed to remove Location callback")
                 }
-
             }
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
             foregroundServiceSubscribeLocationUpdate = false
@@ -415,7 +398,7 @@ class ForegroundOnlyLocationService  : Service() {
             val notificationChannel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID, titleTExt, NotificationManager.IMPORTANCE_DEFAULT)
 
-            // Adds Notification channel to system. Attempting to create an exisitng channel
+            // Adds Notification channel to system. Attempting to create an existing channel
             // with its original performs no operator, so it's safe to perform the blow sequence.
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -424,8 +407,11 @@ class ForegroundOnlyLocationService  : Service() {
         val notificationLayout = RemoteViews(PACKAGE_NAME, R.layout.custom_notification_practice)
         notificationLayout.setTextViewText(R.id.textView_distance_value,
             currentPractice!!.distance.around3Place().toString() + " Km")
+        var  gallon : String = "min"
+        if((currentPractice!!.duration / ONE_HOUR_MILLI).toInt() > 0)
+            gallon = "hour"
         notificationLayout.setTextViewText(R.id.textView_time_value,
-            TimeUtils.convertDutationToFormmated(currentPractice!!.duration.toLong()).toString() + " min")
+            TimeUtils.convertDutationToFormmated(currentPractice!!.duration.toLong()).toString() + " " + gallon)
         notificationLayout.setTextViewText(R.id.textView_practice_type, currentPractice!!.getTypeString())
         notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString())
 
@@ -447,21 +433,13 @@ class ForegroundOnlyLocationService  : Service() {
         val nof =  notificationCompatbuilder
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
-            //.setContentTitle(titleTExt)
-            //.setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            //.setDefaults(NotificationCompat.DEFAULT_ALL)
-            //.setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//            .addAction(
-//                R.drawable.ic_launch, "Launch activity",
-//                activityPendingIntent
-//            )
-//            .addAction(
-//                R.drawable.ic_cancel,
-//                getString(R.string.stop_location_updates_button_text),
-//                servicePendingIntent
-//            )
+            .addAction(
+                R.drawable.stop_btn,
+                getString(R.string.stop_location_updates_button_text),
+                servicePendingIntent
+            )
             .build()
 
         nof.contentIntent = activityPendingIntent

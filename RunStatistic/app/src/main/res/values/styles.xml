@@ -9,14 +9,14 @@
     </style>
 
     <style name="TextWhiteBoldMedium">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:textColor">#E0F2F1</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextWhiteMedium">
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">#E0F2F1</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>

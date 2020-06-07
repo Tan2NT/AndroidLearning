@@ -273,7 +273,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() ---")
-//        foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
         super.onDestroy()
     }
 

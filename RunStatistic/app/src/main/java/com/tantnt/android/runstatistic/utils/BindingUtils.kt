@@ -7,12 +7,17 @@ import com.tantnt.android.runstatistic.base.isPracticeRunning
 import com.tantnt.android.runstatistic.base.shouldShowPracticeResult
 import com.tantnt.android.runstatistic.models.PracticeModel
 
+/**
+ * This class perform the data binding, make the code more shorter and cleaner, run faster
+ * 1. Write the function to process data and set data for the view here, using @BindingAdapter
+ * 2. In the layout file, set the relation to the view, example: app:practiceDurationFormetted="@{practiceViewModel.practice}"
+ */
+
 @BindingAdapter("practiceDurationFormatted")
 fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
     Log.i(LOG_TAG, "practioce duration string: ")
     practice?.let {
         if (isPracticeRunning || shouldShowPracticeResult) {
-            Log.i(LOG_TAG, "practioce duration string: " + TimeUtils.convertDutationToFormmated(practice.duration.toLong()))
             text = TimeUtils.convertDutationToFormmated(practice.duration.toLong())
         } else
             text = "00:00"
