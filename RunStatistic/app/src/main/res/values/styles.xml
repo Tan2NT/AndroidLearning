@@ -21,4 +21,24 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
+    <style name="TextBlackBoldMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#050505</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextBlackMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#050505</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="GreenButton">
+        <item name="android:background">#2E7D32</item>
+        <item name="android:textColor">#E8EAF6</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
 </resources>

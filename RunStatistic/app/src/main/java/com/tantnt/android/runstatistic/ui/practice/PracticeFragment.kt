@@ -36,11 +36,14 @@ import com.tantnt.android.runstatistic.databinding.FragmentPracticeBinding
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
+import com.tantnt.android.runstatistic.ui.dialog.SelectingPracticeTypeDialog
 import com.tantnt.android.runstatistic.utils.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_practice.*
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
+private const val REQUEST_SELECT_PRACTICE_TYPE = 26
 
 @Suppress("DEPRECATION")
 class PracticeFragment : Fragment(), OnMapReadyCallback {
@@ -167,11 +170,17 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // register button listener
         // start a practice
         start_practice_btn.setOnClickListener {
-            foregroundOnlyLocationService?.startPractice(practiceType)
-
-            stop_practice_btn.visibility = View.VISIBLE
-            pause_practice_btn.visibility = View.VISIBLE
-            start_practice_btn.visibility = View.GONE
+            if(!isPracticeRunning) {
+                // we must select practice before start a practice
+                openSelectPracticeTypeDialog()
+            }
+            else {
+                // user resume a practice
+                foregroundOnlyLocationService?.resumePractice()
+                stop_practice_btn.visibility = View.VISIBLE
+                pause_practice_btn.visibility = View.VISIBLE
+                start_practice_btn.visibility = View.GONE
+            }
         }
 
         // stop the practice
@@ -193,6 +202,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         }
 
         initButtonStatus()
+    }
+
+    fun openSelectPracticeTypeDialog() {
+        val ft = fragmentManager?.beginTransaction()
+        val selectPracticeTypeDialog = SelectingPracticeTypeDialog()
+        selectPracticeTypeDialog.setTargetFragment(this, REQUEST_SELECT_PRACTICE_TYPE)
+        selectPracticeTypeDialog.show(ft!!, "PracticeTypeDialog")
     }
 
     private fun initButtonStatus() {
@@ -446,6 +462,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 }
                 else
                     enableLocationSetting()
+            }
+            REQUEST_SELECT_PRACTICE_TYPE -> {
+                val type = data?.getIntExtra("practice_type", 0)!!
+                practiceType = PRACTICE_TYPE.values() [type]
+                foregroundOnlyLocationService?.startPractice(practiceType)
+                Log.d(TAG, "onActivityResult practice_type: $type")
             }
         }
     }

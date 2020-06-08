@@ -20,7 +20,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * latestPractice LiveData
      */
-    val latestInCompletedPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getlatestUncompletedPractice()) {
+    val latestPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getlatestPractice()) {
         it?.let {
             it.asModel()
         }
@@ -32,10 +32,10 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * latestPractice
      */
-    suspend fun getLatestIncompletedPracticeNonLive() : PracticeModel? {
+    suspend fun getLatestPracticeNonLive() : PracticeModel? {
         var practice : PracticeModel? = null
         withContext(Dispatchers.IO) {
-            practice = database.practiceDao.getlatestUncompletedPracticeNonLive()?.asModel()
+            practice = database.practiceDao.getlatestPracticeNonLive()?.asModel()
         }
         return practice
     }

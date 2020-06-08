@@ -25,9 +25,19 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
     <string name="settings">Settings</string>
 
+    <!-- confirmation buttons text -->
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <!-- Practice status -->
     <string name="you_are_not_active">You are not active</string>
+
+
+    <!-- Practice type-->
+    <string name="practice_type_walking">Walking</string>
+    <string name="practice_type_cycling">Cycling</string>
+    <string name="practice_type_running">Running</string>
+    <string name="promote_workouts_to_improve_your_health">Promote workouts to improve your health</string>
 
 </resources>

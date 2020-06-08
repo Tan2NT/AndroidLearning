@@ -41,7 +41,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
     /**
      * a practice displayed on the screen
      */
-    val practice : LiveData<PracticeModel> = runstatisticRepository.latestInCompletedPractice
+    val practice : LiveData<PracticeModel> = runstatisticRepository.latestPractice
 
     val _grade = MutableLiveData<Int>()
     val grade : LiveData<Int>
@@ -59,7 +59,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
         var prac : PracticeModel? = null
         isPracticeRunning?.let {
             viewModelScope.launch {
-                prac = runstatisticRepository.getLatestIncompletedPracticeNonLive()
+                prac = runstatisticRepository.getLatestPracticeNonLive()
             }
         }
         return prac

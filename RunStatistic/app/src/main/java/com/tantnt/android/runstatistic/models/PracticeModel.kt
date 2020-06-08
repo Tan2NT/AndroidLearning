@@ -1,5 +1,6 @@
 package com.tantnt.android.runstatistic.models
 
+import android.content.res.Resources
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.database.DatabasePractice
 
@@ -26,15 +27,19 @@ data class PracticeModel(
 
     fun getTypeString() : String {
         //  todo: adding type then return base on this field
-        return "Walking"
+        when(practiceType) {
+            PRACTICE_TYPE.WALKING -> return "Walking"
+            PRACTICE_TYPE.RUNNING -> return "Running"
+            PRACTICE_TYPE.CYCLING -> return "Cycling"
+        }
     }
 
     fun getStatusString(): String {
         when(status) {
-            PRACTICE_STATUS.RUNNING       -> return "running"
-            PRACTICE_STATUS.NOT_ACTIVE    -> return "you are not active"
-            PRACTICE_STATUS.PAUSING       -> return "pausing"
-            else                          -> return "you are not active"
+            PRACTICE_STATUS.RUNNING       -> return getTypeString()
+            PRACTICE_STATUS.NOT_ACTIVE    -> return "You are not active"
+            PRACTICE_STATUS.PAUSING       -> return "Pausing"
+            else                          -> return "You are not active"
         }
     }
 }
