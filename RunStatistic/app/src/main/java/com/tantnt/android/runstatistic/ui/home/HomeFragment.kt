@@ -1,16 +1,19 @@
 package com.tantnt.android.runstatistic.ui.home
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.tantnt.android.runstatistic.R
+import com.tantnt.android.runstatistic.network.service.TAG
 import com.tantnt.android.runstatistic.utils.*
+
+private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 10
 
 class HomeFragment : Fragment() {
 
@@ -29,5 +32,28 @@ class HomeFragment : Fragment() {
         })
 
         return root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if(writeExternalStorePermissionApproved() == false)
+            requestWriteExternalStoragePermission()
+    }
+
+    // Review Permissions: Method checks if permissions approved.
+    private fun writeExternalStorePermissionApproved(): Boolean {
+        return PermissionUtils.checkPermission(
+            activity?.applicationContext!!,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
+
+    // TODO: Step 1.0, Review Permissions: Method requests permissions.
+    private fun requestWriteExternalStoragePermission() {
+        Log.d(TAG, "requestWriteExternalStoragePermissions ---")
+        requestPermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE
+        )
     }
 }

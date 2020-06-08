@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -43,6 +44,10 @@ private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
 private const val REQUEST_SELECT_PRACTICE_TYPE = 26
 private const val REQUEST_DETECT_ACTIVITY_REQUEST_CODE = 27
+
+private const val ZOOM_LEVEL_MEDIUM = 16.0f
+private const val ZOOM_LEVEL_DETAIL = 17.5f
+
 
 @Suppress("DEPRECATION")
 class PracticeFragment : Fragment(), OnMapReadyCallback {
@@ -149,8 +154,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                         val option = MarkerOptions().position(it.path[0]).title(getString(
                             R.string.current_location))
                         option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange))
-                        mGoogleMap!!.addMarker(option)
-                        moveCameraWithZoom(it.path[0], 16.0f)
+                        mGoogleMap?.addMarker(option)
+                        moveCameraWithZoom(it.path[0], ZOOM_LEVEL_MEDIUM)
                     }
 
                     // adding path
@@ -191,9 +196,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         // stop the practice
         stop_practice_btn.setOnClickListener {
-            foregroundOnlyLocationService?.stopPractice()
-
-           onPracticeStopped()
+            showAlertConfirmStopPractice()
         }
 
         // pause the practice
@@ -214,7 +217,9 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         val ft = fragmentManager?.beginTransaction()
         val selectPracticeTypeDialog = SelectingPracticeTypeDialog()
         selectPracticeTypeDialog.setTargetFragment(this, REQUEST_SELECT_PRACTICE_TYPE)
-        selectPracticeTypeDialog.show(ft!!, "PracticeTypeDialog")
+        ft?.let {
+            selectPracticeTypeDialog.show(ft, "PracticeTypeDialog")
+        }
     }
 
     private fun initButtonStatus() {
@@ -248,6 +253,16 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun onPracticeStopped() {
+
+        mGoogleMap?.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                practiceViewModel.practice.value?.path?.get(0),
+                ZOOM_LEVEL_MEDIUM
+            )
+        )
+
+        practiceViewModel.practice.value?.startTime?.let { Utils.captureScreenAndShare(it, mGoogleMap, requireContext()) }
+
         start_practice_btn.visibility = View.VISIBLE
         stop_practice_btn.visibility = View.GONE
         pause_practice_btn.visibility = View.GONE
@@ -311,7 +326,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         15: Streets
         20: Buildings
         * */
-        mGoogleMap!!.moveCamera(
+        mGoogleMap?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 target,
                 zoomLevel
@@ -334,10 +349,10 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             val option = MarkerOptions().position(path.get(path.size - 1)).title(getString(
                 R.string.current_location))
             option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
-            mMarker = mGoogleMap!!.addMarker(option)
+            mMarker = mGoogleMap?.addMarker(option)
         } else
             mMarker?.position = path.get(path.size - 1)
-        moveCameraWithZoom(path.get(path.size - 1), 17.0f)
+        moveCameraWithZoom(path.get(path.size - 1), ZOOM_LEVEL_DETAIL)
 
         mPolyline = mGoogleMap.addPolyline(polyLineOptions)
 
@@ -427,7 +442,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         if (provideRationale) {
             activity?.let {
                 Snackbar.make(
-                    it.findViewById(R.layout.fragment_practice),
+                    it.findViewById(R.id.navigation_practice),
                     R.string.permission_rationale,
                     Snackbar.LENGTH_LONG
                 )
@@ -461,10 +476,24 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private fun showAlertMessageNoGps() {
         val builder = AlertDialog.Builder(activity)
-        builder.setMessage("This app requires Location setting enabled to perform this feature. Enable Location Setting?")
+        builder.setMessage(getString(R.string.location_setting_required))
             .setCancelable(false)
-            .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
+            .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
                 startActivityForResult(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQUEST_ENBALE_LOCATION_SETTING)
+            })
+            .setNegativeButton(getString(R.string.no ), { dialog, which ->
+                dialog.cancel()
+            })
+        builder.show()
+    }
+
+    private fun showAlertConfirmStopPractice() {
+        val builder = AlertDialog.Builder(activity)
+        builder.setMessage(getString(R.string.confirm_stop_practice))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
+                onPracticeStopped()
+                foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
             })
             .setNegativeButton(getString(R.string.no ), { dialog, which ->
                 dialog.cancel()
@@ -551,11 +580,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             val location = intent?.getParcelableExtra<Location>(
                 ForegroundOnlyLocationService.EXTRA_LOCATION)
             if(isMapReady && location != null) {
-                val point = LatLng(location!!.latitude, location!!.longitude)
+                val point = LatLng(location?.latitude, location?.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))
                 option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
-                mMarker = mGoogleMap!!.addMarker(option)
+                mMarker = mGoogleMap?.addMarker(option)
                 moveCameraWithZoom(point, 16.0f)
             }
 

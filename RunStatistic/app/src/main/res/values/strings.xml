@@ -29,15 +29,19 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- -->
+    <string name="confirm_stop_practice">Do you sure that you want to stop this practice</string>
 
     <!-- Practice status -->
     <string name="you_are_not_active">You are not active</string>
-
 
     <!-- Practice type-->
     <string name="practice_type_walking">Walking</string>
     <string name="practice_type_cycling">Cycling</string>
     <string name="practice_type_running">Running</string>
     <string name="promote_workouts_to_improve_your_health">Promote workouts to improve your health</string>
+    <string name="location_setting_required">This app requires Location setting enabled to perform this feature. Enable Location Setting?</string>
 
 </resources>
