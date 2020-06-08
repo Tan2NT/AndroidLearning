@@ -64,10 +64,9 @@ class DataConvertor {
     fun intToPracticeStatus(value: Int) : PRACTICE_STATUS {
         when (value) {
             PRACTICE_STATUS.COMPETED.value      -> return PRACTICE_STATUS.COMPETED
-            PRACTICE_STATUS.RUNNING.value       -> return PRACTICE_STATUS.RUNNING
+            PRACTICE_STATUS.ACTIVE.value       -> return PRACTICE_STATUS.ACTIVE
             PRACTICE_STATUS.NOT_ACTIVE.value    -> return PRACTICE_STATUS.NOT_ACTIVE
             PRACTICE_STATUS.PAUSING.value       -> return PRACTICE_STATUS.PAUSING
-            PRACTICE_STATUS.NOT_RUNNING.value   -> return PRACTICE_STATUS.NOT_RUNNING
             else                                -> return PRACTICE_STATUS.NOT_ACTIVE
         }
     }

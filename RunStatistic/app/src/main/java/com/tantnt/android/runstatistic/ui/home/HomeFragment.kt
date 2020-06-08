@@ -28,12 +28,6 @@ class HomeFragment : Fragment() {
             //textView.text = it
         })
 
-        val k = 12.12345676
-        Log.i(LOG_TAG, "test around 2 place k = " + k.around2Place().toString())
-        Log.i(LOG_TAG, "test around 3 place k = " + k.around3Place().toString())
-        Log.i(LOG_TAG, "kalo burned per minute = " + KcalCaclator.burnedByWalkingPerMinute(70.0, 7.0, 1.70 ))
-        Log.i(LOG_TAG, "time duration string format = " + TimeUtils.convertDutationToFormmated(104731).toString())
-
         return root
     }
 }

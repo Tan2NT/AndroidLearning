@@ -30,8 +30,9 @@
                 android:gravity="center"
                 android:text="You are not active"
                 app:practiceStatusString="@{practiceViewModel.practice}"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/holo_orange_dark"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -70,8 +71,7 @@
                     android:layout_column="0"
                     android:gravity="center"
                     android:text="Distance"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="15sp" />
+                    style="@style/TextBlackMedium" />
 
                 <TextView
                     android:id="@+id/textView_distance"
@@ -100,8 +100,7 @@
                     android:layout_columnWeight="2"
                     android:layout_gravity="top|center"
                     android:text="Calo"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="15sp" />
+                    style="@style/TextBlackMedium" />
 
                 <TextView
                     android:id="@+id/textView_calo"
@@ -132,8 +131,7 @@
                     android:layout_column="2"
                     android:layout_gravity="right"
                     android:text="Speed"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="15sp" />
+                    style="@style/TextBlackMedium" />
 
                 <TextView
                     android:id="@+id/textView_speed"

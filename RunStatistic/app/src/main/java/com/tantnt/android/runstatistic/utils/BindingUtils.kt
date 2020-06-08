@@ -16,7 +16,6 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 
 @BindingAdapter("practiceDurationFormatted")
 fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
-    Log.i(LOG_TAG, "practioce duration string: ")
     practice?.let {
         if (isPracticeRunning || shouldShowPracticeResult) {
             text = TimeUtils.convertDutationToFormmated(practice.duration.toLong())
@@ -57,7 +56,6 @@ fun TextView.setPracticeSpeedString(practice: PracticeModel?) {
 
 @BindingAdapter("practiceStatusString")
 fun TextView.setPracticeStatusString(practice: PracticeModel?) {
-    Log.i(LOG_TAG, "practice duration string: ")
     practice?.let {
         if (isPracticeRunning || shouldShowPracticeResult) {
             text = practice.getStatusString()

@@ -3,6 +3,7 @@ package com.tantnt.android.runstatistic.ui.practice
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -28,22 +30,19 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.tantnt.android.runstatistic.BuildConfig
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.base.ForegroundOnlyLocationService
-import com.tantnt.android.runstatistic.base.foregroundServiceIsRunning
-import com.tantnt.android.runstatistic.base.foregroundServiceSubscribeLocationUpdate
-import com.tantnt.android.runstatistic.base.isPracticeRunning
+import com.tantnt.android.runstatistic.base.*
 import com.tantnt.android.runstatistic.databinding.FragmentPracticeBinding
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.ui.dialog.SelectingPracticeTypeDialog
 import com.tantnt.android.runstatistic.utils.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_practice.*
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
 private const val REQUEST_SELECT_PRACTICE_TYPE = 26
+private const val REQUEST_DETECT_ACTIVITY_REQUEST_CODE = 27
 
 @Suppress("DEPRECATION")
 class PracticeFragment : Fragment(), OnMapReadyCallback {
@@ -53,10 +52,16 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mGoogleMap: GoogleMap
     private var isMapReady : Boolean = false
     private var mMarker : Marker? = null
+    private var mPolyline: Polyline? = null
 
     private lateinit var practiceViewModel: PracticeViewModel
 
     private var practiceType = PRACTICE_TYPE.WALKING
+
+    /**
+     * The entry point for interacting with activity recognition.
+     */
+    private lateinit var activityRecognitionClient : ActivityRecognitionClient
 
     private var foregroundOnlyLocationServiceBound = false
 
@@ -173,6 +178,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             if(!isPracticeRunning) {
                 // we must select practice before start a practice
                 openSelectPracticeTypeDialog()
+                mPolyline?.remove()
             }
             else {
                 // user resume a practice
@@ -200,6 +206,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         }
 
         initButtonStatus()
+
+        activityRecognitionClient = ActivityRecognitionClient(requireActivity())
     }
 
     fun openSelectPracticeTypeDialog() {
@@ -220,7 +228,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         {
             Log.i(LOG_TAG, "updateStatusButton has practice")
             when(practiceModel.status) {
-                PRACTICE_STATUS.RUNNING -> {
+                PRACTICE_STATUS.ACTIVE, PRACTICE_STATUS.NOT_ACTIVE -> {
                     stop_practice_btn.visibility = View.VISIBLE
                     pause_practice_btn.visibility = View.VISIBLE
                     start_practice_btn.visibility = View.GONE
@@ -231,6 +239,10 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     pause_practice_btn.visibility = View.GONE
                     start_practice_btn.visibility = View.VISIBLE
                 }
+
+                PRACTICE_STATUS.COMPETED -> {
+                    initButtonStatus()
+                }
             }
         }
     }
@@ -239,6 +251,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         start_practice_btn.visibility = View.VISIBLE
         stop_practice_btn.visibility = View.GONE
         pause_practice_btn.visibility = View.GONE
+
+        removeActivityRecognitionUpdates()
     }
 
     override fun onStart() {
@@ -324,7 +338,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         } else
             mMarker?.position = path.get(path.size - 1)
         moveCameraWithZoom(path.get(path.size - 1), 17.0f)
-        mGoogleMap.addPolyline(polyLineOptions)
+
+        mPolyline = mGoogleMap.addPolyline(polyLineOptions)
 
 //        Adding bounds
 //        practiceViewModel.routeBounds.value?.let {
@@ -471,10 +486,62 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 val type = data?.getIntExtra("practice_type", 0)!!
                 practiceType = PRACTICE_TYPE.values() [type]
                 foregroundOnlyLocationService?.startPractice(practiceType)
+                registerActivityRecognitionUpdates()
                 Log.d(TAG, "onActivityResult practice_type: $type")
             }
         }
     }
+
+    /**
+     * Register for activity recognition updates
+     * Registers success and failure callbacks.
+     */
+    fun registerActivityRecognitionUpdates() {
+        Log.i(TAG, "registerActivityRecognitionUpdates")
+
+        val task = activityRecognitionClient.requestActivityUpdates(
+            DETECTION_INTERVAL_IN_MILLISECONDS,
+            getActivityDetectionPendingIntent()
+        )
+
+        task.addOnSuccessListener {
+            Log.i(TAG, "addOnSuccessListener Activity updates enabled!")
+        }
+
+        task.addOnFailureListener {
+            Log.e(TAG, "addOnFailureListener faile to enable activity updates! err: ${it.toString()}")
+        }
+    }
+
+    fun getActivityDetectionPendingIntent(): PendingIntent {
+        val intent = Intent(requireContext(), DetectedActivitiesIntentService::class.java)
+
+        // use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+        // requestActivityUpdates() and removeActivityUpdates()
+        return PendingIntent.getService(requireContext(), REQUEST_DETECT_ACTIVITY_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    /**
+     * Removes activity recognition updates
+     * Register success and failure callbacks
+     */
+    fun removeActivityRecognitionUpdates() {
+
+        Log.i(TAG, "removeActivityRecognitionUpdates")
+
+        val task = activityRecognitionClient.removeActivityUpdates(
+            getActivityDetectionPendingIntent()
+        )
+
+        task.addOnSuccessListener {
+            Log.i(TAG, "addOnSuccessListener Activity  recognition updates removed!")
+        }
+
+        task.addOnFailureListener {
+            Log.i(TAG, "addOnSuccessListener fail to remove Activity recognition updates")
+        }
+    }
+
 
     /**
      * Receiver for Location broadcasts from [ForegroundOnlyLocationService]

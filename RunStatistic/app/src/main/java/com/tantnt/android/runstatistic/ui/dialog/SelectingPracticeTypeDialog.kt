@@ -78,6 +78,11 @@ class SelectingPracticeTypeDialog() : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        // select Walking as default practice type
+        walking_icon.setBackgroundResource(R.drawable.walking_selected_icon)
+        walking_text.setTextColor(Color.GREEN)
+
         // handle icons tapped
         walking_icon.setOnClickListener {
             selectedPracticeType = PRACTICE_TYPE.WALKING

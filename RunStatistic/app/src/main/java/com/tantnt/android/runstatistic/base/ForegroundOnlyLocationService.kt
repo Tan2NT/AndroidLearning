@@ -58,7 +58,7 @@ class ForegroundOnlyLocationService  : Service() {
         distance = 0.00,
         calo = 0.0,
         speed = 0.0,
-        status = PRACTICE_STATUS.NOT_RUNNING,
+        status = PRACTICE_STATUS.NOT_ACTIVE,
         path = arrayListOf()
     )
 
@@ -110,14 +110,14 @@ class ForegroundOnlyLocationService  : Service() {
         // Create a LocationRequest
         locationRequest = LocationRequest().apply {
             // how often the location is updated
-            interval = TimeUnit.SECONDS.toMillis(3)
+            interval = TimeUnit.SECONDS.toMillis(2)
 
             // your application will never receive updates more frequently than this value
             fastestInterval = TimeUnit.SECONDS.toMillis(1)
 
             // sets the maximum time when batched location updates are delivered. Updates may be
             // delivered sooner than this interval
-            maxWaitTime = TimeUnit.SECONDS.toMillis(10)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(3)
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
@@ -129,7 +129,6 @@ class ForegroundOnlyLocationService  : Service() {
         locationCallback = object: LocationCallback() {
             override fun onLocationResult(p0: LocationResult?) {
                 super.onLocationResult(p0)
-                Log.d(TAG, "onLocationResult lastLocation:  " + p0?.lastLocation.toString())
 
                 if(p0?.lastLocation != null ) {
                    if(isPracticeRunning){
@@ -165,7 +164,7 @@ class ForegroundOnlyLocationService  : Service() {
                 distance = 0.0,
                 calo = 0.0,
                 speed = 0.0,
-                status = PRACTICE_STATUS.RUNNING,
+                status = PRACTICE_STATUS.NOT_ACTIVE,
                 path = arrayListOf())
             if (currentLocation != null) {
                 currentPractice!!.path.add(
@@ -177,6 +176,8 @@ class ForegroundOnlyLocationService  : Service() {
             }
             savePractice()
         }
+
+        lastUpdatedTime = TimeUtils.getTimeInMilisecond()
     }
 
     fun stopPractice() {
@@ -201,7 +202,7 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun resumePractice() {
-        currentPractice!!.status = PRACTICE_STATUS.RUNNING
+        currentPractice!!.status = PRACTICE_STATUS.ACTIVE
         if (currentLocation != null) {
             currentPractice!!.path.add(
                 LatLng(
@@ -231,7 +232,7 @@ class ForegroundOnlyLocationService  : Service() {
         val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
         if (currentPractice!!.duration > 0)
             currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
-        currentPractice!!.status = PRACTICE_STATUS.RUNNING
+        currentPractice!!.status = PRACTICE_STATUS.ACTIVE
         currentPractice!!.calo = ((currentPractice!!.duration / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
             USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
                 ).around2Place()
@@ -239,8 +240,12 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     private fun onNewLocation(location: Location?) {
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING) {
-            Log.d(LOG_TAG, "onNewLocation is pausing")
+        val tempStatus = currentPractice!!.status
+        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING || !currentPractice!!.isUserActive()) {
+            Log.d(LOG_TAG, "onNewLocation is pausing or not active")
+
+            if(tempStatus != currentPractice!!.status)
+                savePractice()
             lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
         }
@@ -262,21 +267,19 @@ class ForegroundOnlyLocationService  : Service() {
             location!!.latitude,
             location!!.longitude).around3Place()
 
-        val elapsedTime = TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
+//        val elapsedTime = TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
 
-        Log.i(TAG, "onNewLocation distance: $distance  - elapsed time: $elapsedTime")
+//        Log.i(TAG, "onNewLocation distance: $distance  - elapsed time: $elapsedTime")
 
-        // only allow to add new location if it's not too close with the previous location
-        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && ( elapsedTime >= MIN_UPDATE_TIME_IN_MILLI )) {
+//        // only allow to add new location if it's not too close with the previous location
+//        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && ( elapsedTime >= MIN_UPDATE_TIME_IN_MILLI )) {
             // update the practice
             updatePractice(location, distance)
 
             // save the updated practice into the database
             savePractice()
-        } else {
-            currentPractice!!.status = PRACTICE_STATUS.NOT_ACTIVE
-            savePractice()
-        }
+
+        lastUpdatedTime = TimeUtils.getTimeInMilisecond()
 
         // update current location
         currentLocation!!.latitude = location!!.latitude

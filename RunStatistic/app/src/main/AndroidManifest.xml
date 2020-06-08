@@ -5,8 +5,12 @@
     <!-- Required for foreground services on P+. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!-- Required for location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Require for detect user activity -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:name=".RunStatisticApplication"
@@ -41,6 +45,10 @@
             android:foregroundServiceType="location" />
 
         <service android:name=".base.LaunchAppService"
+            android:exported="false"/>
+
+        <service android:name=".base.DetectedActivitiesIntentService"
+            android:enabled="true"
             android:exported="false"/>
     </application>
 
