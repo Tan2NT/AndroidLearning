@@ -187,9 +187,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         stop_practice_btn.setOnClickListener {
             foregroundOnlyLocationService?.stopPractice()
 
-            stop_practice_btn.visibility = View.GONE
-            pause_practice_btn.visibility = View.GONE
-            start_practice_btn.visibility = View.VISIBLE
+           onPracticeStopped()
         }
 
         // pause the practice
@@ -235,6 +233,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    private fun onPracticeStopped() {
+        start_practice_btn.visibility = View.VISIBLE
+        stop_practice_btn.visibility = View.GONE
+        pause_practice_btn.visibility = View.GONE
     }
 
     override fun onStart() {
@@ -479,7 +483,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         override fun onReceive(context: Context?, intent: Intent?) {
             val location = intent?.getParcelableExtra<Location>(
                 ForegroundOnlyLocationService.EXTRA_LOCATION)
-            if(isMapReady) {
+            if(isMapReady && location != null) {
                 val point = LatLng(location!!.latitude, location!!.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))
@@ -487,6 +491,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 mMarker = mGoogleMap!!.addMarker(option)
                 moveCameraWithZoom(point, 16.0f)
             }
+
+            val isPracticeStopped = intent?.getBooleanExtra(ForegroundOnlyLocationService.EXTRA_PRACTICE_STOPPED, false)
+            if (isPracticeStopped == true){
+                onPracticeStopped()
+            }
+
         }
     }
 }

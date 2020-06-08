@@ -60,14 +60,7 @@ fun TextView.setPracticeStatusString(practice: PracticeModel?) {
     Log.i(LOG_TAG, "practice duration string: ")
     practice?.let {
         if (isPracticeRunning || shouldShowPracticeResult) {
-            Log.i(LOG_TAG, "practioce duration string: " + practice.status.toString())
-            when(practice.status) {
-                PRACTICE_STATUS.NOT_RUNNING -> text = "You are not active"
-                PRACTICE_STATUS.RUNNING -> text = "Running"
-                PRACTICE_STATUS.PAUSING -> text = "Pausing"
-                PRACTICE_STATUS.COMPETED -> text = "Completed"
-                else -> text = "You are not active"
-            }
+            text = practice.getStatusString()
         } else
             text = "You are not active"
     }

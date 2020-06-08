@@ -181,11 +181,18 @@ class ForegroundOnlyLocationService  : Service() {
 
     fun stopPractice() {
         currentPractice!!.status = PRACTICE_STATUS.COMPETED
-        isPracticeRunning = false
         shouldShowPracticeResult = true
         savePractice()
         unsubscribeToLocationUpdates()
+        isPracticeRunning = false
+        notifyPracticeHasStopped()
         stopSelf()
+    }
+
+    fun notifyPracticeHasStopped() {
+        val intent = Intent(ACTION_FORGROUND_ONLY_LOCATION_BROADCAST)
+        intent.putExtra(EXTRA_PRACTICE_STOPPED, true)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     fun pausePractice() {
@@ -468,6 +475,8 @@ class ForegroundOnlyLocationService  : Service() {
             "$PACKAGE_NAME.action.FOREGROUND_ONLY_LOCATION_BROADCAST"
 
         internal const val EXTRA_LOCATION = "$PACKAGE_NAME.extra.LOCATION"
+
+        internal const val EXTRA_PRACTICE_STOPPED = "$PACKAGE_NAME.extra.PRACTICE_STOPPED"
 
         private const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION =
             "$PACKAGE_NAME.extra.CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION"

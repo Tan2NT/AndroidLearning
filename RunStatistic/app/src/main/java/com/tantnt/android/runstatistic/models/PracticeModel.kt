@@ -39,6 +39,7 @@ data class PracticeModel(
             PRACTICE_STATUS.RUNNING       -> return getTypeString()
             PRACTICE_STATUS.NOT_ACTIVE    -> return "You are not active"
             PRACTICE_STATUS.PAUSING       -> return "Pausing"
+            PRACTICE_STATUS.COMPETED      -> return "Completed"
             else                          -> return "You are not active"
         }
     }
