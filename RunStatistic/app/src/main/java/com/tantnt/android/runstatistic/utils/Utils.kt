@@ -4,10 +4,7 @@ import android.R.attr
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
@@ -35,23 +32,33 @@ object Utils {
                     var paint = Paint()
                     paint.style = Paint.Style.FILL
                     paint.color = Color.BLACK
-                    paint.textSize = 20.0f
+                    paint.textSize = 50.0f
+
+                    // font bold
+                    val plain = Typeface.createFromAsset(context.assets, "fonts/COOPBL.TTF")
+                    val bold = Typeface.create(plain, Typeface.BOLD)
+                    paint.setTypeface((bold))
 
                     // Try to adding practice info into the bitmap
-                    val canvas = Canvas()
-                    bitmap?.width?.minus(100.0f)?.let { it1 ->
-                        canvas.drawText("${context.getString(R.string.time_min)} : ${TimeUtils.convertDutationToFormmated(practive.duration.toLong())}",
-                            it1,
-                            it1, paint)
-                    }
-                    canvas.drawText("${context.getString(R.string.distance_km)} : ${practive.distance}",
-                        (bitmap!!.width + 10).toFloat(), (bitmap!!.height/4).toFloat(), paint)
+                    val canvas = Canvas(bitmap!!)
 
-                    canvas.drawText("${context.getString(R.string.time_min)} : ${TimeUtils.convertDutationToFormmated(practive.duration.toLong())}",
-                        (bitmap!!.width/2).toFloat(), (bitmap!!.height/4).toFloat(), paint)
+                    // Distance
+                    canvas.drawText("${practive.getTypeString().capitalize()}",
+                        100.0f, (bitmap!!.height - 150).toFloat(), paint)
+                    canvas.drawText("${practive.distance.around3Place().toString()} Km ",
+                        100.0f, (bitmap!!.height - 80).toFloat(), paint)
 
-                    canvas.drawText("${context.getString(R.string.calo_text)} : ${practive.calo}",
-                        (bitmap!!.width - 100).toFloat(), (bitmap!!.height/4).toFloat(), paint)
+                    // Duration
+                    canvas.drawText("TIME",
+                        (bitmap!!.width/2 - 20).toFloat(), (bitmap!!.height - 150).toFloat(), paint)
+                    canvas.drawText("${TimeUtils.convertDutationToFormmated(practive.duration.toLong())}",
+                        (bitmap!!.width/2 - 30).toFloat(), (bitmap!!.height - 80).toFloat(), paint)
+
+                    // Calo
+                    canvas.drawText("${context.getString(R.string.calo_text).capitalize()}",
+                        (bitmap!!.width - 230).toFloat(), (bitmap!!.height - 150).toFloat(), paint)
+                    canvas.drawText("${practive.calo} Kcal",
+                        (bitmap!!.width - 250).toFloat(), (bitmap!!.height - 80).toFloat(), paint)
 
                     // Share result to others
                     val bitmapPath: String =

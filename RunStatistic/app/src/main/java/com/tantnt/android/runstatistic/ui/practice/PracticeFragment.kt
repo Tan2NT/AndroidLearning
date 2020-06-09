@@ -145,19 +145,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if (isMapReady && it != null && it.path.size >= 1  && isPracticeRunning){
+                if (isMapReady && it != null && it.path.size > 1  && isPracticeRunning){
                     Log.i(TAG, "PracticeFragment - latestPractice: " + it.toString())
-
-                    if(it.path.size == 1) {
-                        Log.i(TAG, "PracticeFragment - start Practice")
-                        // add the Marker at the starting point
-                        val option = MarkerOptions().position(it.path[0]).title(getString(
-                            R.string.current_location))
-                        option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
-                        mStartMarker = mGoogleMap?.addMarker(option)
-                        moveCameraWithZoom(it.path[0], ZOOM_LEVEL_MEDIUM)
-                    }
-
                     // adding path
                     addPath(it.path)
 
@@ -351,7 +340,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         if(mCurrentMarker == null ) {
             val option = MarkerOptions().position(path.get(path.size - 1)).title(getString(
                 R.string.current_location))
-            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_circle))
+            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_circle))
             mCurrentMarker = mGoogleMap?.addMarker(option)
         } else
             mCurrentMarker?.position = path.get(path.size - 1)
@@ -519,6 +508,9 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 practiceType = PRACTICE_TYPE.values() [type]
                 foregroundOnlyLocationService?.startPractice(practiceType)
                 registerActivityRecognitionUpdates()
+                stop_practice_btn.visibility = View.VISIBLE
+                pause_practice_btn.visibility = View.VISIBLE
+                start_practice_btn.visibility = View.GONE
                 Log.d(TAG, "onActivityResult practice_type: $type")
             }
         }
@@ -588,7 +580,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     R.string.current_location))
                 option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
                 mStartMarker = mGoogleMap?.addMarker(option)
-                moveCameraWithZoom(point, 16.0f)
+                moveCameraWithZoom(point, ZOOM_LEVEL_MEDIUM)
             }
 
             val isPracticeStopped = intent?.getBooleanExtra(ForegroundOnlyLocationService.EXTRA_PRACTICE_STOPPED, false)
