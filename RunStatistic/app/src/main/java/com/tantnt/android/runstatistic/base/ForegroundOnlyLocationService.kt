@@ -225,9 +225,10 @@ class ForegroundOnlyLocationService  : Service() {
         }
     }
 
-    fun updatePractice(location: Location?, distance: Double) {
+    fun updatePractice(location: Location?, distance: Double, statechanged: Boolean) {
         currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
-        currentPractice!!.distance += distance.around3Place()
+        if (statechanged == false)
+            currentPractice!!.distance += distance.around3Place()
         currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
         val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
         if (currentPractice!!.duration > 0)
@@ -246,7 +247,8 @@ class ForegroundOnlyLocationService  : Service() {
 
             if(tempStatus != currentPractice!!.status)
                 savePractice()
-            lastUpdatedTime = TimeUtils.getTimeInMilisecond()
+            if (currentPractice!!.status == PRACTICE_STATUS.PAUSING)
+                lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
         }
 
@@ -267,14 +269,7 @@ class ForegroundOnlyLocationService  : Service() {
             location!!.latitude,
             location!!.longitude).around3Place()
 
-//        val elapsedTime = TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
-
-//        Log.i(TAG, "onNewLocation distance: $distance  - elapsed time: $elapsedTime")
-
-//        // only allow to add new location if it's not too close with the previous location
-//        if(distance >= MIN_DISTANCE_ALLOW_IN_KM && ( elapsedTime >= MIN_UPDATE_TIME_IN_MILLI )) {
-            // update the practice
-            updatePractice(location, distance)
+            updatePractice(location, distance, tempStatus != currentPractice!!.status)
 
             // save the updated practice into the database
             savePractice()
@@ -290,7 +285,7 @@ class ForegroundOnlyLocationService  : Service() {
     private fun updateForegroundNotificationifNeed(){
         // @Todo
         // Updates notification content if this service is running as a foreground service
-        if(serviceRunningInForeground) {
+        if(serviceRunningInForeground && isPracticeRunning) {
             notificationManager.notify(
                 NOTIFICATION_ID,
                 generateNotification(currentLocation))

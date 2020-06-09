@@ -16,7 +16,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -46,7 +45,7 @@ private const val REQUEST_SELECT_PRACTICE_TYPE = 26
 private const val REQUEST_DETECT_ACTIVITY_REQUEST_CODE = 27
 
 private const val ZOOM_LEVEL_MEDIUM = 16.0f
-private const val ZOOM_LEVEL_DETAIL = 17.5f
+private const val ZOOM_LEVEL_DETAIL = 18.0f
 
 
 @Suppress("DEPRECATION")
@@ -56,7 +55,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     
     private lateinit var mGoogleMap: GoogleMap
     private var isMapReady : Boolean = false
-    private var mMarker : Marker? = null
+    private var mCurrentMarker : Marker? = null
+    private var mStartMarker : Marker? = null
     private var mPolyline: Polyline? = null
 
     private lateinit var practiceViewModel: PracticeViewModel
@@ -153,8 +153,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                         // add the Marker at the starting point
                         val option = MarkerOptions().position(it.path[0]).title(getString(
                             R.string.current_location))
-                        option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange))
-                        mGoogleMap?.addMarker(option)
+                        option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
+                        mStartMarker = mGoogleMap?.addMarker(option)
                         moveCameraWithZoom(it.path[0], ZOOM_LEVEL_MEDIUM)
                     }
 
@@ -182,8 +182,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         start_practice_btn.setOnClickListener {
             if(!isPracticeRunning) {
                 // we must select practice before start a practice
+                mPolyline = null
+                mStartMarker = null
+                mCurrentMarker = null
+                mGoogleMap?.clear()
                 openSelectPracticeTypeDialog()
-                mPolyline?.remove()
             }
             else {
                 // user resume a practice
@@ -261,7 +264,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             )
         )
 
-        practiceViewModel.practice.value?.startTime?.let { Utils.captureScreenAndShare(it, mGoogleMap, requireContext()) }
+        practiceViewModel.practice.value?.startTime?.let { Utils.captureScreenAndShare(practiceViewModel.practice.value!!, mGoogleMap, requireContext()) }
 
         start_practice_btn.visibility = View.VISIBLE
         stop_practice_btn.visibility = View.GONE
@@ -345,13 +348,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             polyLineOptions.add(path.get(i))
         }
 
-        if(mMarker == null ) {
+        if(mCurrentMarker == null ) {
             val option = MarkerOptions().position(path.get(path.size - 1)).title(getString(
                 R.string.current_location))
-            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
-            mMarker = mGoogleMap?.addMarker(option)
+            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_circle))
+            mCurrentMarker = mGoogleMap?.addMarker(option)
         } else
-            mMarker?.position = path.get(path.size - 1)
+            mCurrentMarker?.position = path.get(path.size - 1)
         moveCameraWithZoom(path.get(path.size - 1), ZOOM_LEVEL_DETAIL)
 
         mPolyline = mGoogleMap.addPolyline(polyLineOptions)
@@ -493,7 +496,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
                 onPracticeStopped()
-                foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+                foregroundOnlyLocationService?.stopPractice()
             })
             .setNegativeButton(getString(R.string.no ), { dialog, which ->
                 dialog.cancel()
@@ -583,8 +586,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 val point = LatLng(location?.latitude, location?.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))
-                option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green))
-                mMarker = mGoogleMap?.addMarker(option)
+                option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
+                mStartMarker = mGoogleMap?.addMarker(option)
                 moveCameraWithZoom(point, 16.0f)
             }
 
