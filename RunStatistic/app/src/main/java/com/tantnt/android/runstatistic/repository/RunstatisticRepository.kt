@@ -98,7 +98,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * 30 latestPractices
      */
-    val latest30Practices = Transformations.map(database.practiceDao.getLatest30Practices()) {
+    val latest30Practices : LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getLatest30Practices()) {
         it.asModel()
     }
 }

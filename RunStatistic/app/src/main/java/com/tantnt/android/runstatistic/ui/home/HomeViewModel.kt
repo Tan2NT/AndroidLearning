@@ -49,5 +49,5 @@ class HomeViewModel(application: Application) : ViewModel() {
     /**
      * only get the best practice from 30 latest practices
      */
-    val latest30Practice = runstatisticRepository.latest30Practices
+    val latest30Practice : LiveData<List<PracticeModel>> = runstatisticRepository.latest30Practices
 }

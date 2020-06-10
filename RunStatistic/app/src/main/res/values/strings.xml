@@ -57,6 +57,7 @@
     <string name="select_target_muscle_gain">Muscle gain</string>
     <string name="select_target_adjust">Adjust</string>
     <string name="select_practice_type">select practice type</string>
+    <string name="steps">Steps</string>
 
 
 </resources>

@@ -281,13 +281,12 @@
 
         <Button
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="View more"
             style="@style/GreenButton"
-			android:background="@drawable/btn_rounded_green"
+            android:background="@drawable/btn_rounded_green"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             />
 
@@ -299,5 +298,10 @@
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_practices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

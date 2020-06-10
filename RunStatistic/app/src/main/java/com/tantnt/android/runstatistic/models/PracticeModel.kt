@@ -4,6 +4,7 @@ import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
+import com.tantnt.android.runstatistic.ui.home.PracticeItem
 import org.threeten.bp.LocalDateTime
 
 /**
@@ -119,4 +120,10 @@ fun PracticeModel.asDatabasePractice() : DatabasePractice {
         this.status,
         this.path
     )
+}
+
+fun List<PracticeModel>.asListPracticeItem(): List<PracticeItem> {
+    return this.map {
+        PracticeItem(it)
+    }
 }

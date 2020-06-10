@@ -11,11 +11,18 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.DAILY_TARGET
 import com.tantnt.android.runstatistic.models.PracticeDayInfo
+import com.tantnt.android.runstatistic.models.PracticeModel
+import com.tantnt.android.runstatistic.models.asListPracticeItem
 import com.tantnt.android.runstatistic.network.service.TAG
 import com.tantnt.android.runstatistic.utils.*
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Section
+import com.xwray.groupie.groupiex.plusAssign
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_select_target_dialog.view.*
 import org.threeten.bp.LocalDateTime
@@ -97,6 +104,9 @@ class HomeFragment : Fragment() {
          */
         homeViewModel.latest30Practice.observe(viewLifecycleOwner, Observer {
             it?.let {
+
+                initRecycleView((it as List<PracticeModel>).asListPracticeItem())
+
                 /**
                  * get the best practice base on now much Calo is spent
                  */
@@ -136,9 +146,30 @@ class HomeFragment : Fragment() {
                     bpr_distance_text.text = bestPracticeDay.totalDistance.toString()
                     bpr_energy_text.text = bestPracticeDay.totalCaloBurned.toString()
                 }
-
             }
         })
+    }
+
+    private fun initRecycleView(items: List<PracticeItem>) {
+        var groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
+
+        }
+
+        // group practice by day
+        var groupByDay  = items.groupBy { it -> it.practiceModel.startTime.toLocalDate() }
+        // add all practice, group by date
+        groupByDay.forEach {
+            val section = Section()
+            section.setHeader(HeaderItem(it.key.toString()))
+            section.addAll(it.value)
+            groupAdapter += section
+        }
+
+        recyclerView_practices.apply {
+            layoutManager = LinearLayoutManager(this@HomeFragment.context)
+            adapter = groupAdapter
+        }
+
     }
 
     fun openSelectDailyTargetDialog() {
