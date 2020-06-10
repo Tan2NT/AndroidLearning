@@ -1,307 +1,311 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.home.HomeFragment">
-
-    <LinearLayout
-        android:id="@+id/basic_info_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.home.HomeFragment">
+
+        <LinearLayout
+            android:id="@+id/basic_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/target_layout"
+                android:layout_width="256dp"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:indeterminate="false"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:background="@drawable/circle_shape"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:progress="65" />
+
+                <ImageView
+                    android:id="@+id/foot_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/foot"
+                    android:layout_gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/current_step_text"
+                    android:layout_marginBottom="5dp"
+                    />
+                <TextView
+                    android:id="@+id/current_step_text"
+                    android:text="00"
+                    style="@style/TextGreenkVeryBig"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <View
+                    android:id="@+id/separator_line"
+                    android:layout_width="100dp"
+                    android:layout_height="2dp"
+                    android:background="@android:color/holo_orange_dark"
+                    app:layout_constraintTop_toBottomOf="@id/current_step_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <TextView
+                    android:id="@+id/target_step"
+                    style="@style/TextOrangeBig"
+                    android:text="6000"
+                    app:layout_constraintTop_toBottomOf="@id/separator_line"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/detail_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="64dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="20dp"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/energy_box"/>
+                    <ImageView
+                        style="@style/TodayPracticeItemInfo_Icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:src="@drawable/energy"
+                        />
+                    <TextView
+                        android:id="@+id/total_calo_today_text"
+                        style="@style/TodayPracticeItemInfo_Text"
+                        android:text="123"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+                    <TextView
+                        style="@style/TodayPracticeItemInfo_MeasureUnit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="Kcal"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="64dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/time_box"/>
+                    <ImageView
+                        style="@style/TodayPracticeItemInfo_Icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:src="@drawable/time"
+                        />
+                    <TextView
+                        style="@style/TodayPracticeItemInfo_Text"
+                        android:id="@+id/total_time_today_text"
+                        android:text="123"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+                    <TextView
+                        style="@style/TodayPracticeItemInfo_MeasureUnit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="Min"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="64dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="20dp"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/foot_box"/>
+                    <ImageView
+                        style="@style/TodayPracticeItemInfo_Icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:src="@drawable/road_icon"
+                        />
+                    <TextView
+                        android:id="@+id/total_distance_today_text"
+                        style="@style/TodayPracticeItemInfo_Text"
+                        android:text="123"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+                    <TextView
+                        style="@style/TodayPracticeItemInfo_MeasureUnit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="Km"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/target_layout"
-            android:layout_width="256dp"
-            android:layout_height="match_parent">
+            android:id="@+id/line_break"
+            style="@style/LineBreak"
+            >
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:indeterminate="false"
-                android:progressDrawable="@drawable/circular_progress_bar"
-                android:background="@drawable/circle_shape"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:max="100"
-                android:progress="65" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp">
+
+            <TextView
+                style="@style/TextHeader2"
+                android:text="@string/best_practice_day"
+                android:layout_marginStart="@dimen/margin_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="top"
+                />
+            <TextView
+                android:id="@+id/bpr_day_text"
+                style="@style/TextOrangeBig"
+                android:textSize="18sp"
+                android:text="20-06-2020"
+                android:layout_marginEnd="@dimen/margin_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <ImageView
+                android:id="@+id/bpr_energy_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/energy"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp"
+                />
+            <TextView
+                android:id="@+id/bpr_energy_text"
+                style="@style/NumberTextHolo"
+                android:text="0.00"
+                app:layout_constraintStart_toEndOf="@id/bpr_energy_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+
+                />
 
             <ImageView
-                android:id="@+id/foot_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:id="@+id/bpr_step_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/foot"
-                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/current_step_text"
-                android:layout_marginBottom="5dp"
                 />
-            <TextView
-                android:id="@+id/current_step_text"
-                android:text="00"
-                style="@style/TextGreenkVeryBig"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-            <View
-                android:id="@+id/separator_line"
-                android:layout_width="100dp"
-                android:layout_height="2dp"
-                android:background="@android:color/holo_orange_dark"
-                app:layout_constraintTop_toBottomOf="@id/current_step_text"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
-                android:id="@+id/target_step"
-                style="@style/TextOrangeBig"
-                android:text="6000"
-                app:layout_constraintTop_toBottomOf="@id/separator_line"
-                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/bpr_step_text"
+                style="@style/NumberTextHolo"
+                android:text="0"
+                android:layout_marginStart="@dimen/margin_small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bpr_step_icon" />
+
+            <ImageView
+                android:id="@+id/bpr_distance_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:src="@drawable/road_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/bpr_distance_text" />
+
+            <TextView
+                android:id="@+id/bpr_distance_text"
+                style="@style/NumberTextHolo"
+                android:text="0.00"
+                android:layout_marginEnd="@dimen/margin_default"
                 app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintBottom_toBottomOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/detail_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="64dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="20dp"
-                >
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/energy_box"/>
-                <ImageView
-                    style="@style/TodayPracticeItemInfo_Icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:src="@drawable/energy"
-                    />
-                <TextView
-                    android:id="@+id/total_calo_today_text"
-                    style="@style/TodayPracticeItemInfo_Text"
-                    android:text="123"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    />
-                <TextView
-					style="@style/TodayPracticeItemInfo_MeasureUnit"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="Kcal"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/line_break2"
+            style="@style/LineBreak"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/general_info_layout"
+            >
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="64dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                >
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/time_box"/>
-                <ImageView
-				style="@style/TodayPracticeItemInfo_Icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:src="@drawable/time"
-                    />
-                <TextView
-					style="@style/TodayPracticeItemInfo_Text"
-                    android:id="@+id/total_time_today_text"
-                    android:text="123"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    />
-                <TextView
-                    style="@style/TodayPracticeItemInfo_MeasureUnit"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="Min"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="64dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"
-                >
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/foot_box"/>
-                <ImageView
-                    style="@style/TodayPracticeItemInfo_Icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:src="@drawable/road_icon"
-                    />
-                <TextView
-                    android:id="@+id/total_distance_today_text"
-					style="@style/TodayPracticeItemInfo_Text"
-                    android:text="123"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    />
-                <TextView
-					style="@style/TodayPracticeItemInfo_MeasureUnit"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="Km"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="View more"
+                style="@style/GreenButton"
+                android:background="@drawable/btn_rounded_green"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="5dp"
+                />
+
+            <TextView
+                style="@style/TextHeader2"
+                android:text="@string/history"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_practices"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/line_break"
-        style="@style/LineBreak"
-        >
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="64dp">
-
-        <TextView
-            style="@style/TextHeader2"
-            android:text="@string/best_practice_day"
-            android:layout_marginStart="@dimen/margin_small"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="top"
-            />
-        <TextView
-            android:id="@+id/bpr_day_text"
-            style="@style/TextOrangeBig"
-            android:textSize="18sp"
-            android:text="20-06-2020"
-            android:layout_marginEnd="@dimen/margin_default"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-        <ImageView
-            android:id="@+id/bpr_energy_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/energy"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"
-            />
-        <TextView
-            android:id="@+id/bpr_energy_text"
-			style="@style/NumberTextHolo"
-			android:text="0.00"
-            app:layout_constraintStart_toEndOf="@id/bpr_energy_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-           
-            />
-
-        <ImageView
-            android:id="@+id/bpr_step_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/foot"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/bpr_step_text"
-            style="@style/NumberTextHolo"
-            android:text="0"
-            android:layout_marginStart="@dimen/margin_small"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bpr_step_icon" />
-
-        <ImageView
-            android:id="@+id/bpr_distance_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:src="@drawable/road_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/bpr_distance_text" />
-
-        <TextView
-            android:id="@+id/bpr_distance_text"
-            style="@style/NumberTextHolo"
-            android:text="0.00"
-            android:layout_marginEnd="@dimen/margin_default"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/line_break2"
-        style="@style/LineBreak"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/general_info_layout"
-        >
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:text="View more"
-            style="@style/GreenButton"
-            android:background="@drawable/btn_rounded_green"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="5dp"
-            />
-
-        <TextView
-            style="@style/TextHeader2"
-            android:text="@string/history"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_practices"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
