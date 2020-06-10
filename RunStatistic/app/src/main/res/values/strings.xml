@@ -7,7 +7,6 @@
     <string name="history">History</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="distance_km">Distance (Km)</string>
     <string name="title_weather">Weather</string>
     <string name="speed_km">Speed (Km/h)</string>
@@ -31,12 +30,17 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 
     <!-- -->
     <string name="confirm_stop_practice">Do you sure that you want to stop this practice</string>
 
     <!-- Practice status -->
     <string name="you_are_not_active">You are not active</string>
+    <string name="status_walking">Walking</string>
+    <string name="status_running">Rungning</string>
+    <string name="status_pausing">Pausing</string>
+
 
     <!-- Practice type-->
     <string name="practice_type_walking">Walking</string>
@@ -44,5 +48,15 @@
     <string name="practice_type_running">Running</string>
     <string name="promote_workouts_to_improve_your_health">Promote workouts to improve your health</string>
     <string name="location_setting_required">This app requires Location setting enabled to perform this feature. Enable Location Setting?</string>
+
+    <string name="select_target_title">Set daily target step</string>
+    <string name="select_target_under_average">Under medium</string>
+    <string name="select_target_average">Medium</string>
+    <string name="select_target_high_active">High active</string>
+    <string name="select_target_weight_loss">Weight loss</string>
+    <string name="select_target_muscle_gain">Muscle gain</string>
+    <string name="select_target_adjust">Adjust</string>
+    <string name="select_practice_type">select practice type</string>
+
 
 </resources>

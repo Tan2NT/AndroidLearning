@@ -6,7 +6,11 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
-import org.threeten.bp.LocalDate
+import org.threeten.bp.DateTimeUtils
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import java.sql.Timestamp
 import kotlin.collections.ArrayList
 
 class DataConvertor {
@@ -29,15 +33,13 @@ class DataConvertor {
     }
 
     @TypeConverter
-    fun localDateToLong(date: LocalDate) : Long {
-        if(date == null)
-            return null!!
-        return date.toEpochDay()
+    fun localDateTimeTosqlString(dateTime: LocalDateTime) : String {
+        return dateTime.toString()
     }
 
     @TypeConverter
-    fun longToLocalDate(epochTime : Long) : LocalDate {
-        return LocalDate.ofEpochDay(epochTime)
+    fun strongToLocalDateTime(timeString: String) : LocalDateTime {
+        return LocalDateTime.parse(timeString)
     }
 
     @TypeConverter
@@ -70,5 +72,4 @@ class DataConvertor {
             else                                -> return PRACTICE_STATUS.NOT_ACTIVE
         }
     }
-
 }

@@ -86,8 +86,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
             // check if has location service is running?
             val enabled = foregroundServiceIsRunning && foregroundServiceSubscribeLocationUpdate
-                //sharedPreferences.getBoolean(
-                //SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
             Log.i(TAG, "onServiceConnected! foregroundServiceEnable? " + enabled.toString())
 
             if (enabled) {

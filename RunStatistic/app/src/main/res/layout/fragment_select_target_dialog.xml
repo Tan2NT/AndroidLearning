@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.dialog.SelectTargetDialog">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        style="@style/TextWhiteBoldRatherBig"
+        android:background="#2E7D32"
+        android:text="@string/select_target_title" />
+
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:layout_height="wrap_content">
+
+            <RadioGroup
+                android:id="@+id/daily_target_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/radio_under_average"
+                    style="@style/TargetRadioItem"
+                    android:text="2000"/>
+                <RadioButton
+                    android:id="@+id/radio_average"
+                    style="@style/TargetRadioItem"
+                    android:text="6000"/>
+                <RadioButton
+                    android:id="@+id/radio_high_active"
+                    style="@style/TargetRadioItem"
+                    android:text="10000"/>
+                <RadioButton
+                    android:id="@+id/radio_weight_loss"
+                    style="@style/TargetRadioItem"
+                    android:text="15000"/>
+                <RadioButton
+                    android:id="@+id/radio_muscle_gain"
+                    style="@style/TargetRadioItem"
+                    android:text="20000"/>
+                <RadioButton
+                    android:id="@+id/radio_adjusted"
+                    style="@style/TargetRadioItem"
+                    android:text="@string/select_target_adjust"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="left|center_vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/TargetItemDescriptionText"
+                android:text="@string/select_target_under_average"/>
+            <TextView
+                style="@style/TargetItemDescriptionText"
+                android:text="@string/select_target_average"/>
+            <TextView
+                style="@style/TargetItemDescriptionText"
+                android:text="@string/select_target_high_active"/>
+            <TextView
+                style="@style/TargetItemDescriptionText"
+                android:text="@string/select_target_weight_loss"/>
+            <TextView
+                style="@style/TargetItemDescriptionText"
+                android:text="@string/select_target_muscle_gain"/>
+            <EditText
+                android:id="@+id/textView_adjust_target"
+                style="@style/TargetItemDescriptionText"
+                android:inputType="number"
+                android:textColor="#2E7D32"
+                android:text="6000"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btn_select_target_cancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/cancel"
+            style="@style/TextBlackMedium"/>
+        <Button
+            android:id="@+id/btn_select_target_save"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/save"
+            style="@style/TextGreenkMedium"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

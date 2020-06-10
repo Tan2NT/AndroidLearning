@@ -12,3 +12,11 @@ enum class PRACTICE_TYPE (val value: Int) {
     RUNNING (1),
     CYCLING (2)
 }
+
+object DAILY_TARGET {
+    const val UNDER_MEDIUM = 2000
+    const val MEDIUM = 6000
+    const val HIGH_ACTIVE = 10000
+    const val WEIGHT_LOSS = 15000
+    const val MUSCLE_GAIN = 20000
+}

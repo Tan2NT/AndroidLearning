@@ -14,7 +14,7 @@ object KcalCaclator {
         val speed = veloctity / 3.6
 
         //First, multiply your body weight in kilograms (i.e. 60) by 0.035.
-        var k1 = 0.035 * bodyHeight
+        var k1 = 0.035 * bodyWeight
 
         //Now, square your velocity (or speed) in metres per second, i.e. multiply it by itself.
         val k2 = speed  * speed
@@ -25,6 +25,8 @@ object KcalCaclator {
         // Calories burned per minute
         val result =  k1 + k3 * 0.029 * 60
 
+
+        Log.i("TDebug", "burnedByWalkingPerMinute: $speed - $k1 - $k2 - $k3 - $result")
         Log.i("TDebug", "burnedByWalkingPerMinute: " + result.around2Place().toString())
 
         return result.around2Place()

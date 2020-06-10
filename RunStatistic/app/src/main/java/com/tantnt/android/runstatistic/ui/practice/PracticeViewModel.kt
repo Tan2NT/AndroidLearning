@@ -43,16 +43,11 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
      */
     val practice : LiveData<PracticeModel> = runstatisticRepository.latestPractice
 
-    val _grade = MutableLiveData<Int>()
-    val grade : LiveData<Int>
-        get() = _grade
-
     /**
      * called immediately when this ViewModel is created
      */
     init {
         Log.d(TAG, "PracticeViewModel Init ---- ")
-        _grade.value = 2
     }
 
     fun getCurrentPractice() : PracticeModel? {

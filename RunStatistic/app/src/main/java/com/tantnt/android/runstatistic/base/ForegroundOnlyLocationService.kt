@@ -27,6 +27,8 @@ import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.toString
 
@@ -52,9 +54,9 @@ class ForegroundOnlyLocationService  : Service() {
     private var lastUpdatedTime : Long = System.currentTimeMillis()
 
     private var currentPractice : PracticeModel? = PracticeModel(
-        startTime = TimeUtils.getTimeInMilisecond(),
+        startTime = LocalDateTime.now(),
         practiceType = PRACTICE_TYPE.WALKING,
-        duration = 0.00,
+        duration = 0L,
         distance = 0.00,
         calo = 0.0,
         speed = 0.0,
@@ -158,9 +160,9 @@ class ForegroundOnlyLocationService  : Service() {
             setPracticeType(pType)
             isPracticeRunning = true
             currentPractice = PracticeModel(
-                startTime = TimeUtils.getTimeInMilisecond(),
+                startTime = LocalDateTime.now(),
                 practiceType = practiceType,
-                duration = 0.0,
+                duration = 0L,
                 distance = 0.0,
                 calo = 0.0,
                 speed = 0.0,
@@ -230,11 +232,11 @@ class ForegroundOnlyLocationService  : Service() {
         if (statechanged == false)
             currentPractice!!.distance += distance.around3Place()
         currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
-        val durationHour = currentPractice!!.duration / ONE_HOUR_MILLI
+        val durationHour = currentPractice!!.duration.toDouble() / ONE_HOUR_MILLI
         if (currentPractice!!.duration > 0)
             currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
         currentPractice!!.status = PRACTICE_STATUS.ACTIVE
-        currentPractice!!.calo = ((currentPractice!!.duration / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
+        currentPractice!!.calo = ((currentPractice!!.duration.toDouble() / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
             USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
                 ).around2Place()
 
@@ -257,7 +259,7 @@ class ForegroundOnlyLocationService  : Service() {
             // Start a new practice
             currentLocation = location
             currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
-            currentPractice!!.startTime = System.currentTimeMillis()
+            currentPractice!!.startTime = LocalDateTime.now()
             savePractice()
             updateForegroundNotificationifNeed()
             return
@@ -424,10 +426,10 @@ class ForegroundOnlyLocationService  : Service() {
         notificationLayout.setTextViewText(R.id.textView_distance_value,
             currentPractice!!.distance.around3Place().toString() + " Km")
         var  gallon : String = "min"
-        if((currentPractice!!.duration / ONE_HOUR_MILLI).toInt() > 0)
+        if((currentPractice!!.duration.toDouble() / ONE_HOUR_MILLI).toInt() > 0)
             gallon = "hour"
         notificationLayout.setTextViewText(R.id.textView_time_value,
-            TimeUtils.convertDutationToFormmated(currentPractice!!.duration.toLong()).toString() + " " + gallon)
+            TimeUtils.convertDutationToFormmated(currentPractice!!.duration).toString() + " " + gallon)
         notificationLayout.setTextViewText(R.id.textView_practice_type, currentPractice!!.getTypeString())
         notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString())
 

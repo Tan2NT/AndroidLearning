@@ -44,11 +44,8 @@
                 />
             <TextView
                 android:id="@+id/current_step_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="00"
-                android:textSize="60sp"
-                android:textStyle="bold"
+                style="@style/TextGreenkVeryBig"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -63,10 +60,9 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/target_step"
+                style="@style/TextOrangeBig"
                 android:text="6000"
-                android:textSize="30sp"
                 app:layout_constraintTop_toBottomOf="@id/separator_line"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -89,36 +85,27 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/energy_box"/>
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    style="@style/TodayPracticeItemInfo_Icon"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="10dp"
                     android:src="@drawable/energy"
                     />
                 <TextView
-                    android:id="@+id/current_calo_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:id="@+id/total_calo_today_text"
+                    style="@style/TodayPracticeItemInfo_Text"
                     android:text="123"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     />
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					style="@style/TodayPracticeItemInfo_MeasureUnit"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="10dp"
                     android:text="Kcal"
-                    android:textSize="15sp"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -134,36 +121,27 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/time_box"/>
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+				style="@style/TodayPracticeItemInfo_Icon"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="10dp"
                     android:src="@drawable/time"
                     />
                 <TextView
-                    android:id="@+id/current_time_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
+					style="@style/TodayPracticeItemInfo_Text"
+                    android:id="@+id/total_time_today_text"
                     android:text="123"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     />
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/TodayPracticeItemInfo_MeasureUnit"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="10dp"
                     android:text="Min"
-                    android:textSize="15sp"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -179,36 +157,27 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/foot_box"/>
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    style="@style/TodayPracticeItemInfo_Icon"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/foot"
+                    android:src="@drawable/road_icon"
                     />
                 <TextView
-                    android:id="@+id/current_distance_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:id="@+id/total_distance_today_text"
+					style="@style/TodayPracticeItemInfo_Text"
                     android:text="123"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     />
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					style="@style/TodayPracticeItemInfo_MeasureUnit"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="10dp"
                     android:text="Km"
-                    android:textSize="15sp"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -217,11 +186,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/line_break"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/break_line_color"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        style="@style/LineBreak"
         >
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -230,13 +195,20 @@
         android:layout_height="64dp">
 
         <TextView
-            android:layout_marginStart="@dimen/margin_default"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/TextHeader2"
             android:text="@string/best_practice_day"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:layout_marginStart="@dimen/margin_small"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="top"
+            />
+        <TextView
+            android:id="@+id/bpr_day_text"
+            style="@style/TextOrangeBig"
+            android:textSize="18sp"
+            android:text="20-06-2020"
+            android:layout_marginEnd="@dimen/margin_default"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
         <ImageView
@@ -250,44 +222,53 @@
             />
         <TextView
             android:id="@+id/bpr_energy_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			style="@style/NumberTextHolo"
+			android:text="0.00"
             app:layout_constraintStart_toEndOf="@id/bpr_energy_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="25"
-            android:textStyle="bold"
-            android:textSize="20sp"
+           
             />
+
+        <ImageView
+            android:id="@+id/bpr_step_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/foot"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/bpr_step_text"
+            style="@style/NumberTextHolo"
+            android:text="0"
+            android:layout_marginStart="@dimen/margin_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bpr_step_icon" />
 
         <ImageView
             android:id="@+id/bpr_distance_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/foot"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:src="@drawable/road_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/bpr_energy_text"
-            android:layout_marginStart="100dp"
-            />
+            app:layout_constraintEnd_toStartOf="@id/bpr_distance_text" />
+
         <TextView
             android:id="@+id/bpr_distance_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/bpr_distance_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="25"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            style="@style/NumberTextHolo"
+            android:text="0.00"
+            android:layout_marginEnd="@dimen/margin_default"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/line_break2"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/break_line_color"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        style="@style/LineBreak"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/general_info_layout"
@@ -299,10 +280,11 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="View more"
-            android:background="@drawable/btn_rounded"
+            style="@style/GreenButton"
+			android:background="@drawable/btn_rounded_green"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="5dp"
@@ -310,12 +292,8 @@
             />
 
         <TextView
-            android:layout_marginStart="@dimen/margin_default"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/TextHeader2"
             android:text="@string/history"
-            android:textSize="20sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />

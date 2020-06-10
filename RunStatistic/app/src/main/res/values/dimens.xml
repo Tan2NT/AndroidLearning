@@ -7,4 +7,6 @@
     <dimen name="margin_small">8dp</dimen>
     <dimen name="space_default">16dp</dimen>
     <dimen name="space_too_small">5dp</dimen>
+    <dimen name="big_space">32dp</dimen>
+    <dimen name="target_item_height">40dp</dimen>
 </resources>

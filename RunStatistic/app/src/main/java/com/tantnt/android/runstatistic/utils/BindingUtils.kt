@@ -18,7 +18,7 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
     practice?.let {
         if (isPracticeRunning || shouldShowPracticeResult) {
-            text = TimeUtils.convertDutationToFormmated(practice.duration.toLong())
+            text = TimeUtils.convertDutationToFormmated(practice.duration)
         } else
             text = "00:00"
     }

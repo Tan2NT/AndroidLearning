@@ -8,6 +8,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 /**
  * Database entities go in this file.
@@ -20,19 +22,17 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 
 @Entity
 data class DatabasePractice constructor(
-    @PrimaryKey
-    var start_time: Long,               // timestamp    - start time of this practice
-    @TypeConverters(DataConvertor::class)
-    var practice_type: PRACTICE_TYPE,   // type         - walking/running/cycling
-    var duration: Double,               // in second    - duration of this practice
-    var distance: Double,               // in Km        - how far which the user has been passed
-    var calo: Double,                   // in Kcal      - how much Calo user has spent
-    var speed: Double,                  // km/h         - the average speed of user during the practice
-    @TypeConverters(DataConvertor::class)
-    var status: PRACTICE_STATUS,          //             - the status of this practice
-    @TypeConverters(DataConvertor::class)
-    var path : ArrayList<LatLng> //             - list of location user has pass through, use to draw the route
-)
+    @PrimaryKey(autoGenerate = false)
+    var start_time: LocalDateTime,          // timestamp    - start time of this practice
+    var practice_type: PRACTICE_TYPE,       // type         - walking/running/cycling
+    var duration: Long,                     // in second    - duration of this practice
+    var distance: Double,                   // in Km        - how far which the user has been passed
+    var calo: Double,                       // in Kcal      - how much Calo user has spent
+    var speed: Double,                      // km/h         - the average speed of user during the practice
+    var status: PRACTICE_STATUS,            //             - the status of this practice
+    var path : ArrayList<LatLng>            //             - list of location user has pass through, use to draw the route
+) {
+}
 
 /**
  * Map DatabasePractice to model practice

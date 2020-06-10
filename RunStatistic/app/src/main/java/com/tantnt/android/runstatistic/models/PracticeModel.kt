@@ -4,6 +4,7 @@ import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
+import org.threeten.bp.LocalDateTime
 
 /**
  * Models objects are plain Kotlin data classes that represent the thing in our app. These are the
@@ -17,9 +18,9 @@ import com.tantnt.android.runstatistic.database.DatabasePractice
  */
 
 data class PracticeModel(
-    var startTime : Long,
+    var startTime : LocalDateTime,
     var practiceType: PRACTICE_TYPE,
-    var duration: Double,
+    var duration: Long,
     var distance: Double,
     var calo: Double,
     var speed: Double,
@@ -85,6 +86,24 @@ data class PracticeModel(
                 status = PRACTICE_STATUS.NOT_ACTIVE
             }
         }
+    }
+
+    /**
+     * get Steps - return how many step user has been pass
+     * assum that the number steps of eacj 1 metres perform is
+     * 1 km of Walking = 2000 steps
+     * 1 km of Running = 1500 steps
+     * 1 km of cycling = 1000 steps
+     */
+    val STEPS_MAP : Map<PRACTICE_TYPE, Int> = mapOf(
+        PRACTICE_TYPE.WALKING to 2000,
+        PRACTICE_TYPE.RUNNING to 1500,
+        PRACTICE_TYPE.CYCLING to 1000
+        )
+
+    fun getStepsCounted() : Int {
+        val stepUnit = STEPS_MAP[practiceType]
+        return (distance * stepUnit!!).toInt()
     }
 
 }
