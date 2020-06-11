@@ -68,7 +68,7 @@
     <style name="TextGreenkVeryBig">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">65sp</item>
+        <item name="android:textSize">55sp</item>
         <item name="android:textColor">#2E7D32</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
@@ -76,7 +76,7 @@
     <style name="TextOrangeBig">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">35sp</item>
+        <item name="android:textSize">30sp</item>
         <item name="android:textColor">@android:color/holo_orange_dark</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
@@ -146,7 +146,7 @@
     <style name="TodayPracticeItemInfo_MeasureUnit">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginEnd">@dimen/margin_small</item>
         <item name="android:textSize">15sp</item>
     </style>
 
