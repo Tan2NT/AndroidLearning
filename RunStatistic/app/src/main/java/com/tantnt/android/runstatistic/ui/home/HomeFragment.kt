@@ -1,6 +1,7 @@
 package com.tantnt.android.runstatistic.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.models.DAILY_TARGET
-import com.tantnt.android.runstatistic.models.PracticeDayInfo
-import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.models.asListPracticeItem
+import com.tantnt.android.runstatistic.models.*
 import com.tantnt.android.runstatistic.network.service.TAG
 import com.tantnt.android.runstatistic.utils.*
 import com.xwray.groupie.GroupAdapter
@@ -77,90 +75,63 @@ class HomeFragment : Fragment() {
                 /**
                  * Get total Steps/Distance/time spent/calo burned in today
                  */
-                var stepCounted = 0
-                var totalDistance = 0.0
-                var totalTimeSpent = 0L
-                var totalCaloBurned = 0.0
 
-                for(practice in it) {
-                    stepCounted += practice.getStepsCounted()
-                    totalDistance += practice.distance
-                    totalTimeSpent += practice.duration
-                    totalCaloBurned += practice.calo
-                    Log.i(LOG_TAG, "practice todays : ${practice.toString()}")
-                }
-                mStepCounted = stepCounted
+                val practiceDayInfo = (it as List<PracticeModel>).getPracticeDayInfo()
+                mStepCounted = practiceDayInfo.totalStepCounted
 
                 // update UI
-                setProgressBarStatus(stepCounted)
-                total_calo_today_text.text = totalCaloBurned.around2Place().toString()
-                total_distance_today_text.text = totalDistance.around2Place().toString()
-                total_time_today_text.text = TimeUtils.convertDutationToFormmated(totalTimeSpent).toString()
+                updateTodayInfo(practiceDayInfo)
             }
         })
 
-        /**
-         * handle display the best practice and history
-         */
+
+        // handle display the best practice and history
         homeViewModel.latest30Practice.observe(viewLifecycleOwner, Observer {
             it?.let {
 
+                // display the latest practices info recyclerView
                 initRecycleView((it as List<PracticeModel>).asListPracticeItem())
 
                 /**
                  * get the best practice base on now much Calo is spent
                  */
-
-                // group practice by day
                 var groupByDay  = it.groupBy { it -> it.startTime.toLocalDate() }
 
                 // find the best practice day
                 var bestPracticeDay =
                     PracticeDayInfo(LocalDate.now(), 0.0, 0L, 0, 0.0)
                 groupByDay.forEach {
-                    var totalDistance = 0.0
-                    var totalTimeSpent = 0L
-                    var totalStepCounted = 0
-                    var totalCaloBurned = 0.0
-                    it.value.forEach { practice ->
-                        totalStepCounted += practice.getStepsCounted()
-                        totalDistance += practice.distance
-                        totalTimeSpent += practice.duration
-                        totalCaloBurned += practice.calo
-                        Log.i(LOG_TAG, "practice todays : ${practice.toString()}")
-                    }
-                    if(totalCaloBurned > bestPracticeDay.totalCaloBurned) {
-                        bestPracticeDay = PracticeDayInfo(
-                            it.key,
-                            totalDistance.around2Place(),
-                            totalTimeSpent,
-                            totalStepCounted,
-                            totalCaloBurned.around2Place())
+                    val currentDayInfo = it.value.getPracticeDayInfo()
+                    if(currentDayInfo.totalCaloBurned >= bestPracticeDay.totalCaloBurned) {
+                        bestPracticeDay = currentDayInfo
                     }
                 }
 
                 // update the best practice day value
                 if(!groupByDay.isEmpty()) {
-                    bpr_day_text.text = bestPracticeDay.date.toString()
-                    bpr_step_text.text = bestPracticeDay.totalStepCounted.toString()
-                    bpr_distance_text.text = bestPracticeDay.totalDistance.toString()
-                    bpr_energy_text.text = bestPracticeDay.totalCaloBurned.toString()
+                    updateBestPracticeDayInfo(bestPracticeDay)
                 }
             }
         })
     }
 
-    private fun initRecycleView(items: List<PracticeItem>) {
+    @SuppressLint("StringFormatMatches")
+    private fun initRecycleView(viewItems: List<PracticeViewItem>) {
         var groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
 
         }
 
         // group practice by day
-        var groupByDay  = items.groupBy { it -> it.practiceModel.startTime.toLocalDate() }
+        var groupByDay  = viewItems.groupBy { it -> it.practiceModel.startTime.toLocalDate() }
         // add all practice, group by date
         groupByDay.forEach {
             val section = Section()
-            section.setHeader(HeaderItem(it.key.toString()))
+            val currentDayInfo = it.value.asListPracticeModel().getPracticeDayInfo()
+            var description =
+                getString(R.string.practice_day_description_has_number_activities, it.value.size, currentDayInfo.totalDistance.toFloat())
+            if(it.value.size == 1)
+                description = getString(R.string.practice_day_description_has_only_1_activity, currentDayInfo.totalDistance.toFloat())
+            section.setHeader(HeaderItem(it.key.toString(), description))
             section.addAll(it.value)
             groupAdapter += section
         }
@@ -220,6 +191,30 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    /**
+     * Update the today practice info
+     */
+    fun updateTodayInfo(info: PracticeDayInfo) {
+        setProgressBarStatus(info.totalStepCounted)
+        total_calo_today_text.text = info.totalCaloBurned.around2Place().toString()
+        total_distance_today_text.text = info.totalDistance.around2Place().toString()
+        total_time_today_text.text = TimeUtils.convertDutationToFormmated(info.totalTimeSpent).toString()
+    }
+
+    /**
+     * Update the best practice day info
+     */
+    fun updateBestPracticeDayInfo(info: PracticeDayInfo) {
+        bpr_day_text.text = info.date.toString()
+        bpr_step_text.text = info.totalStepCounted.toString()
+        bpr_distance_text.text = info.totalDistance.around2Place().toString()
+        bpr_energy_text.text = info.totalCaloBurned.around2Place().toString()
+    }
+
+    /**
+     * How much steps counted / targeting step
+     */
 
     fun setProgressBarStatus(stepCounted: Int) {
         val target = SharedPreferenceUtil.getDailyTargetStep(requireContext())

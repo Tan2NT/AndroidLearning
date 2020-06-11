@@ -1,10 +1,14 @@
 package com.tantnt.android.runstatistic.models
 
+import android.util.Log
 import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
-import com.tantnt.android.runstatistic.ui.home.PracticeItem
+import com.tantnt.android.runstatistic.ui.home.PracticeViewItem
+import com.tantnt.android.runstatistic.utils.LOG_TAG
+import com.tantnt.android.runstatistic.utils.around2Place
+import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
 /**
@@ -106,9 +110,15 @@ data class PracticeModel(
         val stepUnit = STEPS_MAP[practiceType]
         return (distance * stepUnit!!).toInt()
     }
-
 }
 
+/**
+ * ---------------------- EXTENTION FUNCTIONS GOES HERE ----------------------
+ */
+
+/**
+ * get Database data (DatabasePractice) from App data (PracticeModel)
+ */
 fun PracticeModel.asDatabasePractice() : DatabasePractice {
     return DatabasePractice(
         this.startTime,
@@ -122,8 +132,30 @@ fun PracticeModel.asDatabasePractice() : DatabasePractice {
     )
 }
 
-fun List<PracticeModel>.asListPracticeItem(): List<PracticeItem> {
+/**
+ * Get ViewHolder data (PracticeviewItem) from App data (PracticeModel)
+ * preparing the data to display into recycler view
+ */
+fun List<PracticeModel>.asListPracticeItem(): List<PracticeViewItem> {
     return this.map {
-        PracticeItem(it)
+        PracticeViewItem(it)
     }
+}
+
+/**
+ * get PracticeDayInfo of one practice day
+ * NOTE: each practice in the list<PracticeModel) must have the same date(startDay)
+ */
+fun List<PracticeModel>.getPracticeDayInfo(): PracticeDayInfo {
+    // find the best practice day
+    var practiceDayInfo =
+    PracticeDayInfo(this.get(0).startTime.toLocalDate(),
+        0.0, 0L, 0, 0.0)
+    this.forEach { practice ->
+        practiceDayInfo.totalStepCounted += practice.getStepsCounted()
+        practiceDayInfo.totalDistance += practice.distance
+        practiceDayInfo.totalTimeSpent += practice.duration
+        practiceDayInfo.totalCaloBurned += practice.calo
+    }
+    return practiceDayInfo
 }

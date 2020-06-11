@@ -9,12 +9,14 @@
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/day_time_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
         android:text="21-05-2020 5:00 AM"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
         />
 
     <LinearLayout
@@ -36,23 +38,40 @@
                 android:background="@drawable/cycling_selected_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginTop="@dimen/margin_small"
                 app:layout_constraintBottom_toTopOf="@+id/distance_value"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/distance_value"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:gravity="center"
                 android:text="25"
                 android:textSize="25sp"
                 android:textStyle="bold"
+                android:layout_marginStart="@dimen/margin_default"
+                app:layout_constraintTop_toBottomOf="@id/practice_type_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/distance_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:gravity="center"
+                android:text="Km"
+                android:textSize="12sp"
+                android:layout_marginEnd="@dimen/margin_small"
+                app:layout_constraintTop_toBottomOf="@id/practice_type_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/distance_value"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -91,8 +110,9 @@
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:text="0"
+                    android:textColor="#111111"
                     android:layout_gravity="center_vertical"
+                    android:text="0"
                     />
             </LinearLayout>
 
@@ -125,7 +145,8 @@
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="30"
+                    android:text="00:00"
+                    android:textColor="#111111"
                     />
             </LinearLayout>
 
@@ -158,6 +179,7 @@
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:textColor="#111111"
                     android:text="5.2"
                     />
 

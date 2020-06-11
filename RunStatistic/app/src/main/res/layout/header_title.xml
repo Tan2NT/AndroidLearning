@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#B3E5FC"
+    android:layout_width="match_parent"
     android:layout_height="30dp">
 
     <TextView
@@ -8,8 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/TextGreenkMedium"
-        android:background="#B3E5FC"
         android:textStyle="bold"
+        android:text="Title"
+        android:layout_marginStart="@dimen/margin_small"
+        android:gravity="center_vertical"
+        />
+
+    <TextView
+        android:id="@+id/header_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:gravity="center_vertical"
+        android:text="@string/practice_day_description_has_only_1_activity"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

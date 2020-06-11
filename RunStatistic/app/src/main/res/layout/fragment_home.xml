@@ -43,7 +43,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/current_step_text"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="2dp"
                     />
                 <TextView
                     android:id="@+id/current_step_text"
@@ -208,7 +208,7 @@
             <TextView
                 android:id="@+id/bpr_day_text"
                 style="@style/TextOrangeBig"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:text="20-06-2020"
                 android:layout_marginEnd="@dimen/margin_default"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -238,8 +238,8 @@
                 android:layout_height="32dp"
                 android:src="@drawable/foot"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bpr_energy_icon"
+                app:layout_constraintEnd_toStartOf="@id/bpr_distance_icon"
                 />
 
             <TextView
@@ -296,8 +296,10 @@
             <TextView
                 style="@style/TextHeader2"
                 android:text="@string/history"
+                android:layout_marginStart="@dimen/margin_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:gravity="top"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

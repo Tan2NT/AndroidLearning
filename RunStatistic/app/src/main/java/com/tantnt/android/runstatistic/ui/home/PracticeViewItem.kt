@@ -1,5 +1,6 @@
 package com.tantnt.android.runstatistic.ui.home
 
+import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
@@ -11,12 +12,15 @@ import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.header_title.*
 
-class PracticeItem (
+/**
+ * View Item
+ */
+class PracticeViewItem (
     val practiceModel: PracticeModel
 ) : Item() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.apply {
-            day_time_text.text = practiceModel.startTime.toString()
+            day_time_text.text = TimeUtils.convertTimeToStringFormat(practiceModel.startTime)
             distance_value.text = practiceModel.distance.around2Place().toString()
             calo_value.text = practiceModel.calo.around2Place().toString()
             speed_value.text = practiceModel.speed.around2Place().toString()
@@ -26,7 +30,7 @@ class PracticeItem (
                 PRACTICE_TYPE.RUNNING -> resId = R.drawable.running_selected_icon
                 PRACTICE_TYPE.CYCLING -> resId = R.drawable.cycling_selected_icon
             }
-            practice_type_image.setImageResource(resId)
+            practice_type_image.setBackgroundResource(resId)
         }
     }
 
@@ -35,12 +39,34 @@ class PracticeItem (
     }
 }
 
+/**
+ * get list PracticeModel from list PracticeViewItem
+ */
+fun List<PracticeViewItem>.asListPracticeModel(): List<PracticeModel> {
+    return this.map {
+        PracticeModel(
+            startTime = it.practiceModel.startTime,
+            practiceType = it.practiceModel.practiceType,
+            duration = it.practiceModel.duration,
+            distance = it.practiceModel.distance,
+            calo = it.practiceModel.calo,
+            speed = it.practiceModel.speed,
+            status = it.practiceModel.status,
+            path = it.practiceModel.path)
+    }
+}
+
+/**
+ * Header Item
+ */
 class HeaderItem(
-    val title: String
+    val title: String,
+    val description : String
 ) : Item() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.apply {
             header_title.text = title
+            header_description.text = description
         }
     }
 

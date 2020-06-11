@@ -2,22 +2,25 @@ package com.tantnt.android.runstatistic.utils
 
 import android.util.Log
 import com.tantnt.android.runstatistic.network.service.TAG
-import java.util.*
-import java.util.concurrent.TimeUnit
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
+
+/**
+ * This class content some common functions need to reuse more than one time in this project
+ */
 
 object TimeUtils {
     fun getTimeInMilisecond() : Long {
         return System.currentTimeMillis()
     }
 
-    fun getDurationTimeMilli(startTimeMilli : Long, endTimeMilli: Long): Long {
-        return endTimeMilli - startTimeMilli
-    }
-
     fun getDurationTimeMilliFrom(startTimeMilli : Long): Long {
         return System.currentTimeMillis() - startTimeMilli
     }
 
+    /**
+     * Convert a duration time into hh/mm/ss format
+     */
     fun convertDutationToFormmated(durationMilli: Long): String {
         val second = (durationMilli / ONE_SECOND_MILLI).toInt() % 60
         val minutes = (durationMilli / ONE_MINUTE_MILLI) % 60
@@ -30,15 +33,19 @@ object TimeUtils {
             return String.format("%02d:%02d", minutes, second)
     }
 
-    fun getDateFromMilli(timeMilli: Long) : Date {
-        var currentTime = System.currentTimeMillis()
-        val tz = TimeZone.getDefault()
-        val cal = GregorianCalendar.getInstance(tz)
-        val offsetInMillis = tz.getOffset(cal.timeInMillis)
-
-        currentTime -= offsetInMillis.toLong()
-        val date = Date(currentTime)
-        return date
+    /**
+     * Convert a LocalDateTime to custom date time format. ex from 2020-06-10T17:45:55.9483536 to 2020-06-10 17:45:55
+     */
+    fun convertTimeToStringFormat(time: LocalDateTime) : String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm")
+        return time.format(formatter)
     }
 
+    /**
+     * Parse date time string to LocalDateTime
+     */
+    fun parseTimeFromString(timeString: String): LocalDateTime{
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm")
+        return LocalDateTime.parse(timeString, formatter)
+    }
 }
