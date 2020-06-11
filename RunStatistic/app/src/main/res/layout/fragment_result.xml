@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:weightSum="5"
     tools:context=".ui.result.ResultFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/day_time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_small"
-        android:textColor="@color/colorBlack"
-        android:textStyle="bold"
-        android:text="21-05-2020 5:00 AM"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <ImageView
+        android:id="@+id/share_img"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
         />
 
     <LinearLayout
-        app:layout_constraintTop_toBottomOf="@id/day_time_text"
-        app:layout_constraintStart_toStartOf="parent"
+
         android:layout_margin="@dimen/margin_small"
         android:orientation="horizontal"
         android:weightSum="5"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -188,6 +184,31 @@
         </LinearLayout>
 
     </LinearLayout>
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_marginStart="@dimen/margin_small"
+       android:layout_width="wrap_content"
+       android:layout_height="0dp"
+       android:layout_weight="1">
+       <ImageView
+           android:id="@+id/share_btn"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:background="@drawable/share_icon_blue"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintBottom_toBottomOf="parent"/>
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textStyle="bold"
+           android:textSize="20sp"
+           android:text="@string/share"
+           app:layout_constraintStart_toEndOf="@id/share_btn"
+           android:layout_marginStart="@dimen/margin_small"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintTop_toTopOf="parent"/>
+   </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

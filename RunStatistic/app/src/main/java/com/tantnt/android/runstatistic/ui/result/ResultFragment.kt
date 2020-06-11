@@ -1,4 +1,4 @@
-package com.tantnt.android.runstatistic.ui.detail
+package com.tantnt.android.runstatistic.ui.result
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,10 +15,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [DetailFragment.newInstance] factory method to
+ * Use the [ResultFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DetailFragment : Fragment() {
+class ResultFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -36,7 +36,7 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+        return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
     companion object {
@@ -51,7 +51,7 @@ class DetailFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            DetailFragment().apply {
+            ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

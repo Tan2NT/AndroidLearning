@@ -26,7 +26,6 @@ object TimeUtils {
         val minutes = (durationMilli / ONE_MINUTE_MILLI) % 60
         val hours =  (durationMilli / ONE_HOUR_MILLI)
 
-        Log.i(TAG, "convert duration: $durationMilli to $hours:$minutes:$second")
         if(hours > 0)
             return String.format("%02d:%02d:%02d", hours, minutes, second)
         else

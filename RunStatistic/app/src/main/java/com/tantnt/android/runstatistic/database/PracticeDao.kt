@@ -34,5 +34,11 @@ interface PracticeDao {
     @Query("SELECT * FROM databasepractice ORDER BY start_time DESC LIMIT 30 ")
     fun getLatest30Practices() : LiveData<List<DatabasePractice>>
 
+    @Query("SELECT * FROM databasepractice ORDER BY start_time DESC")
+    fun getAllPractices() : LiveData<List<DatabasePractice>>
+
+    @Query("SELECT * FROM databasepractice ORDER BY start_time DESC")
+    fun getAllPracticesNonLive(): List<DatabasePractice>
+
     // Todo: get practices by range of days/months/years
 }

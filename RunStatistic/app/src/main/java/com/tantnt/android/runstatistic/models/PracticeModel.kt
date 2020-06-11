@@ -1,13 +1,10 @@
 package com.tantnt.android.runstatistic.models
 
-import android.util.Log
 import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
-import com.tantnt.android.runstatistic.ui.home.PracticeViewItem
-import com.tantnt.android.runstatistic.utils.LOG_TAG
-import com.tantnt.android.runstatistic.utils.around2Place
+import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
@@ -43,6 +40,8 @@ data class PracticeModel(
             PRACTICE_TYPE.RUNNING -> return "Running"
             PRACTICE_TYPE.CYCLING -> return "Cycling"
         }
+
+
     }
 
     /**
@@ -148,14 +147,19 @@ fun List<PracticeModel>.asListPracticeItem(): List<PracticeViewItem> {
  */
 fun List<PracticeModel>.getPracticeDayInfo(): PracticeDayInfo {
     // find the best practice day
-    var practiceDayInfo =
-    PracticeDayInfo(this.get(0).startTime.toLocalDate(),
-        0.0, 0L, 0, 0.0)
-    this.forEach { practice ->
-        practiceDayInfo.totalStepCounted += practice.getStepsCounted()
-        practiceDayInfo.totalDistance += practice.distance
-        practiceDayInfo.totalTimeSpent += practice.duration
-        practiceDayInfo.totalCaloBurned += practice.calo
-    }
-    return practiceDayInfo
+
+    if(this.size == 0)
+        return  PracticeDayInfo(
+            LocalDate.now(),
+            0.0, 0L, 0, 0.0)
+        var practiceDayInfo =
+            PracticeDayInfo(this.get(0).startTime.toLocalDate(),
+                0.0, 0L, 0, 0.0)
+        this.forEach { practice ->
+            practiceDayInfo.totalStepCounted += practice.getStepsCounted()
+            practiceDayInfo.totalDistance += practice.distance
+            practiceDayInfo.totalTimeSpent += practice.duration
+            practiceDayInfo.totalCaloBurned += practice.calo
+        }
+        return practiceDayInfo
 }

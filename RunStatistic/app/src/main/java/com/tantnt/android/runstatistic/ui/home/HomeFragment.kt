@@ -12,16 +12,19 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.*
 import com.tantnt.android.runstatistic.network.service.TAG
+import com.tantnt.android.runstatistic.ui.view.HeaderItem
+import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
+import com.tantnt.android.runstatistic.ui.view.asListPracticeModel
 import com.tantnt.android.runstatistic.utils.*
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
-import com.xwray.groupie.groupiex.plusAssign
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_select_target_dialog.view.*
 import org.threeten.bp.LocalDateTime
@@ -61,6 +64,12 @@ class HomeFragment : Fragment() {
             openSelectDailyTargetDialog()
         }
 
+        // History button click
+        btn_history.setOnClickListener {
+            it.findNavController()
+                .navigate(R.id.action_navigation_home_to_historyFragment)
+        }
+
         Log.i(LOG_TAG, "LocalDate: ${org.threeten.bp.LocalDate.now()} - LocalDateTime: ${LocalDateTime.now()}")
 
         // set initialize Target text
@@ -77,11 +86,13 @@ class HomeFragment : Fragment() {
                  * Get total Steps/Distance/time spent/calo burned in today
                  */
 
-                val practiceDayInfo = (it as List<PracticeModel>).getPracticeDayInfo()
-                mStepCounted = practiceDayInfo.totalStepCounted
+                if(it.size > 0){
+                    val practiceDayInfo = (it as List<PracticeModel>).getPracticeDayInfo()
+                    mStepCounted = practiceDayInfo.totalStepCounted
 
-                // update UI
-                updateTodayInfo(practiceDayInfo)
+                    // update UI
+                    updateTodayInfo(practiceDayInfo)
+                }
             }
         })
 
@@ -90,28 +101,30 @@ class HomeFragment : Fragment() {
         homeViewModel.latest30Practice.observe(viewLifecycleOwner, Observer {
             it?.let {
 
-                // display the latest practices info recyclerView
-                initRecycleView((it as List<PracticeModel>).asListPracticeItem())
+               if(it.size > 0) {
+                   // display the latest practices info recyclerView
+                   initRecycleView((it as List<PracticeModel>).asListPracticeItem())
 
-                /**
-                 * get the best practice base on now much Calo is spent
-                 */
-                var groupByDay  = it.groupBy { it -> it.startTime.toLocalDate() }
+                   /**
+                    * get the best practice base on now much Calo is spent
+                    */
+                   var groupByDay  = it.groupBy { it -> it.startTime.toLocalDate() }
 
-                // find the best practice day
-                var bestPracticeDay =
-                    PracticeDayInfo(LocalDate.now(), 0.0, 0L, 0, 0.0)
-                groupByDay.forEach {
-                    val currentDayInfo = it.value.getPracticeDayInfo()
-                    if(currentDayInfo.totalCaloBurned >= bestPracticeDay.totalCaloBurned) {
-                        bestPracticeDay = currentDayInfo
-                    }
-                }
+                   // find the best practice day
+                   var bestPracticeDay =
+                       PracticeDayInfo(LocalDate.now(), 0.0, 0L, 0, 0.0)
+                   groupByDay.forEach {
+                       val currentDayInfo = it.value.getPracticeDayInfo()
+                       if(currentDayInfo.totalCaloBurned >= bestPracticeDay.totalCaloBurned) {
+                           bestPracticeDay = currentDayInfo
+                       }
+                   }
 
-                // update the best practice day value
-                if(!groupByDay.isEmpty()) {
-                    updateBestPracticeDayInfo(bestPracticeDay)
-                }
+                   // update the best practice day value
+                   if(!groupByDay.isEmpty()) {
+                       updateBestPracticeDayInfo(bestPracticeDay)
+                   }
+               }
             }
         })
     }
@@ -133,12 +146,11 @@ class HomeFragment : Fragment() {
             if(it.value.size == 1)
                 description = getString(R.string.practice_day_description_has_only_1_activity, currentDayInfo.totalDistance.toFloat())
 
-          /*  val section = Section()
-            section.setHeader(HeaderItem(it.key.toString(), description))
-            section.addAll(it.value)
-            groupAdapter += section*/
-
-            ExpandableGroup(HeaderItem(it.key.toString(), description), true).apply {
+            ExpandableGroup(
+                HeaderItem(
+                    it.key.toString(),
+                    description
+                ), true).apply {
                 add(Section(it.value))
                 groupAdapter.add(this)
             }

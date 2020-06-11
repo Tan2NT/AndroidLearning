@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -201,11 +202,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -233,7 +231,7 @@
                     android:id="@+id/bpr_day_text"
                     style="@style/TextOrangeBig"
                     android:textSize="15sp"
-                    android:text="20-06-2020"
+                    android:text=""
                     android:layout_marginEnd="@dimen/margin_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -307,15 +305,15 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/btn_history"
+                    style="@style/GreenButton"
                     android:layout_width="100dp"
                     android:layout_height="30dp"
-                    android:text="View more"
-                    style="@style/GreenButton"
-                    android:background="@drawable/btn_rounded_green"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
                     android:layout_marginRight="5dp"
-                    />
+                    android:background="@drawable/btn_rounded_green"
+                    android:text="View more"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     style="@style/TextHeader2"

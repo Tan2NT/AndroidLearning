@@ -25,10 +25,6 @@ object KcalCaclator {
         // Calories burned per minute
         val result =  k1 + k3 * 0.029 * 60
 
-
-        Log.i("TDebug", "burnedByWalkingPerMinute: $speed - $k1 - $k2 - $k3 - $result")
-        Log.i("TDebug", "burnedByWalkingPerMinute: " + result.around2Place().toString())
-
         return result.around2Place()
     }
 }

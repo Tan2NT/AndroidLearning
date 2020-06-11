@@ -10,8 +10,6 @@ import com.tantnt.android.runstatistic.repository.RunstatisticRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 
 private const val LIMIT_PRACTICE_COUNT = 30
 
@@ -50,4 +48,9 @@ class HomeViewModel(application: Application) : ViewModel() {
      * only get the best practice from 30 latest practices
      */
     val latest30Practice : LiveData<List<PracticeModel>> = runstatisticRepository.latest30Practices
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
 }

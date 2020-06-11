@@ -60,6 +60,7 @@
     <string name="steps">Steps</string>
     <string name="practice_day_description_has_number_activities">%d activities - %.2f Km</string>
     <string name="practice_day_description_has_only_1_activity">1 activity - %.2f Km</string>
+    <string name="share">Share</string>
 
 
 </resources>
