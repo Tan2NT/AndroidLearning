@@ -7,6 +7,8 @@ import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.utils.TimeUtils
 import com.tantnt.android.runstatistic.utils.around2Place
+import com.xwray.groupie.ExpandableGroup
+import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.fragment_detail.*
@@ -37,6 +39,10 @@ class PracticeViewItem (
     override fun getLayout(): Int {
         return R.layout.fragment_detail
     }
+
+    override fun getSpanSize(spanCount: Int, position: Int): Int {
+        return spanCount
+    }
 }
 
 /**
@@ -62,16 +68,37 @@ fun List<PracticeViewItem>.asListPracticeModel(): List<PracticeModel> {
 class HeaderItem(
     val title: String,
     val description : String
-) : Item() {
+) : Item(), ExpandableItem {
+
+    private lateinit var expandableGroup: ExpandableGroup
+
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.apply {
             header_title.text = title
             header_description.text = description
+            header_arrow.setImageResource(getRotateIconResId())
+
+            header_arrow.setOnClickListener {
+                expandableGroup.onToggleExpanded()
+                header_arrow.setImageResource(getRotateIconResId())
+            }
         }
     }
 
     override fun getLayout(): Int {
         return R.layout.header_title
     }
+
+    override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
+        expandableGroup = onToggleListener
+    }
+
+    private fun getRotateIconResId(): Int {
+        if (expandableGroup.isExpanded)
+            return R.drawable.ic_keyboard_arrow_up_black_24dp
+        else
+            return R.drawable.ic_keyboard_arrow_down_black_24dp
+    }
+
 
 }

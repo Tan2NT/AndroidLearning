@@ -17,6 +17,7 @@ import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.*
 import com.tantnt.android.runstatistic.network.service.TAG
 import com.tantnt.android.runstatistic.utils.*
+import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
@@ -118,22 +119,29 @@ class HomeFragment : Fragment() {
     @SuppressLint("StringFormatMatches")
     private fun initRecycleView(viewItems: List<PracticeViewItem>) {
         var groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
-
+            spanCount = 1
         }
 
         // group practice by day
         var groupByDay  = viewItems.groupBy { it -> it.practiceModel.startTime.toLocalDate() }
         // add all practice, group by date
         groupByDay.forEach {
-            val section = Section()
+
             val currentDayInfo = it.value.asListPracticeModel().getPracticeDayInfo()
             var description =
                 getString(R.string.practice_day_description_has_number_activities, it.value.size, currentDayInfo.totalDistance.toFloat())
             if(it.value.size == 1)
                 description = getString(R.string.practice_day_description_has_only_1_activity, currentDayInfo.totalDistance.toFloat())
+
+          /*  val section = Section()
             section.setHeader(HeaderItem(it.key.toString(), description))
             section.addAll(it.value)
-            groupAdapter += section
+            groupAdapter += section*/
+
+            ExpandableGroup(HeaderItem(it.key.toString(), description), true).apply {
+                add(Section(it.value))
+                groupAdapter.add(this)
+            }
         }
 
         recyclerView_practices.apply {
