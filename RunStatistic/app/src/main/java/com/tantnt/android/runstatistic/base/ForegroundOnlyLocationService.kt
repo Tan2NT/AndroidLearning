@@ -41,7 +41,6 @@ import kotlin.toString
 var foregroundServiceIsRunning = false
 var foregroundServiceSubscribeLocationUpdate = false
 var  isPracticeRunning = false
-var shouldShowPracticeResult = false
 
 const val MIN_UPDATE_TIME_IN_MILLI = 5000  // 5 seconds
 const val MIN_DISTANCE_ALLOW_IN_KM = 0.002              // 2 metres
@@ -152,7 +151,6 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun startPractice(pType: PRACTICE_TYPE) {
-        shouldShowPracticeResult = false
         if(currentPractice!!.status == PRACTICE_STATUS.PAUSING) {
             resumePractice()
         }
@@ -184,7 +182,6 @@ class ForegroundOnlyLocationService  : Service() {
 
     fun stopPractice() {
         currentPractice!!.status = PRACTICE_STATUS.COMPETED
-        shouldShowPracticeResult = true
         savePractice()
         unsubscribeToLocationUpdates()
         isPracticeRunning = false
@@ -424,12 +421,12 @@ class ForegroundOnlyLocationService  : Service() {
         val notificationLayout = RemoteViews(PACKAGE_NAME, R.layout.custom_notification_practice)
         notificationLayout.setTextViewText(R.id.textView_distance_value,
             currentPractice!!.distance.around3Place().toString() + " Km")
-        var  gallon : String = "min"
+        var  gallon : String = baseContext.getString(R.string.minte)
         if((currentPractice!!.duration.toDouble() / ONE_HOUR_MILLI).toInt() > 0)
-            gallon = "hour"
+            gallon = baseContext.getString(R.string.hour)
         notificationLayout.setTextViewText(R.id.textView_time_value,
             TimeUtils.convertDutationToFormmated(currentPractice!!.duration).toString() + " " + gallon)
-        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString())
+        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString(baseContext))
 
         var resId = R.drawable.walking_selected_icon
         when(currentPractice!!.practiceType) {

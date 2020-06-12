@@ -154,11 +154,9 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if (isMapReady && it.path.size >= 1  && isPracticeRunning){
-                    Log.i(TAG, "PracticeFragment - latestPractice: " + it.toString())
+
                     // adding path
                     addPath(it.path)
-
-                    // update the UI
 
                     // update button status
                     updateButtonStatus(it)
@@ -180,8 +178,8 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             if(!isPracticeRunning) {
                 // we must select practice before start a practice
                 mPolyline = null
-                mStartMarker = null
                 mCurrentMarker = null
+                mStartMarker = null
                 mGoogleMap.clear()
                 openSelectPracticeTypeDialog()
             }
@@ -366,6 +364,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() ---")
+        foregroundOnlyLocationService?.stopPractice()
         super.onDestroy()
     }
 
@@ -405,6 +404,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         moveCameraWithZoom(path.get(path.size - 1), ZOOM_LEVEL_DETAIL)
 
         mPolyline = mGoogleMap.addPolyline(polyLineOptions)
+
+        if(path.size == 1){
+            val option = MarkerOptions().position(path.get(0)).title(getString(
+                R.string.current_location))
+            option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
+            mStartMarker = mGoogleMap.addMarker(option)
+        }
 
 //        Adding bounds
 //        practiceViewModel.routeBounds.value?.let {
@@ -644,13 +650,15 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         override fun onReceive(context: Context?, intent: Intent?) {
             val location = intent?.getParcelableExtra<Location>(
                 ForegroundOnlyLocationService.EXTRA_LOCATION)
-            if(isMapReady && location != null) {
+            if(isMapReady && location != null && !isPracticeRunning) {
                 val point = LatLng(location.latitude, location.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))
                 option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
-                mStartMarker = mGoogleMap.addMarker(option)
-                moveCameraWithZoom(point, ZOOM_LEVEL_MEDIUM)
+                if (mStartMarker == null) {
+                    mStartMarker = mGoogleMap.addMarker(option)
+                    moveCameraWithZoom(point, ZOOM_LEVEL_MEDIUM)
+                }
             }
 
             val isPracticeStopped = intent?.getBooleanExtra(ForegroundOnlyLocationService.EXTRA_PRACTICE_STOPPED, false)

@@ -1,7 +1,9 @@
 package com.tantnt.android.runstatistic.models
 
+import android.content.Context
 import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
+import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
 import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
@@ -33,12 +35,12 @@ data class PracticeModel(
      * Get type of the practice
      */
 
-    fun getTypeString() : String {
+    fun getTypeString(context: Context) : String {
         //  todo: adding type then return base on this field
         when(practiceType) {
-            PRACTICE_TYPE.WALKING -> return "Walking"
-            PRACTICE_TYPE.RUNNING -> return "Running"
-            PRACTICE_TYPE.CYCLING -> return "Cycling"
+            PRACTICE_TYPE.WALKING -> return context.getString(R.string.practice_type_walking)
+            PRACTICE_TYPE.RUNNING -> return context.getString(R.string.practice_type_running)
+            PRACTICE_TYPE.CYCLING -> return context.getString(R.string.practice_type_cycling)
         }
 
 
@@ -47,13 +49,13 @@ data class PracticeModel(
     /**
      * Get the status of user
      */
-    fun getStatusString(): String {
+    fun getStatusString(context: Context): String {
         when(status) {
-            PRACTICE_STATUS.ACTIVE       -> return getTypeString()
-            PRACTICE_STATUS.NOT_ACTIVE    -> return "You are not active"
-            PRACTICE_STATUS.PAUSING       -> return "Pausing"
-            PRACTICE_STATUS.COMPETED      -> return "Completed"
-            else                          -> return "You are not active"
+            PRACTICE_STATUS.ACTIVE       -> return getTypeString(context)
+            PRACTICE_STATUS.NOT_ACTIVE    -> return context.getString(R.string.you_are_not_active)
+            PRACTICE_STATUS.PAUSING       -> return context.getString(R.string.status_pausing)
+            PRACTICE_STATUS.COMPETED      -> return context.getString(R.string.status_completed)
+            else                          -> return context.getString(R.string.you_are_not_active)
         }
     }
 

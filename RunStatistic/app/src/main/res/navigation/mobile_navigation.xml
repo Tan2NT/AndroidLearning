@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/resultFragment"
         android:name="com.tantnt.android.runstatistic.ui.result.ResultFragment"
-        android:label="fragment_result"
+        android:label="@string/result"
         tools:layout="@layout/fragment_result" >
         <argument
             android:name="image_file_path"

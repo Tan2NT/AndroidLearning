@@ -164,7 +164,7 @@ class ResultFragment : Fragment() {
 
             // Duration
             canvas.drawText(
-                "TIME",
+                getString(R.string.time),
                 (mutableBitmap.width / 2 - 20).toFloat(),
                 (mutableBitmap.height - 150).toFloat(),
                 paint

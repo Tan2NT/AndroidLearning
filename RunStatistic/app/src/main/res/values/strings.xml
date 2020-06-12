@@ -10,8 +10,14 @@
     <string name="distance_km">Distance (Km)</string>
     <string name="title_weather">Weather</string>
     <string name="speed_km">Speed (Km/h)</string>
-    <string name="time_min">Time (Min)</string>
+    <string name="time_min">Time </string>
+    <string name="time">Time </string>
     <string name="energy_calo">Energy (Kcal)</string>
+    <string name="minte">min</string>
+    <string name="hour">hour</string>
+    <string name="distance">Distance</string>
+    <string name="energy">Calo</string>
+    <string name="speed">Speed</string>
 
     <!-- Google map -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAX38GQpUkkUpjQuOX1Tz1pq0opqDThQiM</string>
@@ -31,13 +37,15 @@
 
     <!-- -->
     <string name="confirm_stop_practice">Do you sure that you want to stop this practice</string>
+    <string name="result">Result</string>
+    <string name="start">Start</string>
 
     <!-- Practice status -->
     <string name="you_are_not_active">You are not active</string>
     <string name="status_walking">Walking</string>
     <string name="status_running">Rungning</string>
     <string name="status_pausing">Pausing</string>
-
+    <string name="status_completed">Completed</string>
 
     <!-- Practice type-->
     <string name="practice_type_walking">Walking</string>
@@ -62,9 +70,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="confirmation">Confirmation</string>
     <string name="view_more">View more</string>
-    <string name="distance">Distance</string>
-    <string name="energy">Calo</string>
-    <string name="speed">Speed</string>
+
 
 
 </resources>

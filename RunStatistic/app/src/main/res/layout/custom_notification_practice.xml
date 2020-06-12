@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Time" />
+                    android:text="@string/time" />
                 <TextView
                     android:id="@+id/textView_time_value"
                     android:layout_marginBottom="0dp"
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Distance" />
+                    android:text="@string/distance" />
                 <TextView
                     android:id="@+id/textView_distance_value"
                     android:layout_width="wrap_content"

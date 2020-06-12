@@ -118,7 +118,8 @@ class PracticeDayViewItem (
             calo_value.text = practiceDayInfo.totalCaloBurned.around2Place().toString()
             // replace speed by steps
             speed_value.text = practiceDayInfo.totalStepCounted.toString()
-            speed_icon.setImageResource(R.drawable.foot)
+            speed_icon.setBackgroundResource(R.drawable.foot)
+            speed_title.text = speed_title.context.getString(R.string.steps)
             time_value.text = TimeUtils.convertDutationToFormmated(practiceDayInfo.totalTimeSpent)
             practice_type_image.setBackgroundResource(R.drawable.road_icon)
         }

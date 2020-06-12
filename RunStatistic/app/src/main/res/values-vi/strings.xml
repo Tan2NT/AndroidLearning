@@ -9,9 +9,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="distance_km">Khoảng cách (Km)</string>
     <string name="title_weather">Thời tiết</string>
-    <string name="speed_km">Tốc độ (Km/giờ)</string>
-    <string name="time_min">Thời gian (phút)</string>
+    <string name="speed_km">Vận tốc (Km/giờ)</string>
+    <string name="time_min">Thời gian (min)</string>
+    <string name="time">Thời gian</string>
     <string name="energy_calo">Năng Lượng (calo)</string>
+    <string name="minte">phút</string>
+    <string name="hour">giờ</string>
+    <string name="energy">Năng lượng</string>
+    <string name="speed">Vận tốc</string>
 
     <!-- Google map -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAX38GQpUkkUpjQuOX1Tz1pq0opqDThQiM</string>
@@ -32,12 +37,15 @@
 
     <!-- -->
     <string name="confirm_stop_practice">Bạn có chắc rằng bạn muốn kết thúc buổi tập này?</string>
+    <string name="result">Kết quả</string>
+    <string name="start">Bắt đầu</string>
 
     <!-- Practice status -->
     <string name="you_are_not_active">Bạn đang không hoạt động</string>
     <string name="status_walking">Đang đi bộ</string>
     <string name="status_running">Đang chạy bộ</string>
     <string name="status_pausing">Tạm dừng</string>
+    <string name="status_completed">Hoàn thành</string>
 
 
     <!-- Practice type-->
@@ -61,8 +69,6 @@
     <string name="share">Chia sẻ</string>
     <string name="view_more">Xem thêm</string>
     <string name="distance">Khoảng cách</string>
-    <string name="energy">Năng lượngk</string>
-    <string name="speed">Vận tốc</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 

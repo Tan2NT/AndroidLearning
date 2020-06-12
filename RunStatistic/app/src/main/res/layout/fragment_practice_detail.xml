@@ -90,7 +90,7 @@
                 android:weightSum="9">
                 <ImageView
                     android:id="@+id/speed_icon"
-                    android:background="@drawable/road_icon"
+                    android:background="@drawable/speed_icon"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     android:layout_gravity="center_vertical"

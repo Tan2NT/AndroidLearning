@@ -27,13 +27,13 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="@dimen/margin_default"
             android:max="100"
-            android:progress="65" />
+            android:progress="0" />
 
         <ImageView
             android:id="@+id/profile_icon"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:src="@drawable/foot"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/anonymous_icon"
             android:layout_gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Funny Kid"
+            tools:text="Funny Kid"
             android:textColor="#388E3C"
             app:layout_constraintBottom_toTopOf="@+id/step_to_next_level_text"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="xxxx remain steps to reach Gx"
+            tools:text="xxxx remain steps to reach Gx"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
