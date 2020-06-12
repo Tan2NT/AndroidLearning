@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Health Practice</string>
+    <string name="title_home">Giao diện chính</string>
+    <string name="title_practice">Tập luyện</string>
+    <string name="title_profile">Cá nhân</string>
+    <string name="best_practice_day">Ngày tập luyện tốt nhất</string>
+    <string name="history">Lịch sử</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="distance_km">Khoảng cách (Km)</string>
+    <string name="title_weather">Thời tiết</string>
+    <string name="speed_km">Tốc độ (Km/giờ)</string>
+    <string name="time_min">Thời gian (phút)</string>
+    <string name="energy_calo">Năng Lượng (calo)</string>
+
+    <!-- Google map -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAX38GQpUkkUpjQuOX1Tz1pq0opqDThQiM</string>
+    <string name="current_location">Vị trí hiệ tại</string>
+
+    <string name="preference_file_key">com.tantnt.android.runstatistic.PREFERENCE_FILE_KEY</string>
+    <string name="permission_rationale">Ứng dụng cần truy cập Vị trí của bạn để thực hiện các chức năng</string>
+    <string name="permission_denied_explanation">Quyền đã bị từ chối, nhưng ứng dụng cần nó để thực hiện các chức năng</string>
+    <string name="settings">Cài đặt</string>
+
+    <!-- confirmation buttons text -->
+    <string name="ok">Đồng ý</string>
+    <string name="yes">Đồng ý</string>
+    <string name="no">Từ chối</string>
+    <string name="cancel">Hủy bỏ</string>
+    <string name="save">Lưu</string>
+	<string name="confirmation">Xác nhận</string>
+
+    <!-- -->
+    <string name="confirm_stop_practice">Bạn có chắc rằng bạn muốn kết thúc buổi tập này?</string>
+
+    <!-- Practice status -->
+    <string name="you_are_not_active">Bạn đang không hoạt động</string>
+    <string name="status_walking">Đang đi bộ</string>
+    <string name="status_running">Đang chạy bộ</string>
+    <string name="status_pausing">Tạm dừng</string>
+
+
+    <!-- Practice type-->
+    <string name="practice_type_walking">Đi bộ</string>
+    <string name="practice_type_cycling">Đạp xe</string>
+    <string name="practice_type_running">chạy bộ</string>
+    <string name="promote_workouts_to_improve_your_health">Tích cực tập luyện để cải thiện sức khỏe</string>
+    <string name="location_setting_required">Ứng dụng này cần truy cập Vị trí của bạn để thức hiện các chức năng cơ bản. Cho phép truy cập?</string>
+
+    <string name="select_target_title">Thiết lập mục tiêu tập luyện</string>
+    <string name="select_target_under_average">Dưới mức trung bình</string>
+    <string name="select_target_average">Mức trung bình</string>
+    <string name="select_target_high_active">Mức cường độ cao</string>
+    <string name="select_target_weight_loss">Mức giảm cân</string>
+    <string name="select_target_muscle_gain">Mức tăng cân</string>
+    <string name="select_target_adjust">Tùy chỉnh</string>
+    <string name="select_practice_type">Chọn hình thức tập luyện</string>
+    <string name="steps">Số bước</string>
+    <string name="practice_day_description_has_number_activities">%d hoạt động - %.2f Km</string>
+    <string name="practice_day_description_has_only_1_activity">1 hoạt động - %.2f Km</string>
+    <string name="share">Chia sẻ</string>
+    <string name="view_more">Xem thêm</string>
+    <string name="distance">Khoảng cách</string>
+    <string name="energy">Năng lượngk</string>
+    <string name="speed">Vận tốc</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+
+</resources>

@@ -178,7 +178,7 @@ class ResultFragment : Fragment() {
 
             // Calo
             canvas.drawText(
-                "${getString(R.string.calo_text).capitalize()}",
+                "${getString(R.string.energy).capitalize()}",
                 (mutableBitmap.width - 230).toFloat(),
                 (mutableBitmap.height - 150).toFloat(),
                 paint

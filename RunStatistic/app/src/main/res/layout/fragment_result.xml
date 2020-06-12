@@ -169,7 +169,7 @@
                     android:layout_weight="5"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="@string/calo_text" />
+                    android:text="@string/energy_calo" />
                 <TextView
                     android:id="@+id/calo_result"
                     android:layout_width="0dp"

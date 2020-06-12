@@ -3,9 +3,12 @@ package com.tantnt.android.runstatistic.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
@@ -67,6 +70,21 @@ class HomeFragment : Fragment() {
         btn_history.setOnClickListener {
             it.findNavController()
                 .navigate(R.id.action_navigation_home_to_historyFragment)
+        }
+
+        // hand touch effect
+        btn_history.setOnTouchListener { v, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    v.background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+                    v.invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    v.background.clearColorFilter()
+                    v.invalidate()
+                }
+            }
+            false
         }
 
         // set initialize Target text

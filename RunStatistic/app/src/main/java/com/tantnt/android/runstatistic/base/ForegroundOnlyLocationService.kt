@@ -458,11 +458,6 @@ class ForegroundOnlyLocationService  : Service() {
             .setCustomContentView(notificationLayout)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .addAction(
-                R.drawable.stop_btn,
-                getString(R.string.stop_location_updates_button_text),
-                servicePendingIntent
-            )
             .build()
 
         nof.contentIntent = activityPendingIntent
