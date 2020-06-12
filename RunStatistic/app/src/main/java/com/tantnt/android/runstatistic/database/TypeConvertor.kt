@@ -6,10 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
-import org.threeten.bp.DateTimeUtils
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
+import org.threeten.bp.*
 import java.sql.Timestamp
 import kotlin.collections.ArrayList
 
@@ -34,8 +31,18 @@ class DataConvertor {
     }
 
     @TypeConverter
-    fun strongToLocalDateTime(timeString: String) : LocalDateTime {
+    fun stringToLocalDateTime(timeString: String) : LocalDateTime {
         return LocalDateTime.parse(timeString)
+    }
+
+    @TypeConverter
+    fun localDateToString(date: LocalDate) : String {
+        return date.toString()
+    }
+
+    @TypeConverter
+    fun stringToLocalDate(stringDate: String) : LocalDate {
+        return LocalDate.parse(stringDate)
     }
 
     @TypeConverter

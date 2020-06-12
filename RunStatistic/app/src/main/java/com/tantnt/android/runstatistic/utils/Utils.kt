@@ -16,7 +16,7 @@ import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.DAILY_TARGET
 import com.tantnt.android.runstatistic.models.PracticeModel
-import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.fragment_practice_detail.view.*
 import kotlinx.coroutines.*
 import java.io.File
 

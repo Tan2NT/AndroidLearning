@@ -9,8 +9,6 @@ import com.tantnt.android.runstatistic.database.asModel
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.utils.LOG_TAG
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -100,7 +98,10 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * 30 latestPractices
      */
-    val latest30Practices : LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getLatest30Practices()) {
+    val latest7DaysPractices : LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getAllPracticesBetweenDates(
+        LocalDate.now().minusDays(7),
+        LocalDate.now()
+    )) {
         it.asModel()
     }
 

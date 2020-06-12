@@ -8,14 +8,18 @@
     android:orientation="horizontal"
     android:background="#D32F2F">
 
-    <ImageView
-        android:layout_margin="@dimen/margin_small"
-        android:id="@+id/practice_icon"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:background="@drawable/foot"
-        />
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_margin="@dimen/margin_small"
+            android:id="@+id/practice_icon"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            tools:background="@drawable/walking_selected_icon"
+            />
+    </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -32,20 +36,16 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView_practice_type"
-                    style="@style/TextWhiteBoldMedium"
-                    android:layout_marginTop="0dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Walk" />
-                <TextView
                     android:id="@+id/textView_practice_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="0dp"
                     android:maxLines="2"
                     tools:text="You are not active"
-                    style="@style/TextWhiteMedium" />
+                    style="@style/TextWhiteMedium"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="14sp"/>
 
             </LinearLayout>
 

@@ -2,7 +2,6 @@ package com.tantnt.android.runstatistic.ui.home
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
@@ -40,14 +39,11 @@ class HomeViewModel(application: Application) : ViewModel() {
      */
     val todayPractices : LiveData<List<PracticeModel>> = runstatisticRepository.todayPractices
 
-    private val _latestPractices = MutableLiveData<List<PracticeModel>>()
-    val latestPractoces : LiveData<List<PracticeModel>>
-        get() = _latestPractices
 
     /**
      * only get the best practice from 30 latest practices
      */
-    val latest30Practice : LiveData<List<PracticeModel>> = runstatisticRepository.latest30Practices
+    val latest7DaysPractice : LiveData<List<PracticeModel>> = runstatisticRepository.latest7DaysPractices
 
     override fun onCleared() {
         super.onCleared()

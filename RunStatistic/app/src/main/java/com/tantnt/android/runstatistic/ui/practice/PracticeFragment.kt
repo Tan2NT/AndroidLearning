@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,11 +40,13 @@ import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.ui.dialog.SelectingPracticeTypeDialog
 import com.tantnt.android.runstatistic.utils.*
+import kotlinx.android.synthetic.main.confirm_popup_layout.view.*
 import kotlinx.android.synthetic.main.fragment_practice.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.lang.Exception
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
@@ -150,7 +153,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if (isMapReady && it.path.size > 1  && isPracticeRunning){
+                if (isMapReady && it.path.size >= 1  && isPracticeRunning){
                     Log.i(TAG, "PracticeFragment - latestPractice: " + it.toString())
                     // adding path
                     addPath(it.path)
@@ -253,14 +256,15 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         Log.i(LOG_TAG, "onPracticeStopped - ")
 
         // ensure map is switch zoom level
+        mGoogleMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                practiceViewModel.practice.value?.path?.get(0),
+                ZOOM_LEVEL_MEDIUM
+            )
+        )
+
          runBlocking {
              val job = launch (context = Dispatchers.Default) {
-                 mGoogleMap.moveCamera(
-                     CameraUpdateFactory.newLatLngZoom(
-                         practiceViewModel.practice.value?.path?.get(0),
-                         ZOOM_LEVEL_MEDIUM
-                     )
-                 )
                  delay(100)
              }
              job.join()
@@ -276,7 +280,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     fun captureMapScreen(practive: PracticeModel, map : GoogleMap, context: Context){
 
             var bitmap : Bitmap? = null
-            var path : String = ""
             val callback =
                 GoogleMap.SnapshotReadyCallback { snapshot ->
                     // TODO Auto-generated method stub
@@ -284,28 +287,30 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
                     bitmap?.let {
 
-                        // Share result to others
-                        val bitmapPath: String =
-                            MediaStore.Images.Media.insertImage(
-                                context.contentResolver,
-                                bitmap,
-                                practive.startTime.toString(),
-                                null
-                            )
+                        try {
+                            // Share result to others
+                            val bitmapPath: String =
+                                MediaStore.Images.Media.insertImage(
+                                    context.contentResolver,
+                                    bitmap,
+                                    practive.startTime.toString(),
+                                    null
+                                )
 
-                        path = bitmapPath
-
-                        val actionResult
-                                = PracticeFragmentDirections.actionNavigationPracticeToResultFragment(
-                            path,
-                            practive.practiceType.value,
-                            practive.distance.toFloat(),
-                            practive.duration,
-                            practive.speed.toFloat(),
-                            practive.calo.toFloat())
-                        findNavController().navigate(actionResult)
-
-                        Log.i(LOG_TAG, "SnapshotReadyCallback - $path ")
+                            bitmapPath?.let {
+                                val actionResult
+                                        = PracticeFragmentDirections.actionNavigationPracticeToResultFragment(
+                                    bitmapPath,
+                                    practive.practiceType.value,
+                                    practive.distance.toFloat(),
+                                    practive.duration,
+                                    practive.speed.toFloat(),
+                                    practive.calo.toFloat())
+                                findNavController().navigate(actionResult)
+                            }
+                        } catch (e: Exception) {
+                            Log.i(LOG_TAG, "Failed to save practice image into MediaStore $e")
+                        }
                     }
                 }
             map.snapshot(callback)
@@ -533,18 +538,29 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun showAlertConfirmStopPractice() {
-        val builder = AlertDialog.Builder(activity)
-        builder.setMessage(getString(R.string.confirm_stop_practice))
-            .setCancelable(true)
-            .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
-                onPracticeStopped()
-                openResultScreen()
-                foregroundOnlyLocationService?.stopPractice()
-            })
-            .setNegativeButton(getString(R.string.no ), { dialog, which ->
-                dialog.cancel()
-            })
-        builder.show()
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.confirm_popup_layout,null)
+        dialogView.message_text.text = getString(R.string.confirm_stop_practice)
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+
+        val alertDialog = builder.show()
+
+        dialogView.btn_ok.setOnClickListener {
+            onPracticeStopped()
+            openResultScreen()
+            foregroundOnlyLocationService?.stopPractice()
+            alertDialog.dismiss()
+        }
+
+        dialogView.btn_cancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        val window = alertDialog.window
+        val wlp = window?.attributes
+        wlp?.gravity = Gravity.BOTTOM
+        window?.attributes = wlp
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

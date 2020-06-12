@@ -95,49 +95,34 @@ class HomeFragment : Fragment() {
 
 
         // handle display the best practice and history
-        homeViewModel.latest30Practice.observe(viewLifecycleOwner, Observer {
+        homeViewModel.latest7DaysPractice.observe(viewLifecycleOwner, Observer {
             it?.let {
 
                if(it.size > 0) {
                    // display the latest practices info recyclerView
-                   initRecycleView(it.asListPracticeItem())
-
-                   /**
-                    * get the best practice base on now much Calo is spent
-                    */
-                   var groupByDay  = it.groupBy { it -> it.startTime.toLocalDate() }
-
-                   // find the best practice day
-                   var bestPracticeDay =
-                       PracticeDayInfo(LocalDate.now(), 0.0, 0L, 0, 0.0)
-                   groupByDay.forEach {
-                       val currentDayInfo = it.value.getPracticeDayInfo()
-                       if(currentDayInfo.totalCaloBurned >= bestPracticeDay.totalCaloBurned) {
-                           bestPracticeDay = currentDayInfo
-                       }
-                   }
-
-                   // update the best practice day value
-                   if(!groupByDay.isEmpty()) {
-                       updateBestPracticeDayInfo(bestPracticeDay)
-                   }
+                   initRecycleViewAndBestPracticeDay(it.asListPracticeItem())
                }
             }
         })
     }
 
     @SuppressLint("StringFormatMatches")
-    private fun initRecycleView(viewItems: List<PracticeViewItem>) {
+    private fun initRecycleViewAndBestPracticeDay(viewItems: List<PracticeViewItem>) {
         var groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
             spanCount = 1
         }
 
         // group practice by day
         var groupByDay  = viewItems.groupBy { it -> it.practiceModel.startTime.toLocalDate() }
+
         // add all practice, group by date
+        // find the best practice day
+        var bestPracticeDay =
+            PracticeDayInfo(LocalDate.now(), 0.0, 0L, 0, 0.0)
         groupByDay.forEach {
 
             val currentDayInfo = it.value.asListPracticeModel().getPracticeDayInfo()
+            val headerTitle = it.key.toString()
             var description =
                 getString(R.string.practice_day_description_has_number_activities, it.value.size, currentDayInfo.totalDistance.toFloat())
             if(it.value.size == 1)
@@ -145,11 +130,16 @@ class HomeFragment : Fragment() {
 
             ExpandableGroup(
                 HeaderItem(
-                    it.key.toString(),
+                    headerTitle,
                     description
                 ), true).apply {
                 add(Section(it.value))
                 groupAdapter.add(this)
+            }
+
+            // find the best practice day
+            if(currentDayInfo.totalCaloBurned >= bestPracticeDay.totalCaloBurned) {
+                bestPracticeDay = currentDayInfo
             }
         }
 
@@ -158,12 +148,17 @@ class HomeFragment : Fragment() {
             adapter = groupAdapter
         }
 
+        // update the best practice day value
+        if(!groupByDay.isEmpty()) {
+            updateBestPracticeDayInfo(bestPracticeDay)
+        }
+
     }
 
     fun openSelectDailyTargetDialog() {
         // Inflate the dialog with custom view
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_select_target_dialog, null)
-        val builder = AlertDialog.Builder(requireContext())
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_select_target_dialog, null)
+        val builder = AlertDialog.Builder(context)
             .setView(dialogView)
 
         var target = SharedPreferenceUtil.getDailyTargetStep(requireContext())

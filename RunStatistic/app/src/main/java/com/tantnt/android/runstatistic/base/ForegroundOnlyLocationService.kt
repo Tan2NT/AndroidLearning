@@ -249,7 +249,7 @@ class ForegroundOnlyLocationService  : Service() {
 
             if(tempStatus != currentPractice!!.status)
                 savePractice()
-            if (currentPractice!!.status == PRACTICE_STATUS.PAUSING)
+            //if (currentPractice!!.status == PRACTICE_STATUS.PAUSING)
                 lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             return
         }
@@ -429,8 +429,14 @@ class ForegroundOnlyLocationService  : Service() {
             gallon = "hour"
         notificationLayout.setTextViewText(R.id.textView_time_value,
             TimeUtils.convertDutationToFormmated(currentPractice!!.duration).toString() + " " + gallon)
-        notificationLayout.setTextViewText(R.id.textView_practice_type, currentPractice!!.getTypeString())
         notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString())
+
+        var resId = R.drawable.walking_selected_icon
+        when(currentPractice!!.practiceType) {
+            PRACTICE_TYPE.RUNNING -> resId = R.drawable.running_selected_icon
+            PRACTICE_TYPE.CYCLING -> resId = R.drawable.cycling_selected_icon
+        }
+        notificationLayout.setImageViewResource(R.id.practice_icon, resId)
 
         // 4. Set up the main Intent.Pending intents for notification
         val launchActivityIntent = Intent(this, LaunchAppService::class.java)

@@ -85,7 +85,7 @@ class ResultFragment : Fragment() {
         share_btn.setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+                    v.background.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP)
                     v.invalidate()
                 }
                 MotionEvent.ACTION_UP -> {
@@ -214,6 +214,7 @@ class ResultFragment : Fragment() {
         // Delete the image to save user device storage
         imageFilePath?.let {
             try {
+                Log.i(LOG_TAG, "ResultActivity -- try to remove image ")
                 context?.contentResolver?.delete(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     MediaStore.MediaColumns.DATA + "='" + imageFilePath + "'",
@@ -242,6 +243,7 @@ class ResultFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        Log.i(LOG_TAG, "ResultActivity -- onDestroy")
         super.onDestroy()
         cleanUp()
     }

@@ -1,19 +1,16 @@
 package com.tantnt.android.runstatistic.ui.view
 
-import android.util.Log
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeDayInfo
 import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.utils.LOG_TAG
-import com.tantnt.android.runstatistic.utils.ONE_HOUR_MILLI
 import com.tantnt.android.runstatistic.utils.TimeUtils
 import com.tantnt.android.runstatistic.utils.around2Place
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.fragment_practice_detail.*
 import kotlinx.android.synthetic.main.header_title.*
 
 /**
@@ -43,7 +40,7 @@ class PracticeViewItem (
     }
 
     override fun getLayout(): Int {
-        return R.layout.fragment_detail
+        return R.layout.fragment_practice_detail
     }
 
     override fun getSpanSize(spanCount: Int, position: Int): Int {
@@ -128,6 +125,6 @@ class PracticeDayViewItem (
     }
 
     override fun getLayout(): Int {
-        return R.layout.fragment_detail
+        return R.layout.fragment_practice_detail
     }
 }
