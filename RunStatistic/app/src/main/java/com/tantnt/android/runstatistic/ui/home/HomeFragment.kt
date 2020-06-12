@@ -17,8 +17,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.facebook.ads.AdSize
+import com.facebook.ads.AdView
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.models.*
+import com.tantnt.android.runstatistic.models.DAILY_TARGET
+import com.tantnt.android.runstatistic.models.PracticeDayInfo
+import com.tantnt.android.runstatistic.models.asListPracticeItem
+import com.tantnt.android.runstatistic.models.getPracticeDayInfo
 import com.tantnt.android.runstatistic.network.service.TAG
 import com.tantnt.android.runstatistic.ui.view.HeaderItem
 import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
@@ -32,13 +37,18 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_select_target_dialog.view.*
 import org.threeten.bp.LocalDate
 
+
 private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 10
+private const val ADS_BANNER_PLACEMENT_ID = "261115174996633_261116634996487"
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
 
     private var mStepCounted : Int? = 0
+
+    // Facebook ads
+    private var bannerAdView: AdView? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -122,6 +132,23 @@ class HomeFragment : Fragment() {
                }
             }
         })
+
+        // Instantiate an AdView object.
+        // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
+        // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
+        bannerAdView = AdView(context, "$ADS_BANNER_PLACEMENT_ID", AdSize.BANNER_HEIGHT_90)
+
+        // Request an ad
+        bannerAdView?.let {
+            // Add the ad view to activity layout
+            banner_container.addView(bannerAdView)
+            it.loadAd()
+        }
+    }
+
+    override fun onDestroy() {
+        bannerAdView?.destroy()
+        super.onDestroy()
     }
 
     @SuppressLint("StringFormatMatches")
