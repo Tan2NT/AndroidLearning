@@ -136,7 +136,7 @@ class HomeFragment : Fragment() {
         // Instantiate an AdView object.
         // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
         // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
-        bannerAdView = AdView(context, "$ADS_BANNER_PLACEMENT_ID", AdSize.BANNER_HEIGHT_90)
+        bannerAdView = AdView(context, "$ADS_BANNER_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50)
 
         // Request an ad
         bannerAdView?.let {

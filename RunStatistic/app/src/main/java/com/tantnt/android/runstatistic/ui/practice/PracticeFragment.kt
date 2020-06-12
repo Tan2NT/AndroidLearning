@@ -47,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Exception
+import com.facebook.ads.*;
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
@@ -57,11 +58,14 @@ private const val ZOOM_LEVEL_SMALL = 16.0f
 private const val ZOOM_LEVEL_MEDIUM = 17.0f
 private const val ZOOM_LEVEL_DETAIL = 18.0f
 
+private const val INTERSTITIAL_ADS_PLACEMENT_ID = "261115174996633_261125164995634"
 
 @Suppress("DEPRECATION")
 class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private val TAG = "TDebug" //PracticeFragment::class.java.simpleName
+
+    private lateinit var interstitialAd : InterstitialAd
     
     private lateinit var mGoogleMap: GoogleMap
     private var isMapReady : Boolean = false
@@ -209,6 +213,40 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         initButtonStatus()
 
         activityRecognitionClient = ActivityRecognitionClient(requireActivity())
+
+        // Instantiate an InterstitialAd object.
+        // NOTE: the placement ID will eventually identify this as your App, you can ignore it for
+        // now, while you are testing and replace it later when you have signed up.
+        // While you are using this temporary code you will only get test ads and if you release
+        // your code like this to the Google Play your users will not receive ads (you will get a no fill error).
+        interstitialAd = InterstitialAd(context, "$INTERSTITIAL_ADS_PLACEMENT_ID");
+
+        // set lisnters for the Intertitial ad
+        interstitialAd?.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {
+            }
+
+            override fun onAdClicked(p0: Ad?) {
+            }
+
+            override fun onInterstitialDismissed(p0: Ad?) {
+            }
+
+            override fun onError(p0: Ad?, p1: AdError?) {
+            }
+
+            override fun onAdLoaded(p0: Ad?) {
+                interstitialAd.show()
+            }
+
+            override fun onLoggingImpression(p0: Ad?) {
+            }
+
+        })
+
+        // For auto play video ads, it's recommended to load the ad
+        // at least 30 seconds before it is shown
+        interstitialAd.loadAd();
     }
 
     fun openSelectPracticeTypeDialog() {
@@ -365,6 +403,9 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() ---")
         foregroundOnlyLocationService?.stopPractice()
+
+        interstitialAd?.destroy()
+
         super.onDestroy()
     }
 
