@@ -65,7 +65,7 @@ class SleepNightAdapter(val clickListener: SleepNightListener):
                else -> listOf(DataItem.Header) + list.map { DataItem.SleepNightItem(it)}
            }
 
-           withContext(Dispatchers.Main) {
+           withContext(Dispatchers.Main) {sleepDetailViewModel
                submitList(items)
            }
        }

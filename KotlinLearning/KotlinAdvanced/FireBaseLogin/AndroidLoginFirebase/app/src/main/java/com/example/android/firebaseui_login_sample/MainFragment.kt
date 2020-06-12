@@ -41,6 +41,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.facebook.ads.*
 
 
 class MainFragment : Fragment() {
@@ -57,6 +58,9 @@ class MainFragment : Fragment() {
     // Facebook login
     private lateinit var callbackManager: CallbackManager
     private lateinit var auth: FirebaseAuth
+
+    // Facebook ads
+    private var bannerAdView: AdView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -110,6 +114,18 @@ class MainFragment : Fragment() {
         observeAuthenticationState()
 
         binding.authButton.setOnClickListener { launchSignInFlow() }
+
+        // Instantiate an AdView object.
+  // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
+  // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
+
+        bannerAdView = AdView(this.activity, "IMG_16_9_APP_INSTALL#568034547465752_569892737279933", AdSize.BANNER_HEIGHT_50)
+        bannerAdView?.let {nonNullBannerAdView ->
+            binding.bannerContainer.addView(nonNullBannerAdView)
+            //nonNullBannerAdView.setAdListener(this)
+            nonNullBannerAdView.loadAd()
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

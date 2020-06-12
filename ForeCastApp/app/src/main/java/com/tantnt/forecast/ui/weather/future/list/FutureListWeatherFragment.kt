@@ -15,9 +15,11 @@ import com.tantnt.forecast.R
 import com.tantnt.forecast.data.db.entity.LocalDateTimeConverter
 import com.tantnt.forecast.data.db.unitlocalized.future.list.UnitSpecificsimpleFutureWeatherEntry
 import com.tantnt.forecast.ui.base.ScopeFragment
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.*
+import com.xwray.groupie.groupiex.plusAssign
+import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.future_list_weather_fragment.*
+import kotlinx.android.synthetic.main.header_item.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
@@ -73,10 +75,20 @@ class FutureListWeatherFragment : ScopeFragment(), KodeinAware{
         }
     }
 
+    val dataSection = Section()
+
     private fun initRecycleView(items : List<FutureWeatherItem>){
-        val groupAdapter = GroupAdapter<ViewHolder>().apply {
-            addAll(items)
+
+        var groupAdapter = GroupAdapter<ViewHolder>().apply {
+            //addAll(items)
         }
+
+        //groupAdapter += HeaderItem("Tin tin")
+        val section = Section()
+        section.setHeader(HeaderItem("Tin tin"))
+        section.addAll(items)
+        groupAdapter += section
+
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@FutureListWeatherFragment.context)
@@ -97,3 +109,18 @@ class FutureListWeatherFragment : ScopeFragment(), KodeinAware{
     }
 
 }
+
+class HeaderItem (private val title: String) : Item() {
+    override fun bind(
+        viewHolder: com.xwray.groupie.kotlinandroidextensions.ViewHolder,
+        position: Int
+    ) {
+        viewHolder.header_title.text = title
+    }
+
+    override fun getLayout(): Int {
+        return R.layout.header_item
+    }
+
+}
+
