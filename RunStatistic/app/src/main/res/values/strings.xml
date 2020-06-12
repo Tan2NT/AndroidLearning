@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RunStatistic</string>
+    <string name="app_name">Health Practice</string>
     <string name="title_home">Home</string>
     <string name="title_practice">Practice</string>
     <string name="title_profile">Profile</string>
@@ -61,6 +61,9 @@
     <string name="practice_day_description_has_number_activities">%d activities - %.2f Km</string>
     <string name="practice_day_description_has_only_1_activity">1 activity - %.2f Km</string>
     <string name="share">Share</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

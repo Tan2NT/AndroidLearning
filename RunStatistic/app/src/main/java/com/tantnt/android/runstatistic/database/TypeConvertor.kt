@@ -19,10 +19,6 @@ class DataConvertor {
 
     @TypeConverter
     fun stringToList(data: String): ArrayList<LatLng> {
-        if(data == null) {
-            return arrayListOf()
-        }
-
         val listType = object : TypeToken<List<LatLng>>() {}.type
         return gson.fromJson<ArrayList<LatLng>> (data, listType)
     }

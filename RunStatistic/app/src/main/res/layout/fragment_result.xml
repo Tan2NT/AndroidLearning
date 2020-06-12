@@ -9,6 +9,7 @@
     tools:context=".ui.result.ResultFragment">
 
     <ImageView
+        android:layout_margin="@dimen/margin_small"
         android:id="@+id/share_img"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -41,7 +42,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/distance_value"
+                android:id="@+id/distance_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
@@ -65,7 +66,7 @@
                 android:layout_marginEnd="@dimen/margin_small"
                 app:layout_constraintTop_toBottomOf="@id/practice_type_image"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/distance_value"
+                app:layout_constraintStart_toEndOf="@id/distance_result"
                 app:layout_constraintEnd_toEndOf="parent"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -101,7 +102,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/speed_km"/>
                 <TextView
-                    android:id="@+id/speed_value"
+                    android:id="@+id/speed_result"
                     android:layout_width="0dp"
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
@@ -136,7 +137,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/time_min" />
                 <TextView
-                    android:id="@+id/time_value"
+                    android:id="@+id/time_result"
                     android:layout_width="0dp"
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
@@ -170,7 +171,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/calo_text" />
                 <TextView
-                    android:id="@+id/calo_value"
+                    android:id="@+id/calo_result"
                     android:layout_width="0dp"
                     android:layout_weight="3"
                     android:layout_height="wrap_content"
@@ -178,37 +179,35 @@
                     android:textColor="#111111"
                     android:text="5.2"
                     />
-
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
-   <androidx.constraintlayout.widget.ConstraintLayout
-       android:layout_marginStart="@dimen/margin_small"
-       android:layout_width="wrap_content"
-       android:layout_height="0dp"
-       android:layout_weight="1">
-       <ImageView
-           android:id="@+id/share_btn"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:background="@drawable/share_icon_blue"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintBottom_toBottomOf="parent"/>
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:textStyle="bold"
-           android:textSize="20sp"
-           android:text="@string/share"
-           app:layout_constraintStart_toEndOf="@id/share_btn"
-           android:layout_marginStart="@dimen/margin_small"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintTop_toTopOf="parent"/>
-   </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_weight="1">
 
+        <ImageView
+            android:id="@+id/share_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/share_icon_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:text="@string/share"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/share_btn"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -27,7 +27,6 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_select_target_dialog.view.*
-import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalDate
 
 private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 10
@@ -70,8 +69,6 @@ class HomeFragment : Fragment() {
                 .navigate(R.id.action_navigation_home_to_historyFragment)
         }
 
-        Log.i(LOG_TAG, "LocalDate: ${org.threeten.bp.LocalDate.now()} - LocalDateTime: ${LocalDateTime.now()}")
-
         // set initialize Target text
         target_step.text = SharedPreferenceUtil.getDailyTargetStep(requireContext()).toString()
 
@@ -87,7 +84,7 @@ class HomeFragment : Fragment() {
                  */
 
                 if(it.size > 0){
-                    val practiceDayInfo = (it as List<PracticeModel>).getPracticeDayInfo()
+                    val practiceDayInfo = it.getPracticeDayInfo()
                     mStepCounted = practiceDayInfo.totalStepCounted
 
                     // update UI
@@ -103,7 +100,7 @@ class HomeFragment : Fragment() {
 
                if(it.size > 0) {
                    // display the latest practices info recyclerView
-                   initRecycleView((it as List<PracticeModel>).asListPracticeItem())
+                   initRecycleView(it.asListPracticeItem())
 
                    /**
                     * get the best practice base on now much Calo is spent
@@ -239,7 +236,6 @@ class HomeFragment : Fragment() {
     fun setProgressBarStatus(stepCounted: Int) {
         val target = SharedPreferenceUtil.getDailyTargetStep(requireContext())
         val completedPercent = (stepCounted * 100) / target
-        Log.i(LOG_TAG, "setProgressBarStatu $stepCounted - $target - $completedPercent")
         current_step_text.text = stepCounted.toString()
         progressBar.progress = completedPercent
     }
@@ -261,14 +257,18 @@ class HomeFragment : Fragment() {
     private fun writeExternalStorePermissionApproved(): Boolean {
         return PermissionUtils.checkPermission(
             activity?.applicationContext!!,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                PermissionUtils.checkPermission(
+                    activity?.applicationContext!!,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE)
+
     }
 
     // TODO: Step 1.0, Review Permissions: Method requests permissions.
     private fun requestWriteExternalStoragePermission() {
         Log.d(TAG, "requestWriteExternalStoragePermissions ---")
         requestPermissions(
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
             REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE
         )
     }

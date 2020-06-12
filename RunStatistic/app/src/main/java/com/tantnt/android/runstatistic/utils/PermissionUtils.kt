@@ -11,7 +11,6 @@ object PermissionUtils {
     }
 
     fun checkPermissions(appContext: Context, permissions: Array<String>) : Boolean {
-        var result = true
         for(permission in permissions){
             if (!checkPermission(appContext, permission))
                 return false

@@ -136,7 +136,7 @@ class ForegroundOnlyLocationService  : Service() {
                    if(isPracticeRunning){
                        onNewLocation(p0.lastLocation)
                    }else {
-                       currentLocation = p0?.lastLocation
+                       currentLocation = p0.lastLocation
                        val intent = Intent(ACTION_FORGROUND_ONLY_LOCATION_BROADCAST)
                        intent.putExtra(EXTRA_LOCATION, currentLocation)
                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
@@ -228,7 +228,7 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun updatePractice(location: Location?, distance: Double, statechanged: Boolean) {
-        currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
+        currentPractice!!.path.add(LatLng(location!!.latitude, location.longitude))
         if (statechanged == false)
             currentPractice!!.distance += distance.around3Place()
         currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
@@ -258,7 +258,7 @@ class ForegroundOnlyLocationService  : Service() {
         if(currentPractice!!.path.size == 0) {
             // Start a new practice
             currentLocation = location
-            currentPractice!!.path.add(LatLng(location!!.latitude, location!!.longitude))
+            currentPractice!!.path.add(LatLng(location!!.latitude, location.longitude))
             currentPractice!!.startTime = LocalDateTime.now()
             savePractice()
             updateForegroundNotificationifNeed()
@@ -279,8 +279,8 @@ class ForegroundOnlyLocationService  : Service() {
         lastUpdatedTime = TimeUtils.getTimeInMilisecond()
 
         // update current location
-        currentLocation!!.latitude = location!!.latitude
-        currentLocation!!.longitude = location!!.longitude
+        currentLocation?.latitude = location.latitude
+        currentLocation?.longitude = location.longitude
         updateForegroundNotificationifNeed()
     }
 
@@ -290,7 +290,7 @@ class ForegroundOnlyLocationService  : Service() {
         if(serviceRunningInForeground && isPracticeRunning) {
             notificationManager.notify(
                 NOTIFICATION_ID,
-                generateNotification(currentLocation))
+                generateNotification())
         }
     }
 
@@ -339,7 +339,7 @@ class ForegroundOnlyLocationService  : Service() {
 
         if(!configurationChange && SharedPreferenceUtil.getLocationTrackingPref(this)) {
             Log.d(TAG, "Start foreground service")
-            val notification = generateNotification(currentLocation)
+            val notification = generateNotification()
             startForeground(NOTIFICATION_ID, notification)
             serviceRunningInForeground = true
         }
@@ -404,11 +404,10 @@ class ForegroundOnlyLocationService  : Service() {
         }
     }
 
-    private fun generateNotification(location: Location?): Notification {
+    private fun generateNotification(): Notification {
         Log.d(TAG, "generateNotification() ---- ")
 
         // 1. get Data
-        val mainNotificationText = location.toString()
         val titleTExt = "Location in Android"
 
         // 2. Create Notification Channel for O+ and beyond devices (26+)

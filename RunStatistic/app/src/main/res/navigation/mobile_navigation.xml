@@ -19,7 +19,11 @@
         android:id="@+id/navigation_practice"
         android:name="com.tantnt.android.runstatistic.ui.practice.PracticeFragment"
         android:label="@string/title_practice"
-        tools:layout="@layout/fragment_practice" />
+        tools:layout="@layout/fragment_practice" >
+        <action
+            android:id="@+id/action_navigation_practice_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -31,4 +35,28 @@
         android:name="com.tantnt.android.runstatistic.ui.history.HistoryFragment"
         android:label="@string/history"
         tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.tantnt.android.runstatistic.ui.result.ResultFragment"
+        android:label="fragment_result"
+        tools:layout="@layout/fragment_result" >
+        <argument
+            android:name="image_file_path"
+            app:argType="string" />
+        <argument
+            android:name="practice_type"
+            app:argType="integer" />
+        <argument
+            android:name="practice_distance"
+            app:argType="float" />
+        <argument
+            android:name="practice_duration"
+            app:argType="long" />
+        <argument
+            android:name="practice_speed"
+            app:argType="float" />
+        <argument
+            android:name="practice_calo"
+            app:argType="float" />
+    </fragment>
 </navigation>

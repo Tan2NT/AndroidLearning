@@ -39,7 +39,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     suspend fun getLatestPracticeNonLive() : PracticeModel? {
         var practice : PracticeModel? = null
         withContext(Dispatchers.IO) {
-            practice = database.practiceDao.getlatestPracticeNonLive()?.asModel()
+            practice = database.practiceDao.getlatestPracticeNonLive().asModel()
         }
         return practice
     }

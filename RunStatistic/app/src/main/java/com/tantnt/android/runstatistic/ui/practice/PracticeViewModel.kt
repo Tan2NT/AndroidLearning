@@ -52,7 +52,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
 
     fun getCurrentPractice() : PracticeModel? {
         var prac : PracticeModel? = null
-        isPracticeRunning?.let {
+        isPracticeRunning.let {
             viewModelScope.launch {
                 prac = runstatisticRepository.getLatestPracticeNonLive()
             }

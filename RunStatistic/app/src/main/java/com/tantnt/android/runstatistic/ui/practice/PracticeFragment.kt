@@ -6,21 +6,24 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Color
+import android.graphics.*
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.library.BuildConfig
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -28,7 +31,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
-import com.tantnt.android.runstatistic.BuildConfig
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.*
 import com.tantnt.android.runstatistic.databinding.FragmentPracticeBinding
@@ -38,13 +40,18 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.ui.dialog.SelectingPracticeTypeDialog
 import com.tantnt.android.runstatistic.utils.*
 import kotlinx.android.synthetic.main.fragment_practice.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
 private const val REQUEST_SELECT_PRACTICE_TYPE = 26
 private const val REQUEST_DETECT_ACTIVITY_REQUEST_CODE = 27
 
-private const val ZOOM_LEVEL_MEDIUM = 16.0f
+private const val ZOOM_LEVEL_SMALL = 16.0f
+private const val ZOOM_LEVEL_MEDIUM = 17.0f
 private const val ZOOM_LEVEL_DETAIL = 18.0f
 
 
@@ -133,17 +140,17 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         //val root = inflater.inflate(R.layout.fragment_practice, container, false)
 
-        val mapFragment  = childFragmentManager?.findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment  = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
         if(mapFragment != null)
         {
             Log.i(TAG, "onCreateView get Map Async!")
-            mapFragment?.getMapAsync(this)
+            mapFragment.getMapAsync(this)
         }
 
         practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if (isMapReady && it != null && it.path.size > 1  && isPracticeRunning){
+                if (isMapReady && it.path.size > 1  && isPracticeRunning){
                     Log.i(TAG, "PracticeFragment - latestPractice: " + it.toString())
                     // adding path
                     addPath(it.path)
@@ -172,7 +179,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 mPolyline = null
                 mStartMarker = null
                 mCurrentMarker = null
-                mGoogleMap?.clear()
+                mGoogleMap.clear()
                 openSelectPracticeTypeDialog()
             }
             else {
@@ -243,21 +250,70 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun onPracticeStopped() {
+        Log.i(LOG_TAG, "onPracticeStopped - ")
 
-        mGoogleMap?.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                practiceViewModel.practice.value?.path?.get(0),
-                ZOOM_LEVEL_MEDIUM
-            )
-        )
-
-        practiceViewModel.practice.value?.startTime?.let { Utils.captureScreenAndShare(practiceViewModel.practice.value!!, mGoogleMap, requireContext()) }
+        // ensure map is switch zoom level
+         runBlocking {
+             val job = launch (context = Dispatchers.Default) {
+                 mGoogleMap.moveCamera(
+                     CameraUpdateFactory.newLatLngZoom(
+                         practiceViewModel.practice.value?.path?.get(0),
+                         ZOOM_LEVEL_MEDIUM
+                     )
+                 )
+                 delay(100)
+             }
+             job.join()
+         }
 
         start_practice_btn.visibility = View.VISIBLE
         stop_practice_btn.visibility = View.GONE
         pause_practice_btn.visibility = View.GONE
 
         removeActivityRecognitionUpdates()
+    }
+
+    fun captureMapScreen(practive: PracticeModel, map : GoogleMap, context: Context){
+
+            var bitmap : Bitmap? = null
+            var path : String = ""
+            val callback =
+                GoogleMap.SnapshotReadyCallback { snapshot ->
+                    // TODO Auto-generated method stub
+                    bitmap = snapshot
+
+                    bitmap?.let {
+
+                        // Share result to others
+                        val bitmapPath: String =
+                            MediaStore.Images.Media.insertImage(
+                                context.contentResolver,
+                                bitmap,
+                                practive.startTime.toString(),
+                                null
+                            )
+
+                        path = bitmapPath
+
+                        val actionResult
+                                = PracticeFragmentDirections.actionNavigationPracticeToResultFragment(
+                            path,
+                            practive.practiceType.value,
+                            practive.distance.toFloat(),
+                            practive.duration,
+                            practive.speed.toFloat(),
+                            practive.calo.toFloat())
+                        findNavController().navigate(actionResult)
+
+                        Log.i(LOG_TAG, "SnapshotReadyCallback - $path ")
+                    }
+                }
+            map.snapshot(callback)
+        }
+
+    private fun openResultScreen() {
+        Log.i(LOG_TAG, "openResultScreen - 111 ")
+        captureMapScreen(practiceViewModel.practice.value!!, mGoogleMap, requireContext())
     }
 
     override fun onStart() {
@@ -316,7 +372,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         15: Streets
         20: Buildings
         * */
-        mGoogleMap?.moveCamera(
+        mGoogleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 target,
                 zoomLevel
@@ -325,7 +381,6 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun addPath(path : ArrayList<LatLng>) {
-        Log.i(TAG, "addMapDirections !")
         var polyLineOptions : PolylineOptions = PolylineOptions()
         polyLineOptions.color(Color.RED)
         polyLineOptions.width(20f)
@@ -339,7 +394,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             val option = MarkerOptions().position(path.get(path.size - 1)).title(getString(
                 R.string.current_location))
             option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_circle))
-            mCurrentMarker = mGoogleMap?.addMarker(option)
+            mCurrentMarker = mGoogleMap.addMarker(option)
         } else
             mCurrentMarker?.position = path.get(path.size - 1)
         moveCameraWithZoom(path.get(path.size - 1), ZOOM_LEVEL_DETAIL)
@@ -483,6 +538,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
                 onPracticeStopped()
+                openResultScreen()
                 foregroundOnlyLocationService?.stopPractice()
             })
             .setNegativeButton(getString(R.string.no ), { dialog, which ->
@@ -573,11 +629,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             val location = intent?.getParcelableExtra<Location>(
                 ForegroundOnlyLocationService.EXTRA_LOCATION)
             if(isMapReady && location != null) {
-                val point = LatLng(location?.latitude, location?.longitude)
+                val point = LatLng(location.latitude, location.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))
                 option?.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
-                mStartMarker = mGoogleMap?.addMarker(option)
+                mStartMarker = mGoogleMap.addMarker(option)
                 moveCameraWithZoom(point, ZOOM_LEVEL_MEDIUM)
             }
 
