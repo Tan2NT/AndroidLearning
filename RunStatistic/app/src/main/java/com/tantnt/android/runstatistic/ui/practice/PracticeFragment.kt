@@ -48,6 +48,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Exception
 import com.facebook.ads.*;
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.ActivityRecognition
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
@@ -99,11 +101,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             foregroundOnlyLocationServiceBound = true
 
             // check if has location service is running?
-            val enabled = foregroundServiceIsRunning && foregroundServiceSubscribeLocationUpdate
+            val enabled = gIsForegroundServiceRunning && gIsForegroundServiceSubscribeLocationUpdate
             Log.i(TAG, "onServiceConnected! foregroundServiceEnable? " + enabled.toString())
+            Log.i(TAG, "onServiceConnected! gIsPracticeRunning? " + gIsPracticeRunning.toString())
 
             if (enabled) {
-                isPracticeRunning?.let {
+               if(gIsPracticeRunning) {
                     updateButtonStatus(practiceViewModel.getCurrentPractice())
                 }
             } else {
@@ -157,7 +160,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
         practiceViewModel.practice.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if (isMapReady && it.path.size >= 1  && isPracticeRunning){
+                if (isMapReady && it.path.size >= 1  && gIsPracticeRunning){
 
                     // adding path
                     addPath(it.path)
@@ -179,12 +182,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // register button listener
         // start a practice
         start_practice_btn.setOnClickListener {
-            if(!isPracticeRunning) {
+            if(!gIsPracticeRunning) {
                 // we must select practice before start a practice
                 mPolyline = null
                 mCurrentMarker = null
                 mStartMarker = null
                 mGoogleMap.clear()
+                registerActivityRecognitionUpdates()
                 openSelectPracticeTypeDialog()
             }
             else {
@@ -284,6 +288,12 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 PRACTICE_STATUS.COMPETED -> {
                     initButtonStatus()
                 }
+
+                PRACTICE_STATUS.ACTIVE -> {
+                    stop_practice_btn.visibility = View.VISIBLE
+                    pause_practice_btn.visibility = View.VISIBLE
+                    start_practice_btn.visibility = View.GONE
+                }
             }
         }
     }
@@ -292,12 +302,14 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         Log.i(LOG_TAG, "onPracticeStopped - ")
 
         // ensure map is switch zoom level
-        mGoogleMap.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                practiceViewModel.practice.value?.path?.get(0),
-                ZOOM_LEVEL_MEDIUM
+        if(practiceViewModel.practice?.value?.path?.size!! > 0) {
+            mGoogleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    practiceViewModel.practice.value?.path?.get(0),
+                    ZOOM_LEVEL_MEDIUM
+                )
             )
-        )
+        }
 
          runBlocking {
              val job = launch (context = Dispatchers.Default) {
@@ -401,8 +413,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy() ---")
-        foregroundOnlyLocationService?.stopPractice()
+        Log.d(TAG, "PracticeFragment onDestroy() ---")
+
+        if(!gIsPracticeRunning && gIsForegroundServiceSubscribeLocationUpdate) {
+            foregroundOnlyLocationService?.unsubscribeToLocationUpdates()
+        }
 
         interstitialAd?.destroy()
 
@@ -593,9 +608,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         val alertDialog = builder.show()
 
         dialogView.btn_ok.setOnClickListener {
-            onPracticeStopped()
-            openResultScreen()
-            foregroundOnlyLocationService?.stopPractice()
+            if (gIsPracticeRunning) {
+                onPracticeStopped()
+                openResultScreen()
+                foregroundOnlyLocationService?.stopPractice()
+            }
             alertDialog.dismiss()
         }
 
@@ -624,7 +641,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                 val type = data?.getIntExtra("practice_type", 0)!!
                 practiceType = PRACTICE_TYPE.values() [type]
                 foregroundOnlyLocationService?.startPractice(practiceType)
-                registerActivityRecognitionUpdates()
+                //registerActivityRecognitionUpdates()
                 stop_practice_btn.visibility = View.VISIBLE
                 pause_practice_btn.visibility = View.VISIBLE
                 start_practice_btn.visibility = View.GONE
@@ -679,7 +696,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         }
 
         task.addOnFailureListener {
-            Log.i(TAG, "addOnSuccessListener fail to remove Activity recognition updates")
+            Log.e(TAG, "addOnSuccessListener fail to remove Activity recognition updates ${it.toString()}")
         }
     }
 
@@ -691,7 +708,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         override fun onReceive(context: Context?, intent: Intent?) {
             val location = intent?.getParcelableExtra<Location>(
                 ForegroundOnlyLocationService.EXTRA_LOCATION)
-            if(isMapReady && location != null && !isPracticeRunning) {
+            if(isMapReady && location != null && !gIsPracticeRunning) {
                 val point = LatLng(location.latitude, location.longitude)
                 val option = MarkerOptions().position(point).title(getString(
                     R.string.current_location))

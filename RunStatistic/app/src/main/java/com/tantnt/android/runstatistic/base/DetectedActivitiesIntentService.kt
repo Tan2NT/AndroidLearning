@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.ActivityRecognitionResult
 import com.google.android.gms.location.DetectedActivity
+import com.tantnt.android.runstatistic.utils.LOG_TAG
 
 /**
  * IntentService for handling incoming intents that are generated as a result of requesting activities updates using
@@ -27,7 +28,7 @@ class DetectedActivitiesIntentService : IntentService("DetectedActivitiesIntentS
         // Get the list of the probable activities associated with the current state of the device.
         // Each activity is associated with a confidence level, which is an int between 0 and 100
         gDetectedActivities = result.probableActivities
-        Log.i(LOCAL_TAG, "activities detected " + gDetectedActivities.toString())
+        Log.i(LOG_TAG, "activities detected " + gDetectedActivities.toString())
 
         for(da in gDetectedActivities) {
             Log.i(LOCAL_TAG, "type: $da.type - confidence: $da.confidence - description: ${da.describeContents()}")

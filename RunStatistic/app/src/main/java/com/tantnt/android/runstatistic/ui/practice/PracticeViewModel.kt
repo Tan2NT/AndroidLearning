@@ -4,11 +4,11 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.tantnt.android.runstatistic.base.isPracticeRunning
+import com.tantnt.android.runstatistic.base.gIsPracticeRunning
 import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.repository.RunstatisticRepository
+import com.tantnt.android.runstatistic.utils.LOG_TAG
 import kotlinx.coroutines.*
 
 
@@ -52,7 +52,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
 
     fun getCurrentPractice() : PracticeModel? {
         var prac : PracticeModel? = null
-        isPracticeRunning.let {
+        gIsPracticeRunning.let {
             viewModelScope.launch {
                 prac = runstatisticRepository.getLatestPracticeNonLive()
             }
@@ -61,6 +61,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
     }
 
     override fun onCleared() {
+        Log.i(LOG_TAG, "PracticeViewModel onCleared")
         super.onCleared()
         viewModelJob.cancel()
     }

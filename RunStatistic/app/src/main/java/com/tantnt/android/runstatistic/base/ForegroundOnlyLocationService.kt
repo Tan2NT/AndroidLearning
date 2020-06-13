@@ -27,10 +27,8 @@ import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
-import kotlin.toString
 
 /**
  * Service tracks location when requested and updates Activity via binding.
@@ -38,12 +36,13 @@ import kotlin.toString
  * itself to a foreground service to insure location updates interrupted
  */
 
-var foregroundServiceIsRunning = false
-var foregroundServiceSubscribeLocationUpdate = false
-var  isPracticeRunning = false
+var gIsForegroundServiceRunning = false
+var gIsForegroundServiceSubscribeLocationUpdate = false
+var  gIsPracticeRunning = false
 
 const val MIN_UPDATE_TIME_IN_MILLI = 5000  // 5 seconds
 const val MIN_DISTANCE_ALLOW_IN_KM = 0.002              // 2 metres
+const val MIN_TIME_TO_START_CHECK_ACTIVITY_RECOGNITION = 10 * 1000  // 50 second since start time, caused by AG is update too long for the first update
 
 class ForegroundOnlyLocationService  : Service() {
 
@@ -100,6 +99,8 @@ class ForegroundOnlyLocationService  : Service() {
 
     private var practiceType = PRACTICE_TYPE.WALKING
 
+    private var practiceStartTime = 0L
+
     override fun onCreate() {
         Log.d(TAG, "ForegroundService onCreate() ---- ")
 
@@ -132,7 +133,7 @@ class ForegroundOnlyLocationService  : Service() {
                 super.onLocationResult(p0)
 
                 if(p0?.lastLocation != null ) {
-                   if(isPracticeRunning){
+                   if(gIsPracticeRunning){
                        onNewLocation(p0.lastLocation)
                    }else {
                        currentLocation = p0.lastLocation
@@ -143,7 +144,7 @@ class ForegroundOnlyLocationService  : Service() {
                 }
             }
         }
-        foregroundServiceIsRunning = true
+        gIsForegroundServiceRunning = true
     }
 
     fun setPracticeType(type: PRACTICE_TYPE) {
@@ -151,12 +152,13 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun startPractice(pType: PRACTICE_TYPE) {
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING) {
+        if(currentPractice?.status == PRACTICE_STATUS.PAUSING) {
             resumePractice()
         }
         else {
+            practiceStartTime = System.currentTimeMillis()
             setPracticeType(pType)
-            isPracticeRunning = true
+            gIsPracticeRunning = true
             currentPractice = PracticeModel(
                 startTime = LocalDateTime.now(),
                 practiceType = practiceType,
@@ -167,7 +169,7 @@ class ForegroundOnlyLocationService  : Service() {
                 status = PRACTICE_STATUS.NOT_ACTIVE,
                 path = arrayListOf())
             if (currentLocation != null) {
-                currentPractice!!.path.add(
+                currentPractice?.path?.add(
                     LatLng(
                         currentLocation!!.latitude,
                         currentLocation!!.longitude
@@ -180,13 +182,15 @@ class ForegroundOnlyLocationService  : Service() {
         lastUpdatedTime = TimeUtils.getTimeInMilisecond()
     }
 
-    fun stopPractice() {
-        currentPractice!!.status = PRACTICE_STATUS.COMPETED
-        savePractice()
-        unsubscribeToLocationUpdates()
-        isPracticeRunning = false
-        notifyPracticeHasStopped()
-        stopSelf()
+    fun stopPractice() = gIsPracticeRunning?.let {
+        if(it) {
+            currentPractice?.status = PRACTICE_STATUS.COMPETED
+            savePractice()
+            unsubscribeToLocationUpdates()
+            gIsPracticeRunning = false
+            notifyPracticeHasStopped()
+            stopSelf()
+        }
     }
 
     fun notifyPracticeHasStopped() {
@@ -196,17 +200,17 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun pausePractice() {
-        currentPractice!!.status = PRACTICE_STATUS.PAUSING
+        currentPractice?.status = PRACTICE_STATUS.PAUSING
         savePractice()
     }
 
     fun resumePractice() {
-        currentPractice!!.status = PRACTICE_STATUS.ACTIVE
+        currentPractice?.status = PRACTICE_STATUS.ACTIVE
         if (currentLocation != null) {
-            currentPractice!!.path.add(
+            currentPractice?.path?.add(
                 LatLng(
-                    currentLocation!!.latitude,
-                    currentLocation!!.longitude
+                    currentLocation?.latitude!!,
+                    currentLocation?.longitude!!
                 )
             )
         }
@@ -217,7 +221,7 @@ class ForegroundOnlyLocationService  : Service() {
         lastUpdatedTime = TimeUtils.getTimeInMilisecond()
         coroutineScope.launch {
             try {
-                repository.insertPractice(currentPractice!!.asDatabasePractice())
+                repository.insertPractice(currentPractice?.asDatabasePractice()!!)
             } catch (e: Exception) {
                 Log.e(TAG, "insert to database failed : " + e.toString())
             }
@@ -225,66 +229,78 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     fun updatePractice(location: Location?, distance: Double, statechanged: Boolean) {
-        currentPractice!!.path.add(LatLng(location!!.latitude, location.longitude))
+        currentPractice?.path!!.add(LatLng(location!!.latitude, location.longitude))
         if (statechanged == false)
             currentPractice!!.distance += distance.around3Place()
-        currentPractice!!.duration = currentPractice!!.duration +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
-        val durationHour = currentPractice!!.duration.toDouble() / ONE_HOUR_MILLI
-        if (currentPractice!!.duration > 0)
-            currentPractice!!.speed = (currentPractice!!.distance / (durationHour)).around2Place()  // Km/h
-        currentPractice!!.status = PRACTICE_STATUS.ACTIVE
-        currentPractice!!.calo = ((currentPractice!!.duration.toDouble() / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
-            USER_WEIGHT_DEFAULT, currentPractice!!.speed, USER_HEIGHT_DEFAULT)
+        currentPractice?.duration = currentPractice?.duration!! +  TimeUtils.getDurationTimeMilliFrom(lastUpdatedTime)
+        val durationHour = currentPractice?.duration!!.toDouble() / ONE_HOUR_MILLI
+        if (currentPractice?.duration!! > 0)
+            currentPractice?.speed = (currentPractice?.distance!! / (durationHour)).around2Place()  // Km/h
+        currentPractice?.status = PRACTICE_STATUS.ACTIVE
+        currentPractice?.calo = ((currentPractice?.duration!!.toDouble() / ONE_MINUTE_MILLI) * KcalCaclator.burnedByWalkingPerMinute(
+            USER_WEIGHT_DEFAULT, currentPractice?.speed!!, USER_HEIGHT_DEFAULT)
                 ).around2Place()
 
     }
 
     private fun onNewLocation(location: Location?) {
-        val tempStatus = currentPractice!!.status
-        if(currentPractice!!.status == PRACTICE_STATUS.PAUSING || !currentPractice!!.isUserActive()) {
-            Log.d(LOG_TAG, "onNewLocation is pausing or not active")
+        // a trick to temporary fix the bug that ActivityRecognition take too long to update
+        // the first time after user start a practice
+        // in 10 seconds first, just check the distance,
+        val timeSinceStart = System.currentTimeMillis() - practiceStartTime
 
-            if(tempStatus != currentPractice!!.status)
+        val tempStatus = currentPractice?.status
+        if(currentPractice?.status == PRACTICE_STATUS.PAUSING
+            || (!currentPractice!!.isUserActive() || timeSinceStart > MIN_TIME_TO_START_CHECK_ACTIVITY_RECOGNITION)) {
+            Log.d(LOG_TAG, "onNewLocation is pausing or not active status ${currentPractice?.status}")
+
+            if(tempStatus != currentPractice?.status)
                 savePractice()
-            //if (currentPractice!!.status == PRACTICE_STATUS.PAUSING)
-                lastUpdatedTime = TimeUtils.getTimeInMilisecond()
-            return
-        }
-
-         //check the location
-        if(currentPractice!!.path.size == 0) {
-            // Start a new practice
-            currentLocation = location
-            currentPractice!!.path.add(LatLng(location!!.latitude, location.longitude))
-            currentPractice!!.startTime = LocalDateTime.now()
-            savePractice()
+            //if (currentPractice?.status == PRACTICE_STATUS.PAUSING)
+            lastUpdatedTime = TimeUtils.getTimeInMilisecond()
             updateForegroundNotificationifNeed()
             return
         }
 
         val distance = MathUtils.distance(
-            currentLocation!!.latitude,
-            currentLocation!!.longitude,
+            currentLocation?.latitude!!,
+            currentLocation?.longitude!!,
             location!!.latitude,
             location!!.longitude).around3Place()
 
-            updatePractice(location, distance, tempStatus != currentPractice!!.status)
+        Log.i(LOG_TAG, "onNewLocation distance: $distance  - Practice duration: ${currentPractice?.duration!!}")
+
+        if(distance >= MIN_DISTANCE_ALLOW_IN_KM) {
+            //check the location
+            if(currentPractice?.path?.size == 0) {
+                // Start a new practice
+                currentLocation = location
+                currentPractice?.path?.add(LatLng(location.latitude, location.longitude))
+                currentPractice?.startTime = LocalDateTime.now()
+                savePractice()
+                return
+            }
+
+            updatePractice(location, distance, tempStatus != currentPractice?.status)
 
             // save the updated practice into the database
             savePractice()
 
-        lastUpdatedTime = TimeUtils.getTimeInMilisecond()
+            lastUpdatedTime = TimeUtils.getTimeInMilisecond()
 
-        // update current location
-        currentLocation?.latitude = location.latitude
-        currentLocation?.longitude = location.longitude
-        updateForegroundNotificationifNeed()
+            // update current location
+            currentLocation?.latitude = location.latitude
+            currentLocation?.longitude = location.longitude
+            updateForegroundNotificationifNeed()
+        }
     }
 
     private fun updateForegroundNotificationifNeed(){
         // @Todo
         // Updates notification content if this service is running as a foreground service
-        if(serviceRunningInForeground && isPracticeRunning) {
+        Log.i(LOG_TAG, "updateForegroundNotificationifNeed serviceRunningInForeground: $serviceRunningInForeground")
+        Log.i(LOG_TAG, "updateForegroundNotificationifNeed gIsPracticeRunning: $gIsPracticeRunning")
+        if(serviceRunningInForeground && gIsPracticeRunning) {
             notificationManager.notify(
                 NOTIFICATION_ID,
                 generateNotification())
@@ -328,7 +344,8 @@ class ForegroundOnlyLocationService  : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Log.d(TAG, "onUnbind ---")
+        Log.d(TAG, "onUnbind configurationChange: ${configurationChange.toString()} ---")
+        Log.d(TAG, "onUnbind Pref: ${SharedPreferenceUtil.getLocationTrackingPref(this).toString()} ---")
 
         // client leaves foreground, so service needs to become a foreground service
         // to update the practicing info
@@ -347,7 +364,7 @@ class ForegroundOnlyLocationService  : Service() {
 
     override fun onDestroy() {
         Log.d(TAG, "foregroundService onDestroy()")
-        foregroundServiceIsRunning = false
+        gIsForegroundServiceRunning = false
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -359,7 +376,7 @@ class ForegroundOnlyLocationService  : Service() {
         Log.d(TAG, "subscribeToLocationUpdates()")
 
         SharedPreferenceUtil.saveLocationTrackingPref(this, true)
-        foregroundServiceSubscribeLocationUpdate = true
+        gIsForegroundServiceSubscribeLocationUpdate = true
 
         // Binding to this service doesn't actually trigger onStartCommand(). That is needed to
         // ensure this Service can be promoted to a foreground service, i.e., the service needs to
@@ -372,13 +389,13 @@ class ForegroundOnlyLocationService  : Service() {
                 locationRequest, locationCallback, Looper.myLooper())
         } catch (unlikely: SecurityException) {
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
-            foregroundServiceSubscribeLocationUpdate = false
+            gIsForegroundServiceSubscribeLocationUpdate = false
             Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
         }
     }
 
     fun unsubscribeToLocationUpdates() {
-        Log.d(TAG, "unsubcribeToLocationUpdates ----")
+        Log.d(TAG, "ForegroundService unsubcribeToLocationUpdates ----")
 
         try{
             // Unsubscribe to Location changes
@@ -393,10 +410,10 @@ class ForegroundOnlyLocationService  : Service() {
                 }
             }
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
-            foregroundServiceSubscribeLocationUpdate = false
+            gIsForegroundServiceSubscribeLocationUpdate = false
         } catch (unlikely: SecurityException) {
             SharedPreferenceUtil.saveLocationTrackingPref(this, true)
-            foregroundServiceSubscribeLocationUpdate = true
+            gIsForegroundServiceSubscribeLocationUpdate = true
             Log.e(TAG, "Lost location permissions. Couldn;t remove updates")
         }
     }
@@ -420,18 +437,19 @@ class ForegroundOnlyLocationService  : Service() {
         // 3. custom notification
         val notificationLayout = RemoteViews(PACKAGE_NAME, R.layout.custom_notification_practice)
         notificationLayout.setTextViewText(R.id.textView_distance_value,
-            currentPractice!!.distance.around3Place().toString() + " Km")
+            currentPractice?.distance!!.around3Place().toString() + " Km")
         var  gallon : String = baseContext.getString(R.string.minte)
-        if((currentPractice!!.duration.toDouble() / ONE_HOUR_MILLI).toInt() > 0)
+        if((currentPractice?.duration!!.toDouble() / ONE_HOUR_MILLI).toInt() > 0)
             gallon = baseContext.getString(R.string.hour)
         notificationLayout.setTextViewText(R.id.textView_time_value,
-            TimeUtils.convertDutationToFormmated(currentPractice!!.duration).toString() + " " + gallon)
-        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice!!.getStatusString(baseContext))
+            TimeUtils.convertDutationToFormmated(currentPractice?.duration!!).toString() + " " + gallon)
+        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice?.getStatusString(baseContext))
 
         var resId = R.drawable.walking_selected_icon
-        when(currentPractice!!.practiceType) {
+        when(currentPractice?.practiceType) {
             PRACTICE_TYPE.RUNNING -> resId = R.drawable.running_selected_icon
             PRACTICE_TYPE.CYCLING -> resId = R.drawable.cycling_selected_icon
+            PRACTICE_TYPE.WALKING -> resId = R.drawable.walking_selected_icon
         }
         notificationLayout.setImageViewResource(R.id.practice_icon, resId)
 

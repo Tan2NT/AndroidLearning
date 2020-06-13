@@ -1,12 +1,14 @@
 package com.tantnt.android.runstatistic.models
 
 import android.content.Context
+import android.util.Log
 import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.gDetectedActivities
 import com.tantnt.android.runstatistic.database.DatabasePractice
 import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
+import com.tantnt.android.runstatistic.utils.LOG_TAG
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
@@ -78,10 +80,11 @@ data class PracticeModel(
                 PRACTICE_TYPE.CYCLING -> detectActivityType = DetectedActivity.ON_BICYCLE
                 else -> detectActivityType = DetectedActivity.WALKING
             }
-
+            Log.i(LOG_TAG, "checkUserStatus gdetectedActivity: ${gDetectedActivities.toString()}")
             var found = false
-            val MIN_CONFIDENCE_TRUST_ALLOW = 20
+            val MIN_CONFIDENCE_TRUST_ALLOW = 10
             for (da in gDetectedActivities) {
+                //Log.i(LOG_TAG, "checkUserStatus  activityType: ${da.type} - confidence: ${da.confidence}")
                 if(da.type == detectActivityType && da.confidence >= MIN_CONFIDENCE_TRUST_ALLOW)
                     found = true
             }

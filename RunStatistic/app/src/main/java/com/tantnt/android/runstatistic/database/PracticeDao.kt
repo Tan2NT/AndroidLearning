@@ -41,7 +41,7 @@ interface PracticeDao {
     @Query("SELECT * FROM databasepractice ORDER BY start_time DESC")
     fun getAllPracticesNonLive(): List<DatabasePractice>
 
-    @Query("SELECT * FROM databasepractice WHERE date(start_time) <= date(:endDay) AND date(start_time) >= date(:startDay) ORDER BY start_time DESC")
+    @Query("SELECT * FROM databasepractice WHERE date(start_time) <= date(:endDay) AND date(start_time) >= date(:startDay) ORDER BY start_time DESC LIMIT 60 ")
     fun getAllPracticesBetweenDates(startDay: LocalDate, endDay: LocalDate) : LiveData<List<DatabasePractice>>
 
     // Todo: get practices by range of days/months/years

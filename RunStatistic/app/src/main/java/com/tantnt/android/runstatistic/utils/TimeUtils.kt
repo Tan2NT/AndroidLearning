@@ -18,6 +18,10 @@ object TimeUtils {
         return System.currentTimeMillis() - startTimeMilli
     }
 
+    fun getDurationTimeMilli(startTime : Long, endTime: Long): Long {
+        return endTime - startTime
+    }
+
     /**
      * Convert a duration time into hh/mm/ss format
      */

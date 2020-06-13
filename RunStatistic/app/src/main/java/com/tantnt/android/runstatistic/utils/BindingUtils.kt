@@ -1,10 +1,9 @@
 package com.tantnt.android.runstatistic.utils
 
-import android.util.Log
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.base.isPracticeRunning
+import com.tantnt.android.runstatistic.base.gIsPracticeRunning
 import com.tantnt.android.runstatistic.models.PracticeModel
 
 /**
@@ -16,7 +15,7 @@ import com.tantnt.android.runstatistic.models.PracticeModel
 @BindingAdapter("practiceDurationFormatted")
 fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
     practice?.let {
-        if (isPracticeRunning) {
+        if (gIsPracticeRunning) {
             text = TimeUtils.convertDutationToFormmated(practice.duration)
         } else
             text = "00:00"
@@ -26,7 +25,7 @@ fun TextView.setPracticeDurationFormatted(practice: PracticeModel?) {
 @BindingAdapter("practiceDistanceString")
 fun TextView.setPracticeDistanceString(practice: PracticeModel?) {
     practice?.let {
-        if (isPracticeRunning) {
+        if (gIsPracticeRunning) {
             text = practice.distance.around2Place().toString()
         } else
             text = "0.00"       // default value
@@ -36,7 +35,7 @@ fun TextView.setPracticeDistanceString(practice: PracticeModel?) {
 @BindingAdapter("practiceCaloBurnedString")
 fun TextView.setPracticeCaloBurnedString(practice: PracticeModel?) {
     practice?.let {
-        if (isPracticeRunning) {
+        if (gIsPracticeRunning) {
             text = practice.calo.around2Place().toString()
         } else
             text = "0.00"       // default value
@@ -46,7 +45,7 @@ fun TextView.setPracticeCaloBurnedString(practice: PracticeModel?) {
 @BindingAdapter("practiceSpeedString")
 fun TextView.setPracticeSpeedString(practice: PracticeModel?) {
     practice?.let {
-        if (isPracticeRunning) {
+        if (gIsPracticeRunning) {
             text = practice.speed.around2Place().toString()
         } else
             text = "0.00"       // default value
@@ -56,7 +55,7 @@ fun TextView.setPracticeSpeedString(practice: PracticeModel?) {
 @BindingAdapter("practiceStatusString")
 fun TextView.setPracticeStatusString(practice: PracticeModel?) {
     practice?.let {
-        if (isPracticeRunning) {
+        if (gIsPracticeRunning) {
             text = practice.getStatusString(context)
         } else
             text = context.getString(R.string.you_are_not_active)
