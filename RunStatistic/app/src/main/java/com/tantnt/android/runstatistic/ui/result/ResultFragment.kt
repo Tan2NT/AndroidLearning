@@ -193,7 +193,7 @@ class ResultFragment : Fragment() {
             Log.i(LOG_TAG, "adding canvas done!")
 
             // Start share intent with image
-            mutableBitmap?.let {
+            mutableBitmap.let {
                 mShareImagePath = MediaStore.Images.Media.insertImage(
                     context?.contentResolver,
                     it,

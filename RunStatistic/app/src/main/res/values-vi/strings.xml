@@ -70,6 +70,10 @@
     <string name="view_more">Xem thêm</string>
     <string name="distance">Khoảng cách</string>
     <!-- TODO: Remove or change this placeholder text -->
-
+    <string name="login">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="current_level">G%d</string>
+    <string name="step_to_next_level">Bạn cần thêm %d bước nữa để đạt cấp G%d</string>
+    <string name="supper_man">you are a Supper man</string>
 
 </resources>

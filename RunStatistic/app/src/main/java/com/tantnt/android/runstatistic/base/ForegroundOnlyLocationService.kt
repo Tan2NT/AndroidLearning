@@ -186,6 +186,10 @@ class ForegroundOnlyLocationService  : Service() {
         if(it) {
             currentPractice?.status = PRACTICE_STATUS.COMPETED
             savePractice()
+            val totalStepCounted = SharedPreferenceUtil.getTotalStep(baseContext)
+            SharedPreferenceUtil.saveTotalStepCountedPref(baseContext,
+                totalStepCounted + currentPractice?.getStepsCounted()!!)
+
             unsubscribeToLocationUpdates()
             gIsPracticeRunning = false
             notifyPracticeHasStopped()

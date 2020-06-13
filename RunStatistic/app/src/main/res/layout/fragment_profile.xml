@@ -58,17 +58,32 @@
             android:id="@+id/profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             tools:text="Funny Kid"
             android:textColor="#388E3C"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/btn_auth_google"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            style="@style/GreenButton"
+            android:background="@drawable/btn_rounded_green"
+            android:text="@string/login"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/profile_name"
             app:layout_constraintBottom_toTopOf="@+id/step_to_next_level_text"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            />
 
         <TextView
             android:id="@+id/step_to_next_level_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/TextBlackMedium"
             android:layout_marginBottom="16dp"
             tools:text="xxxx remain steps to reach Gx"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +94,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/line_break"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="1dp"
         android:background="@color/break_line_color"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"

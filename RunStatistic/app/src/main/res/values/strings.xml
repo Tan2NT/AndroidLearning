@@ -70,6 +70,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="confirmation">Confirmation</string>
     <string name="view_more">View more</string>
+    <string name="login">Log in</string>
+    <string name="logout">Log out</string>
+    <string name="current_level">G%d</string>
+    <string name="step_to_next_level">You need %d step to reach level G%d</string>
+    <string name="supper_man">you are a Supper man</string>
 
 
 

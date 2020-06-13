@@ -345,7 +345,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                                     null
                                 )
 
-                            bitmapPath?.let {
+                            bitmapPath.let {
                                 val actionResult
                                         = PracticeFragmentDirections.actionNavigationPracticeToResultFragment(
                                     bitmapPath,

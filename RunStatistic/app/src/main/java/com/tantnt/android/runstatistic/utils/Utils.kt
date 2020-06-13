@@ -65,4 +65,24 @@ internal object SharedPreferenceUtil {
             Context.MODE_PRIVATE).edit {
             putInt(KEY_DAILY_TARGET_STEP, target)
         }
+
+    /**
+     * get Step counted from Share reference
+     */
+
+    const val KEY_TOTAL_STEP_COUNTED = "total_step_counted"
+    fun getTotalStep(context: Context): Long =
+        context.getSharedPreferences(
+            context.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+            .getLong(KEY_TOTAL_STEP_COUNTED, 0)
+
+    /**
+     * Stores the Daily target step value in SharedPreferences.
+     */
+    fun saveTotalStepCountedPref(context: Context, target: Long) =
+        context.getSharedPreferences(
+            context.getString(R.string.preference_file_key),
+            Context.MODE_PRIVATE).edit {
+            putLong(KEY_TOTAL_STEP_COUNTED, target)
+        }
 }

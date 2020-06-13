@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "307736869159",
+    "firebase_url": "https://health-practice.firebaseio.com",
+    "project_id": "health-practice",
+    "storage_bucket": "health-practice.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307736869159:android:70d328eb2ae9da26731102",
+        "android_client_info": {
+          "package_name": "com.tantnt.android.runstatistic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "307736869159-dnegscgi590mllv3ilrf09ci0vkqtuv6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tantnt.android.runstatistic",
+            "certificate_hash": "091966ea92918b7c4e4387383a2fd301003c7e5e"
+          }
+        },
+        {
+          "client_id": "307736869159-tmkokch1thhus4mls2b4ooi222669k8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN_Hej3HNtbv-HyNIAZ-rTzKzQY2DAxrc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307736869159-tmkokch1thhus4mls2b4ooi222669k8r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,6 +34,7 @@ class PracticeViewItem (
             when(practiceModel.practiceType) {
                 PRACTICE_TYPE.RUNNING -> resId = R.drawable.running_selected_icon
                 PRACTICE_TYPE.CYCLING -> resId = R.drawable.cycling_selected_icon
+                PRACTICE_TYPE.WALKING -> resId = R.drawable.walking_selected_icon
             }
             practice_type_image.setBackgroundResource(resId)
         }
