@@ -31,9 +31,12 @@
     <!-- confirmation buttons text -->
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
+    <string name="got_it">Got it!</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+
+    <string name="no_internet_connection">You are currently not connecting to the Internet. Pleas turn on your connection to start Practice</string>
 
     <!-- -->
     <string name="confirm_stop_practice">Do you sure that you want to stop this practice</string>
@@ -52,7 +55,7 @@
     <string name="practice_type_cycling">Cycling</string>
     <string name="practice_type_running">Running</string>
     <string name="promote_workouts_to_improve_your_health">Promote workouts to improve your health</string>
-    <string name="location_setting_required">This app requires Location setting enabled to perform this feature. Enable Location Setting?</string>
+    <string name="location_setting_required">This app requires Location setting enabled with "High Accuracy" mode to perform this feature. Enable Location Setting?</string>
 
     <string name="select_target_title">Set daily target step</string>
     <string name="select_target_under_average">Under medium</string>
@@ -68,6 +71,7 @@
     <string name="share">Share</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="notification">Notification</string>
     <string name="confirmation">Confirmation</string>
     <string name="view_more">View more</string>
     <string name="login">Log in</string>

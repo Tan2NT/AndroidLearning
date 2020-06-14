@@ -68,8 +68,12 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if(writeExternalStorePermissionApproved() == false)
-            requestWriteExternalStoragePermission()
+        // check and request storage permissons
+        if( !PermissionUtils.checkPermissions(requireContext(),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE))
+        )
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE)
 
         // Register buttons listener
         target_layout.setOnClickListener {
@@ -287,29 +291,5 @@ class HomeFragment : Fragment() {
         SharedPreferenceUtil.saveDailyTargetStepPref(requireContext(), newTarget)
         target_step.text = newTarget.toString()
         setProgressBarStatus(mStepCounted!!)
-    }
-
-    /**
-     * update progress bar status: number of step perform / target step
-     */
-
-    // Review Permissions: Method checks if permissions approved.
-    private fun writeExternalStorePermissionApproved(): Boolean {
-        return PermissionUtils.checkPermission(
-            activity?.applicationContext!!,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                PermissionUtils.checkPermission(
-                    activity?.applicationContext!!,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE)
-
-    }
-
-    // TODO: Step 1.0, Review Permissions: Method requests permissions.
-    private fun requestWriteExternalStoragePermission() {
-        Log.d(TAG, "requestWriteExternalStoragePermissions ---")
-        requestPermissions(
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
-            REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE
-        )
     }
 }

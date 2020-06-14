@@ -17,10 +17,16 @@ import com.tantnt.android.runstatistic.R
 import java.security.Permission
 
 object LocationUtils {
-    fun isLocationEnable(appContext: Context) : Boolean {
+    fun isLocationHighAccuracyEnable(appContext: Context) : Boolean {
         var locationManager : LocationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    fun isLocationEnable(appContext: Context) : Boolean {
+        var locationManager : LocationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 }
 

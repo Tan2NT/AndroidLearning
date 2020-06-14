@@ -8,7 +8,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
@@ -19,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.library.BuildConfig
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -31,7 +29,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.material.snackbar.Snackbar
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.*
 import com.tantnt.android.runstatistic.databinding.FragmentPracticeBinding
@@ -48,10 +45,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Exception
 import com.facebook.ads.*;
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.ActivityRecognition
+import kotlinx.android.synthetic.main.confirm_popup_layout.view.message_text
+import kotlinx.android.synthetic.main.message_box_ok_only.view.*
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
+private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 25
 private const val REQUEST_ENBALE_LOCATION_SETTING = 25
 private const val REQUEST_SELECT_PRACTICE_TYPE = 26
 private const val REQUEST_DETECT_ACTIVITY_REQUEST_CODE = 27
@@ -110,13 +108,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     updateButtonStatus(practiceViewModel.getCurrentPractice())
                 }
             } else {
-                if (foregroundPermissionApproved()) {
-                    if(locationSettingEnabled()) {
+                if (locationPermissionApproved()) {
+                    if(LocationUtils.isLocationHighAccuracyEnable(requireContext())) {
                        foregroundOnlyLocationService?.subscribeToLocationUpdates()
                     } else
                         enableLocationSetting()
                 } else {
-                    requestForegroundPermissions()
+                    requestLocationPermissions()
                 }
             }
         }
@@ -182,22 +180,13 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // register button listener
         // start a practice
         start_practice_btn.setOnClickListener {
-            if(!gIsPracticeRunning) {
-                // we must select practice before start a practice
-                mPolyline = null
-                mCurrentMarker = null
-                mStartMarker = null
-                mGoogleMap.clear()
-                registerActivityRecognitionUpdates()
-                openSelectPracticeTypeDialog()
+            val connectivity = ConnectivityInterceptor(requireContext())
+            if(connectivity.isOnline()){
+                handleOnStartPracticeButtonClick()
+            } else {
+                openNoInternetConnectionDialog()
             }
-            else {
-                // user resume a practice
-                foregroundOnlyLocationService?.resumePractice()
-                stop_practice_btn.visibility = View.VISIBLE
-                pause_practice_btn.visibility = View.VISIBLE
-                start_practice_btn.visibility = View.GONE
-            }
+
         }
 
         // stop the practice
@@ -251,6 +240,67 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // For auto play video ads, it's recommended to load the ad
         // at least 30 seconds before it is shown
         interstitialAd.loadAd();
+    }
+
+    private fun handleOnStartPracticeButtonClick() {
+        if (checkAndRequestPermissionIfNeed()) {
+            if(!gIsPracticeRunning) {
+                // we must select practice before start a practice
+                mPolyline = null
+                mCurrentMarker = null
+                mStartMarker = null
+                mGoogleMap.clear()
+                registerActivityRecognitionUpdates()
+                openSelectPracticeTypeDialog()
+            }
+            else {
+                // user resume a practice
+                foregroundOnlyLocationService?.resumePractice()
+                stop_practice_btn.visibility = View.VISIBLE
+                pause_practice_btn.visibility = View.VISIBLE
+                start_practice_btn.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun checkAndRequestPermissionIfNeed(): Boolean {
+        // location
+        if(!locationPermissionApproved())
+        {
+            requestLocationPermissions()
+            return false
+        }
+
+        // write/read external storage
+        if (!PermissionUtils.checkPermissions(requireContext(),
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            requestWriteExternalStoragePermission()
+            return false
+        }
+
+        if(!LocationUtils.isLocationEnable(requireContext().applicationContext)) {
+            enableLocationSetting()
+            return false
+        }
+
+        return true
+    }
+
+    fun openNoInternetConnectionDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.message_box_ok_only, null)
+        val dialogbuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+        dialogView.message_title.text = getString(R.string.notification)
+        dialogView.message_text.text = getString(R.string.no_internet_connection)
+
+        val dialog = dialogbuilder.show()
+
+        dialogView.confirm_button.setOnClickListener {
+            dialog.dismiss()
+            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS));
+        }
+
     }
 
     fun openSelectPracticeTypeDialog() {
@@ -501,41 +551,41 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
                     // permission was granted
                     Log.d(TAG, "User interaction permission was granted")
                     //foregroundOnlyLocationService?.subscribeToLocationUpdates()
-                    if(locationSettingEnabled()){
+                    if(LocationUtils.isLocationHighAccuracyEnable(requireContext().applicationContext)){
                         foregroundOnlyLocationService?.subscribeToLocationUpdates()
                     }
                     else
                         enableLocationSetting()
                 }
                 else -> {
-                    // permission denied.
-                    Log.d(TAG, "User interaction permission denied.")
-                    Snackbar.make(
-                        requireActivity().findViewById(R.id.navigation_practice),
-                        R.string.permission_denied_explanation,
-                        Snackbar.LENGTH_LONG
-                    )
-                        .setAction(R.string.settings) {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts(
-                                "package",
-                                BuildConfig.APPLICATION_ID,
-                                null
-                            )
-                            intent.data = uri
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        }
-                        .show()
+                    // permission denied. Show the explaination
+
+                    val dialogView =
+                        LayoutInflater.from(requireContext()).inflate(R.layout.message_box_ok_only, null)
+                    val dialogbuilder = AlertDialog.Builder(requireContext())
+                        .setView(dialogView)
+                        .setCancelable(false)
+                    dialogView.message_title.text = getString(R.string.notification)
+                    dialogView.message_text.text = getString(R.string.permission_denied_explanation)
+
+                    val dialog = dialogbuilder.show()
+
+                    dialogView.confirm_button.setOnClickListener {
+                        dialog.dismiss()
+                        requestPermissions(
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+                        )
+                    }
+
+
                 }
             }
         }
     }
 
     // Review Permissions: Method checks if permissions approved.
-    private fun foregroundPermissionApproved(): Boolean {
+    private fun locationPermissionApproved(): Boolean {
         return PermissionUtils.checkPermissions(
             activity?.applicationContext!!,
             arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -545,58 +595,56 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     // TODO: Step 1.0, Review Permissions: Method requests permissions.
     @SuppressLint("ResourceType")
-    private fun requestForegroundPermissions() {
-        Log.d(TAG, "RequestLocationPermission ---")
-        val provideRationale = foregroundPermissionApproved()
-
-        // If the user denied a previous request, but didn't check "Don't ask again", provide
-        // additional rationale.
-        if (provideRationale) {
-            activity?.let {
-                Snackbar.make(
-                    it.findViewById(R.id.navigation_practice),
-                    R.string.permission_rationale,
-                    Snackbar.LENGTH_LONG
-                )
-                    .setAction(R.string.ok) {
-                        // Request permissions
-                        requestPermissions(
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-                        )
-                    }
-                    .show()
-            }
-
-        } else {
-            Log.d(TAG, "Request foreground only permission")
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-            )
-        }
+    private fun requestLocationPermissions() {
+        requestPermissions(
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+        )
     }
 
-    // check location setting
-    private fun locationSettingEnabled() : Boolean {
-        return LocationUtils.isLocationEnable(requireContext().applicationContext)
+    /**
+     * Check if permission is approved
+     */
+
+    private fun writeExternalStorePermissionApproved(): Boolean {
+        return PermissionUtils.checkPermission(
+            activity?.applicationContext!!,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                PermissionUtils.checkPermission(
+                    activity?.applicationContext!!,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    /**
+     * Request permission
+     */
+    // TODO: Step 1.0, Review Permissions: Method requests permissions.
+    private fun requestWriteExternalStoragePermission() {
+        Log.d(com.tantnt.android.runstatistic.network.service.TAG, "requestWriteExternalStoragePermissions ---")
+        requestPermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
+            REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE
+        )
     }
 
     private fun enableLocationSetting() {
-        showAlertMessageNoGps()
-    }
-
-    private fun showAlertMessageNoGps() {
-        val builder = AlertDialog.Builder(activity)
-        builder.setMessage(getString(R.string.location_setting_required))
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.message_box_ok_only, null)
+        val dialogbuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialog, which ->
-                startActivityForResult(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQUEST_ENBALE_LOCATION_SETTING)
-            })
-            .setNegativeButton(getString(R.string.no ), { dialog, which ->
-                dialog.cancel()
-            })
-        builder.show()
+        dialogView.message_title.text = getString(R.string.notification)
+        dialogView.message_text.text = getString(R.string.location_setting_required)
+
+        val dialog = dialogbuilder.show()
+
+        dialogView.confirm_button.setOnClickListener {
+            startActivityForResult(
+                Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                REQUEST_ENBALE_LOCATION_SETTING
+            )
+            dialog.dismiss()
+        }
     }
 
     private fun showAlertConfirmStopPractice() {
@@ -631,17 +679,14 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         Log.d(TAG, "onActivityResult requestCode: " + requestCode + " - resultCode: " + resultCode)
         when (requestCode) {
             REQUEST_ENBALE_LOCATION_SETTING -> {
-                if(locationSettingEnabled()) {
+                if(LocationUtils.isLocationEnable(requireContext())) {
                     foregroundOnlyLocationService?.subscribeToLocationUpdates()
                 }
-                else
-                    enableLocationSetting()
             }
             REQUEST_SELECT_PRACTICE_TYPE -> {
                 val type = data?.getIntExtra("practice_type", 0)!!
                 practiceType = PRACTICE_TYPE.values() [type]
                 foregroundOnlyLocationService?.startPractice(practiceType)
-                //registerActivityRecognitionUpdates()
                 stop_practice_btn.visibility = View.VISIBLE
                 pause_practice_btn.visibility = View.VISIBLE
                 start_practice_btn.visibility = View.GONE

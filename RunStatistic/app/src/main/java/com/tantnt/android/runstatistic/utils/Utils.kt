@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
 import android.util.Log
@@ -14,11 +15,43 @@ import androidx.core.content.edit
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.tantnt.android.runstatistic.R
+import com.tantnt.android.runstatistic.database.getDatabase
 import com.tantnt.android.runstatistic.models.DAILY_TARGET
 import com.tantnt.android.runstatistic.models.PracticeModel
 import kotlinx.android.synthetic.main.fragment_practice_detail.view.*
 import kotlinx.coroutines.*
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
+internal object Utils {
+    fun backupDatabase() {
+        val inFileName = "/data/data/$PACKAGE_NAME/databases/practice";
+        val outFileName = Environment.getExternalStorageDirectory().absolutePath+"/database_copy";
+        copyFileFile(inFileName, outFileName)
+    }
+
+    fun restoreDatabase() {
+        val outFileName = "/data/data/$PACKAGE_NAME/databases/practice_ce";
+        val inFileName = Environment.getExternalStorageDirectory().absolutePath+"/database_copy";
+        copyFileFile(inFileName, outFileName)
+    }
+
+    fun copyFileFile(srcPath: String, desPath: String) {
+        val dbFile = File(srcPath);
+
+        val fis = FileInputStream(dbFile);
+        val fos = FileOutputStream(desPath)
+
+        if(dbFile.exists()) {
+            val src = fis.channel
+            val dst = fos.channel
+            dst.transferFrom(src, 0, src.size())
+            src.close()
+            dst.close()
+        }
+    }
+}
 
 
 internal object SharedPreferenceUtil {

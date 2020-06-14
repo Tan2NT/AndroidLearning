@@ -31,7 +31,7 @@
                 android:background="@drawable/circle_shape"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:max="100"
-                android:progress="65" />
+                tools:progress="65" />
 
             <ImageView
                 android:id="@+id/foot_icon"

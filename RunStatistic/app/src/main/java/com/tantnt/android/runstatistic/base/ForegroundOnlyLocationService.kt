@@ -255,7 +255,7 @@ class ForegroundOnlyLocationService  : Service() {
 
         val tempStatus = currentPractice?.status
         if(currentPractice?.status == PRACTICE_STATUS.PAUSING
-            || (!currentPractice!!.isUserActive() || timeSinceStart > MIN_TIME_TO_START_CHECK_ACTIVITY_RECOGNITION)) {
+            || (!currentPractice!!.isUserActive() && timeSinceStart > MIN_TIME_TO_START_CHECK_ACTIVITY_RECOGNITION)) {
             Log.d(LOG_TAG, "onNewLocation is pausing or not active status ${currentPractice?.status}")
 
             if(tempStatus != currentPractice?.status)
@@ -272,7 +272,7 @@ class ForegroundOnlyLocationService  : Service() {
             location!!.latitude,
             location!!.longitude).around3Place()
 
-        Log.i(LOG_TAG, "onNewLocation distance: $distance  - Practice duration: ${currentPractice?.duration!!}")
+        Log.i(LOG_TAG, "onNewLocation timeSinceStart: $timeSinceStart - distance: $distance  - Practice duration: ${currentPractice?.duration!!}")
 
         if(distance >= MIN_DISTANCE_ALLOW_IN_KM) {
             //check the location
