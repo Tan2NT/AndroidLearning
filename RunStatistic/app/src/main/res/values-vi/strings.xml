@@ -80,4 +80,16 @@
     <string name="current_level">G%d</string>
     <string name="step_to_next_level">Bạn cần thêm %d bước nữa để đạt cấp G%d</string>
     <string name="supper_man">you are a Supper man</string>
+
+    <string name="notification_extra_message">extra_message</string>
+    <string name="notification_channel_id">fcm_default_channel</string>
+    <string name="notification_channel_name" translatable="true">Breakfast</string>
+    <string name="notification_channel_description">Breakfast reminder</string>
+    <string name="notification_practice_channel_id">practice_channel</string>
+    <string name="notification_practice_channel_name" translatable="true">Practice</string>
+    <string name="notification_practice_channel_description">Practice reminder</string>
+
+    <string name="notification_not_practice_1_day">Ôi! Bạn đã không tập luyện 1 ngày rồi! Tích cực tập  luyện để nanng cao sức khỏe nhé!!</string>
+    <string name="notification_not_practice_2_day">Ôi! Bạn đã không tập luyện 2 ngày rồi! Tích cực tập  luyện để nanng cao sức khỏe nhé!!</string>
+    <string name="notification_not_practice_long_time">Ôi! Bạn đã không tập luyện một thời Tích cực tập  luyện để nanng cao sức khỏe nhé khỏe nào!!</string>
 </resources>

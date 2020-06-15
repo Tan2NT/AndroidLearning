@@ -1,4 +1,4 @@
-package com.tantnt.android.runstatistic.base
+package com.tantnt.android.runstatistic.base.service
 
 import android.app.IntentService
 import android.content.Intent

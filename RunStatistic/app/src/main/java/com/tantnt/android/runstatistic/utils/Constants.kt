@@ -16,9 +16,9 @@ const val USER_WEIGHT_DEFAULT = 60.0
 
 // Time
 
-val ONE_SECOND_MILLI = 1000  //TimeUnit.SECONDS.convert(1, TimeUnit.SECONDS)
-val ONE_MINUTE_MILLI = ONE_SECOND_MILLI * 60 //TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
-val ONE_HOUR_MILLI = ONE_MINUTE_MILLI * 60 //TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+val ONE_SECOND_MILLI = 1000L  //TimeUnit.SECONDS.convert(1, TimeUnit.SECONDS)
+val ONE_MINUTE_MILLI = ONE_SECOND_MILLI * 60L //TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
+val ONE_HOUR_MILLI = ONE_MINUTE_MILLI * 60L //TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
 
 val DETECTION_INTERVAL_IN_MILLISECONDS: Long = 1    // hard this value to make the update not too long *8-15s)
 

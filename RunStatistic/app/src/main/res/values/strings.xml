@@ -81,5 +81,17 @@
     <string name="step_to_next_level">You need %d step to reach level G%d</string>
     <string name="supper_man">you are a Supper man</string>
 
+    <!-- Notification  -->
+    <string name="notification_extra_message">extra_message</string>
+    <string name="notification_channel_id">fcm_default_channel</string>
+    <string name="notification_channel_name" translatable="true">Breakfast</string>
+    <string name="notification_channel_description">Runstatistic reminder</string>
+    <string name="notification_practice_channel_id">practice_channel</string>
+    <string name="notification_practice_channel_name" translatable="true">Practice</string>
+    <string name="notification_practice_channel_description">Practice reminder</string>
+    <string name="notification_not_practice_1_day">Hi! You are not practice for a day! Practice to makes your health better!!</string>
+    <string name="notification_not_practice_2_day">Hi! You are not practice for a day! Practice to makes your health better!!</string>
+    <string name="notification_not_practice_long_time">Hi! You are not practice for a day! Practice to makes your health better!!</string>
+
 
 </resources>

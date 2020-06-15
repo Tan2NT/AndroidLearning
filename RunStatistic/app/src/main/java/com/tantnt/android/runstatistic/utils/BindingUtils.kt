@@ -3,7 +3,7 @@ package com.tantnt.android.runstatistic.utils
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.base.gIsPracticeRunning
+import com.tantnt.android.runstatistic.base.service.gIsPracticeRunning
 import com.tantnt.android.runstatistic.models.PracticeModel
 
 /**

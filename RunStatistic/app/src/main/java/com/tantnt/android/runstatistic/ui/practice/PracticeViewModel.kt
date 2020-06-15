@@ -3,7 +3,7 @@ package com.tantnt.android.runstatistic.ui.practice
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.tantnt.android.runstatistic.base.gIsPracticeRunning
+import com.tantnt.android.runstatistic.base.service.gIsPracticeRunning
 import com.tantnt.android.runstatistic.data.database.PracticeDao
 //import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel

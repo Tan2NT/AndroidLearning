@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Exception
 import com.facebook.ads.*;
+import com.tantnt.android.runstatistic.base.service.*
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.confirm_popup_layout.view.message_text
 import kotlinx.android.synthetic.main.message_box_ok_only.view.*
@@ -191,7 +192,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         // start a practice
         start_practice_btn.setOnClickListener {
             val connectivity = ConnectivityInterceptor(requireContext())
-            if(connectivity.isOnline()){
+            if(connectivity.isOnline() || gIsPracticeRunning){
                 handleOnStartPracticeButtonClick()
             } else {
                 openNoInternetConnectionDialog()

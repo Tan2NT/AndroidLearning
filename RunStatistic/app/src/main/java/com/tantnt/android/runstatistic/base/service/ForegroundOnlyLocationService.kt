@@ -1,4 +1,4 @@
-package com.tantnt.android.runstatistic.base
+package com.tantnt.android.runstatistic.base.service
 
 import android.app.*
 import android.content.Context
@@ -6,17 +6,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.location.Location
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.widget.RemoteViews
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.tantnt.android.runstatistic.R
-//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
@@ -315,7 +310,7 @@ class ForegroundOnlyLocationService  : Service() {
         if(serviceRunningInForeground && gIsPracticeRunning) {
             notificationManager.notify(
                 NOTIFICATION_ID,
-                generateNotification())
+                NotificationUtils.generatePracticeNotification(baseContext, currentPractice!!))
         }
     }
 
@@ -365,7 +360,7 @@ class ForegroundOnlyLocationService  : Service() {
 
         if(!configurationChange && SharedPreferenceUtil.getLocationTrackingPref(this)) {
             Log.d(TAG, "Start foreground service")
-            val notification = generateNotification()
+            val notification = NotificationUtils.generatePracticeNotification(baseContext, currentPractice!!)
             startForeground(NOTIFICATION_ID, notification)
             serviceRunningInForeground = true
         }
@@ -430,69 +425,6 @@ class ForegroundOnlyLocationService  : Service() {
         }
     }
 
-    private fun generateNotification(): Notification {
-        Log.d(TAG, "generateNotification() ---- ")
-
-        // 1. get Data
-        val titleTExt = "Location in Android"
-
-        // 2. Create Notification Channel for O+ and beyond devices (26+)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID, titleTExt, NotificationManager.IMPORTANCE_DEFAULT)
-
-            // Adds Notification channel to system. Attempting to create an existing channel
-            // with its original performs no operator, so it's safe to perform the blow sequence.
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
-
-        // 3. custom notification
-        val notificationLayout = RemoteViews(PACKAGE_NAME, R.layout.custom_notification_practice)
-        notificationLayout.setTextViewText(R.id.textView_distance_value,
-            currentPractice?.distance!!.around3Place().toString() + " Km")
-        var  gallon : String = baseContext.getString(R.string.minte)
-        if((currentPractice?.duration!!.toDouble() / ONE_HOUR_MILLI).toInt() > 0)
-            gallon = baseContext.getString(R.string.hour)
-        notificationLayout.setTextViewText(R.id.textView_time_value,
-            TimeUtils.convertDutationToFormmated(currentPractice?.duration!!).toString() + " " + gallon)
-        notificationLayout.setTextViewText(R.id.textView_practice_status, currentPractice?.getStatusString(baseContext))
-
-        var resId = R.drawable.walking_selected_icon
-        when(currentPractice?.practiceType) {
-            PRACTICE_TYPE.RUNNING -> resId = R.drawable.running_selected_icon
-            PRACTICE_TYPE.CYCLING -> resId = R.drawable.cycling_selected_icon
-            PRACTICE_TYPE.WALKING -> resId = R.drawable.walking_selected_icon
-        }
-        notificationLayout.setImageViewResource(R.id.practice_icon, resId)
-
-        // 4. Set up the main Intent.Pending intents for notification
-        val launchActivityIntent = Intent(this, LaunchAppService::class.java)
-        val activityPendingIntent = PendingIntent.getService(
-            this, NOTIFICATION_ID, launchActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val cancelIntent = Intent(this, ForegroundOnlyLocationService::class.java)
-        cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
-        val servicePendingIntent = PendingIntent.getService(
-            this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        // 5. Build and issue the notification
-        val notificationCompatbuilder =
-            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-
-        val nof =  notificationCompatbuilder
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setCustomContentView(notificationLayout)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .build()
-
-        nof.contentIntent = activityPendingIntent
-        nof.deleteIntent = servicePendingIntent
-
-        return nof
-    }
-
     companion object {
         private const val TAG = "TDebug"
 
@@ -505,7 +437,7 @@ class ForegroundOnlyLocationService  : Service() {
 
         internal const val EXTRA_PRACTICE_STOPPED = "$PACKAGE_NAME.extra.PRACTICE_STOPPED"
 
-        private const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION =
+        const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION =
             "$PACKAGE_NAME.extra.CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION"
 
         private const val NOTIFICATION_ID = 170491

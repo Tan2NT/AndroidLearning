@@ -12,7 +12,9 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.tantnt.android.runstatistic.base.notification.LocalPushManager
 import com.tantnt.android.runstatistic.utils.LOG_TAG
+import com.tantnt.android.runstatistic.utils.NotificationUtils
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -56,16 +58,31 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         AndroidThreeTen.init(this.application)
 
+        // Create channel for normal notification
+        NotificationUtils.createChannel(applicationContext,
+            applicationContext.getString(R.string.notification_channel_id),
+            applicationContext.getString(R.string.notification_channel_name),
+            applicationContext.getString(R.string.notification_channel_description))
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, null)
     }
 
+    override fun onResume() {
+        super.onResume()
+        LocalPushManager.cancelAlarm(baseContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Schedule comeback notification
+        LocalPushManager.scheduleNotification(baseContext)
+    }
+
     override fun onDestroy() {
         Log.i(LOG_TAG, "MainActivity - onDestroy")
         super.onDestroy()
-
-
     }
 }

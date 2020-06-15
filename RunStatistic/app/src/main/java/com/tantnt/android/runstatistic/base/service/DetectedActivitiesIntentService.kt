@@ -1,9 +1,8 @@
-package com.tantnt.android.runstatistic.base
+package com.tantnt.android.runstatistic.base.service
 
 import android.app.IntentService
 import android.content.Intent
 import android.util.Log
-import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.ActivityRecognitionResult
 import com.google.android.gms.location.DetectedActivity
 import com.tantnt.android.runstatistic.utils.LOG_TAG

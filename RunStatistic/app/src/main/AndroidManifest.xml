@@ -39,20 +39,55 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".base.notification.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
+
         <!-- Foreground services in Android 10+ require type. -->
         <!-- TODO: Add foreground service type. -->
         <service
-            android:name="com.tantnt.android.runstatistic.base.ForegroundOnlyLocationService"
+            android:name="com.tantnt.android.runstatistic.base.service.ForegroundOnlyLocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
 
-        <service android:name=".base.LaunchAppService"
+        <service android:name=".base.service.LaunchAppService"
             android:exported="false"/>
 
-        <service android:name=".base.DetectedActivitiesIntentService"
+        <!-- Detect user activities: Walking, running, cycling, tilling, ... -->
+        <service android:name="com.tantnt.android.runstatistic.base.service.DetectedActivitiesIntentService"
             android:enabled="true"
             android:exported="false"/>
+
+        <service
+            android:name=".base.service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- [START fcm_default_icon] -->
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+             See README(https://goo.gl/l4GJaQ) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/common_google_signin_btn_icon_dark"/>
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent"/> <!-- [END fcm_default_icon] -->
+        <!-- [START fcm_default_channel] -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/notification_channel_id" />
+        <!-- [END fcm_default_channel] -->
     </application>
 
 </manifest>

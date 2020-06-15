@@ -1,6 +1,6 @@
 package com.tantnt.android.runstatistic.di.module
 
-import com.tantnt.android.runstatistic.base.ForegroundOnlyLocationService
+import com.tantnt.android.runstatistic.base.service.ForegroundOnlyLocationService
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
