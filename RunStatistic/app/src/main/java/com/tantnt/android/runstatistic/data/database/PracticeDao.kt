@@ -1,4 +1,4 @@
-package com.tantnt.android.runstatistic.database
+package com.tantnt.android.runstatistic.data.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

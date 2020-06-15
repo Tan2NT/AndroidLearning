@@ -1,6 +1,6 @@
 package com.tantnt.android.runstatistic.models
 
-import com.tantnt.android.runstatistic.ui.view.PracticeDayViewItem
+import com.tantnt.android.runstatistic.ui.recycler_view_item.PracticeDayViewItem
 import org.threeten.bp.LocalDate
 
 class PracticeDayInfo (

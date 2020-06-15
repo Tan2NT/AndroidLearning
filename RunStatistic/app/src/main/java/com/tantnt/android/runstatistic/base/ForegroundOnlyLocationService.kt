@@ -16,19 +16,22 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.database.getDatabase
+//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.models.asDatabasePractice
-import com.tantnt.android.runstatistic.repository.RunstatisticRepository
+import com.tantnt.android.runstatistic.data.repository.RunstatisticRepository
 import com.tantnt.android.runstatistic.utils.*
 import com.tantnt.android.runstatistic.utils.SharedPreferenceUtil
+import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Service tracks location when requested and updates Activity via binding.
@@ -44,6 +47,7 @@ const val MIN_UPDATE_TIME_IN_MILLI = 5000  // 5 seconds
 const val MIN_DISTANCE_ALLOW_IN_KM = 0.002              // 2 metres
 const val MIN_TIME_TO_START_CHECK_ACTIVITY_RECOGNITION = 10 * 1000  // 50 second since start time, caused by AG is update too long for the first update
 
+@Singleton
 class ForegroundOnlyLocationService  : Service() {
 
     /**
@@ -65,7 +69,8 @@ class ForegroundOnlyLocationService  : Service() {
     // Coroutines scope to allow repository to safe access the database
     private lateinit var coroutineScope : CoroutineScope
 
-    private lateinit var repository: RunstatisticRepository
+    @Inject
+    lateinit var repository: RunstatisticRepository
 
     /**
      * checks whether the bound activity has really gone away (foreground service with notification
@@ -104,6 +109,8 @@ class ForegroundOnlyLocationService  : Service() {
     override fun onCreate() {
         Log.d(TAG, "ForegroundService onCreate() ---- ")
 
+        AndroidInjection.inject(this)
+
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Review the FusedLocationProviderClient
@@ -124,7 +131,7 @@ class ForegroundOnlyLocationService  : Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-        repository = RunstatisticRepository(getDatabase(application))
+        //repository = RunstatisticRepository(getDatabase(application).practiceDao)
         coroutineScope = CoroutineScope(Dispatchers.Default)
 
         // Initialize the LocationCallback
@@ -225,6 +232,7 @@ class ForegroundOnlyLocationService  : Service() {
         lastUpdatedTime = TimeUtils.getTimeInMilisecond()
         coroutineScope.launch {
             try {
+                Log.i(TAG, "savePractice insert to database : $currentPractice")
                 repository.insertPractice(currentPractice?.asDatabasePractice()!!)
             } catch (e: Exception) {
                 Log.e(TAG, "insert to database failed : " + e.toString())

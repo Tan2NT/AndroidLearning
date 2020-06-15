@@ -1,7 +1,5 @@
 package com.tantnt.android.runstatistic.utils
 
-import android.util.Log
-import com.tantnt.android.runstatistic.network.service.TAG
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 

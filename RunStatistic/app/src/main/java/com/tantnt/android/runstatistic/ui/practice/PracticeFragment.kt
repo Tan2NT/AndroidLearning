@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
@@ -45,8 +46,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.Exception
 import com.facebook.ads.*;
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.confirm_popup_layout.view.message_text
 import kotlinx.android.synthetic.main.message_box_ok_only.view.*
+import javax.inject.Inject
 
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 25
@@ -64,6 +67,9 @@ private const val INTERSTITIAL_ADS_PLACEMENT_ID = "261115174996633_2611251649956
 class PracticeFragment : Fragment(), OnMapReadyCallback {
 
     private val TAG = "TDebug" //PracticeFragment::class.java.simpleName
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var interstitialAd : InterstitialAd
     
@@ -126,6 +132,11 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidSupportInjection.inject(this)
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -140,8 +151,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
             inflater, R.layout.fragment_practice, container, false)
 
         practiceViewModel =
-                ViewModelProviders.of(this, PracticeViewModelFactory(activity.application)).
-                    get(PracticeViewModel::class.java)
+                ViewModelProviders.of(this, viewModelFactory).get(PracticeViewModel::class.java)
 
         binding.setLifecycleOwner(this)
         binding.practiceViewModel = practiceViewModel
@@ -620,7 +630,7 @@ class PracticeFragment : Fragment(), OnMapReadyCallback {
      */
     // TODO: Step 1.0, Review Permissions: Method requests permissions.
     private fun requestWriteExternalStoragePermission() {
-        Log.d(com.tantnt.android.runstatistic.network.service.TAG, "requestWriteExternalStoragePermissions ---")
+        Log.d(com.tantnt.android.runstatistic.data.network.service.TAG, "requestWriteExternalStoragePermissions ---")
         requestPermissions(
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
             REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE

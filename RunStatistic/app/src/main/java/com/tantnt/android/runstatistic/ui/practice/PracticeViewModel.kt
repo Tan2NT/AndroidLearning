@@ -1,20 +1,21 @@
 package com.tantnt.android.runstatistic.ui.practice
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.tantnt.android.runstatistic.base.gIsPracticeRunning
-import com.tantnt.android.runstatistic.database.getDatabase
+import com.tantnt.android.runstatistic.data.database.PracticeDao
+//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.repository.RunstatisticRepository
+import com.tantnt.android.runstatistic.data.repository.RunstatisticRepository
 import com.tantnt.android.runstatistic.utils.LOG_TAG
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
 /** A method to download json data from url  */
 
-class PracticeViewModel(application: Application) : AndroidViewModel(application) {
+class PracticeViewModel @Inject constructor( praticeDao: PracticeDao ) : ViewModel() {
 
     private val TAG : String = "TDebug"
 
@@ -36,7 +37,7 @@ class PracticeViewModel(application: Application) : AndroidViewModel(application
     /**
      * the data source this ViewModel will fetch results from
      */
-    private val runstatisticRepository = RunstatisticRepository(getDatabase(application))
+    private val runstatisticRepository = RunstatisticRepository(praticeDao)
 
     /**
      * a practice displayed on the screen

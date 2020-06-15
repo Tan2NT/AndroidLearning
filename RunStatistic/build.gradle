@@ -12,7 +12,11 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.6.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
+        // passing arg between fragment
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+
+        // dependency injection
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
 
         // google service
         classpath 'com.google.gms:google-services:4.3.3'

@@ -1,28 +1,30 @@
-package com.tantnt.android.runstatistic.repository
+package com.tantnt.android.runstatistic.data.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.tantnt.android.runstatistic.database.DatabasePractice
-import com.tantnt.android.runstatistic.database.PracticeDatabase
-import com.tantnt.android.runstatistic.database.asModel
+import com.tantnt.android.runstatistic.data.database.DatabasePractice
+import com.tantnt.android.runstatistic.data.database.PracticeDao
+import com.tantnt.android.runstatistic.data.database.asModel
 import com.tantnt.android.runstatistic.models.PracticeModel
 import com.tantnt.android.runstatistic.utils.LOG_TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Repository for storing the practice on disk
 */
-
-class RunstatisticRepository(private val database: PracticeDatabase) {
+@Singleton
+class RunstatisticRepository @Inject constructor(private val practiceDao : PracticeDao) {
 
     /**
      * latestPractice LiveData
      */
-    val latestPractice: LiveData<PracticeModel> = Transformations.map(database.practiceDao.getlatestPractice()) {
+    val latestPractice: LiveData<PracticeModel> = Transformations.map(practiceDao.getlatestPractice()) {
         it?.let {
             it.asModel()
         }
@@ -37,12 +39,12 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     suspend fun getLatestPracticeNonLive() : PracticeModel? {
         var practice : PracticeModel? = null
         withContext(Dispatchers.IO) {
-            practice = database.practiceDao.getlatestPracticeNonLive().asModel()
+            practice = practiceDao.getlatestPracticeNonLive().asModel()
         }
         return practice
     }
 
-    val todayPractices: LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getPracticeByDay(
+    val todayPractices: LiveData<List<PracticeModel>> = Transformations.map(practiceDao.getPracticeByDay(
         LocalDateTime.now())) {
         it?.let {
             it.asModel()
@@ -60,7 +62,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
         var practices : LiveData<List<PracticeModel>>? = null
         withContext(Dispatchers.IO) {
             Log.i(LOG_TAG, "getPracticesByDay --- ")
-            practices = Transformations.map(database.practiceDao.getPracticeByDay(date)) {
+            practices = Transformations.map(practiceDao.getPracticeByDay(date)) {
                 it?.asModel()
             }
         }
@@ -77,7 +79,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     suspend fun insertPractice(practice: DatabasePractice) {
         withContext(Dispatchers.IO) {
             Log.i(LOG_TAG, "insertPractice --- ")
-            database.practiceDao.insert(practice)
+            practiceDao.insert(practice)
         }
     }
 
@@ -88,7 +90,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
         var practices : LiveData<List<PracticeModel>>? = null
         withContext(Dispatchers.IO) {
             Log.i(LOG_TAG, "getPracticesLimitBy $limit --- ")
-            practices = Transformations.map(database.practiceDao.getLatestPractices(limit)) {
+            practices = Transformations.map(practiceDao.getLatestPractices(limit)) {
                 it?.asModel()
             }
         }
@@ -98,7 +100,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * 30 latestPractices
      */
-    val latest7DaysPractices : LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getAllPracticesBetweenDates(
+    val latest7DaysPractices : LiveData<List<PracticeModel>> = Transformations.map(practiceDao.getAllPracticesBetweenDates(
         LocalDate.now().minusDays(7),
         LocalDate.now()
     )) {
@@ -108,7 +110,7 @@ class RunstatisticRepository(private val database: PracticeDatabase) {
     /**
      * all practices LiveData
      */
-    val allPractices : LiveData<List<PracticeModel>> = Transformations.map(database.practiceDao.getAllPractices()) {
+    val allPractices : LiveData<List<PracticeModel>> = Transformations.map(practiceDao.getAllPractices()) {
         it.asModel()
     }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,24 +25,31 @@ import com.tantnt.android.runstatistic.models.DAILY_TARGET
 import com.tantnt.android.runstatistic.models.PracticeDayInfo
 import com.tantnt.android.runstatistic.models.asListPracticeItem
 import com.tantnt.android.runstatistic.models.getPracticeDayInfo
-import com.tantnt.android.runstatistic.network.service.TAG
-import com.tantnt.android.runstatistic.ui.view.HeaderItem
-import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
-import com.tantnt.android.runstatistic.ui.view.asListPracticeModel
+import com.tantnt.android.runstatistic.ui.recycler_view_item.HeaderItem
+import com.tantnt.android.runstatistic.ui.recycler_view_item.PracticeViewItem
+import com.tantnt.android.runstatistic.ui.recycler_view_item.asListPracticeModel
 import com.tantnt.android.runstatistic.utils.*
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_select_target_dialog.view.*
 import org.threeten.bp.LocalDate
+import javax.inject.Inject
 
 
 private const val REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST_CODE = 10
 private const val ADS_BANNER_PLACEMENT_ID = "261115174996633_261116634996487"
 
 class HomeFragment : Fragment() {
+
+    /**
+     * Inject the ViewModelFactory
+     */
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -50,6 +58,13 @@ class HomeFragment : Fragment() {
     // Facebook ads
     private var bannerAdView: AdView? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Inject the ViewModelFactory into our Fragment
+        AndroidSupportInjection.inject(this)
+
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -57,8 +72,8 @@ class HomeFragment : Fragment() {
     ): View? {
 
         homeViewModel =
-                ViewModelProviders.of(this, HomeViewModelFactory(requireActivity().application) )
-                    .get(HomeViewModel::class.java)
+                ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
+
 
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 

@@ -1,18 +1,21 @@
 package com.tantnt.android.runstatistic.ui.home
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.tantnt.android.runstatistic.database.getDatabase
+import com.tantnt.android.runstatistic.data.database.PracticeDao
+//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.repository.RunstatisticRepository
+import com.tantnt.android.runstatistic.data.repository.RunstatisticRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Inject
 
 private const val LIMIT_PRACTICE_COUNT = 30
 
-class HomeViewModel(application: Application) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    practiceDao: PracticeDao
+) : ViewModel() {
 
     /**
      * This is the job for all coroutines started by this ViewModel.
@@ -32,7 +35,7 @@ class HomeViewModel(application: Application) : ViewModel() {
     /**
      * the data source this ViewModel will fetch results from
      */
-    private val runstatisticRepository = RunstatisticRepository(getDatabase(application))
+    private val runstatisticRepository = RunstatisticRepository(practiceDao)
 
     /**
      * today practices -- all practices performed this day

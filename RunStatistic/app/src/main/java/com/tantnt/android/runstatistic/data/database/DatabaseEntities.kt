@@ -1,14 +1,11 @@
-package com.tantnt.android.runstatistic.database
+package com.tantnt.android.runstatistic.data.database
 
-import androidx.lifecycle.Transformations.map
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import com.tantnt.android.runstatistic.models.PracticeModel
-import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
 /**

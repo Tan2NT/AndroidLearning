@@ -1,4 +1,4 @@
-package com.tantnt.android.runstatistic.database
+package com.tantnt.android.runstatistic.data.database
 
 import androidx.room.TypeConverter
 import com.google.android.gms.maps.model.LatLng
@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken
 import com.tantnt.android.runstatistic.models.PRACTICE_STATUS
 import com.tantnt.android.runstatistic.models.PRACTICE_TYPE
 import org.threeten.bp.*
-import java.sql.Timestamp
 import kotlin.collections.ArrayList
 
 class DataConvertor {

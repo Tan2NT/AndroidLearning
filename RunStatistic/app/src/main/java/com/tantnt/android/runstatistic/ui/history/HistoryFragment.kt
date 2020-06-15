@@ -8,18 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tantnt.android.runstatistic.R
+//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.*
-import com.tantnt.android.runstatistic.ui.view.HeaderItem
-import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
-import com.tantnt.android.runstatistic.ui.view.asListPracticeModel
+import com.tantnt.android.runstatistic.ui.recycler_view_item.HeaderItem
+import com.tantnt.android.runstatistic.ui.recycler_view_item.PracticeViewItem
+import com.tantnt.android.runstatistic.ui.recycler_view_item.asListPracticeModel
 import com.tantnt.android.runstatistic.utils.around2Place
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_history.*
+import javax.inject.Inject
 
 class HistoryFragment : Fragment() {
 
@@ -28,13 +32,17 @@ class HistoryFragment : Fragment() {
         MONTH(2)
     }
 
-    companion object {
-        fun newInstance() = HistoryFragment()
-    }
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: HistoryViewModel
 
     private var mGroupType = GROUP_TYPE.MONTH
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidSupportInjection.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +55,7 @@ class HistoryFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel =
-        ViewModelProviders.of(this, HistoryViewModelFactory(requireActivity().application) )
-            .get(HistoryViewModel::class.java)
+        ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel::class.java)
 
         viewModel.allPractices.observe(viewLifecycleOwner, Observer {
             when(mGroupType) {

@@ -15,7 +15,7 @@ import androidx.core.content.edit
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.tantnt.android.runstatistic.R
-import com.tantnt.android.runstatistic.database.getDatabase
+//import com.tantnt.android.runstatistic.data.database.getDatabase
 import com.tantnt.android.runstatistic.models.DAILY_TARGET
 import com.tantnt.android.runstatistic.models.PracticeModel
 import kotlinx.android.synthetic.main.fragment_practice_detail.view.*

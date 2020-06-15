@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -12,15 +13,33 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.tantnt.android.runstatistic.utils.LOG_TAG
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private lateinit var navController: NavController
 
+    /**
+     * Implement HasActivityInjector and inject the ViewModelFactory into our Fragment (Home, History, Practice)
+     */
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+
+
+    override fun supportFragmentInjector() = dispatchingAndroidInjector
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        /**
+         * inject this method into our activity so that our fragment can inject the ViewModelFactory
+         */
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 

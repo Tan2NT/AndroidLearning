@@ -6,8 +6,8 @@ import com.google.android.gms.location.DetectedActivity
 import com.google.android.gms.maps.model.LatLng
 import com.tantnt.android.runstatistic.R
 import com.tantnt.android.runstatistic.base.gDetectedActivities
-import com.tantnt.android.runstatistic.database.DatabasePractice
-import com.tantnt.android.runstatistic.ui.view.PracticeViewItem
+import com.tantnt.android.runstatistic.data.database.DatabasePractice
+import com.tantnt.android.runstatistic.ui.recycler_view_item.PracticeViewItem
 import com.tantnt.android.runstatistic.utils.LOG_TAG
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime

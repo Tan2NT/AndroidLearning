@@ -1,20 +1,15 @@
 package com.tantnt.android.runstatistic.ui.history
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.tantnt.android.runstatistic.database.getDatabase
-import com.tantnt.android.runstatistic.models.PracticeModel
-import com.tantnt.android.runstatistic.repository.RunstatisticRepository
-import com.tantnt.android.runstatistic.utils.LOG_TAG
+import com.tantnt.android.runstatistic.data.database.PracticeDao
+//import com.tantnt.android.runstatistic.data.database.getDatabase
+import com.tantnt.android.runstatistic.data.repository.RunstatisticRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HistoryViewModel(application: Application) : ViewModel() {
+class HistoryViewModel @Inject constructor(practiceDao: PracticeDao) : ViewModel() {
 
     /**
      * This is the job for all coroutines started by this ViewModel.
@@ -34,7 +29,7 @@ class HistoryViewModel(application: Application) : ViewModel() {
     /**
      * the data source this ViewModel will fetch results from
      */
-    private val runstatisticRepository = RunstatisticRepository(getDatabase(application))
+    private val runstatisticRepository = RunstatisticRepository(practiceDao)
 
     /**
      * Get all practices
